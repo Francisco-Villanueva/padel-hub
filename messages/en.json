@@ -550,5 +550,92 @@
         "generic": "Something went wrong. Try again."
       }
     }
+  },
+  "landing": {
+    "meta": {
+      "title": "PadelHub: fill every match with your club's community",
+      "description": "PadelHub organizes your club's players by level, position and schedule. When you're one short, you see who to message and reach out on WhatsApp in one tap."
+    },
+    "nav": {
+      "howItWorks": "How it works",
+      "forClubs": "For clubs",
+      "faq": "FAQ",
+      "login": "Log in",
+      "cta": "Try it at your club",
+      "menu": "Menu",
+      "main": "Main navigation"
+    },
+    "hero": {
+      "eyebrow": "For padel clubs",
+      "title": "Fill the match with the <accent>community</accent> your club already has.",
+      "lead": "PadelHub organizes players by level, position and schedule. When you're one short, you see who to message and do it on WhatsApp in one tap.",
+      "cta": "Try it at your club",
+      "secondary": "See how it works",
+      "note": "Nothing to install. Works on your phone and on the tablet at the front desk.",
+      "cardLabel": "Example of a match with one open spot",
+      "when": "Today, 8:00 PM",
+      "missing": "1 missing",
+      "free": "Open",
+      "whatsapp": "Message on WhatsApp"
+    },
+    "benefits": {
+      "eyebrow": "For the club",
+      "title": "Fewer scattered messages, more full matches",
+      "players": {
+        "title": "Your player base, organized",
+        "body": "Level, position, schedule and area in a single list. Filter in seconds instead of digging through chats."
+      },
+      "quarter": {
+        "title": "Missing a fourth, solved",
+        "body": "Enter who's already in and the app shows you the players who fit. You choose who to message."
+      },
+      "consent": {
+        "title": "Sign-up with consent",
+        "body": "Players join through a link, a QR code or the tablet, and explicitly accept to be contacted."
+      }
+    },
+    "steps": {
+      "eyebrow": "How it works",
+      "title": "From the list to the match in three steps",
+      "share": {
+        "title": "Share your club's link",
+        "body": "Put it on your Instagram, in the WhatsApp group or on a QR code at the front desk."
+      },
+      "signup": {
+        "title": "Players sign up",
+        "body": "They fill in their details in a minute from their phone, with nothing to install."
+      },
+      "complete": {
+        "title": "Fill the match",
+        "body": "When you're one short, filter and message on WhatsApp in one tap."
+      }
+    },
+    "faq": {
+      "eyebrow": "FAQ",
+      "title": "What clubs usually ask",
+      "q1": {
+        "q": "Does the app message players on its own?",
+        "a": "No. Contact is always an action by the club: the app organizes and filters, and builds the WhatsApp link. You decide who to message."
+      },
+      "q2": {
+        "q": "Do players have to install anything?",
+        "a": "No. They sign up from their phone's browser, with the club's link or QR code, or on the tablet at the front desk."
+      },
+      "q3": {
+        "q": "What happens with players' data?",
+        "a": "Each player explicitly accepts when signing up and can ask to see, correct or delete their data. Each club only sees its own players."
+      },
+      "q4": {
+        "q": "Does it work on phones and tablets?",
+        "a": "Yes. It is built for phones, for the tablet at the front desk and for the club's computer."
+      }
+    },
+    "cta": {
+      "title": "Your club already has the players. They just need organizing.",
+      "button": "Try it at your club"
+    },
+    "footer": {
+      "login": "Log in"
+    }
   }
 }

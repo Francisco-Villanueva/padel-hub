@@ -550,5 +550,92 @@
         "generic": "Algo deu errado. Tente de novo."
       }
     }
+  },
+  "landing": {
+    "meta": {
+      "title": "PadelHub: complete o jogo com a comunidade do seu clube",
+      "description": "O PadelHub organiza os jogadores do seu clube por categoria, posição e horário. Quando falta um, você vê a quem escrever e chama pelo WhatsApp em um toque."
+    },
+    "nav": {
+      "howItWorks": "Como funciona",
+      "forClubs": "Para clubes",
+      "faq": "Perguntas",
+      "login": "Entrar",
+      "cta": "Experimente no seu clube",
+      "menu": "Menu",
+      "main": "Navegação principal"
+    },
+    "hero": {
+      "eyebrow": "Para clubes de padel",
+      "title": "Complete o jogo com a <accent>comunidade</accent> que o seu clube já tem.",
+      "lead": "O PadelHub organiza os jogadores por categoria, posição e horário. Quando falta um, você vê a quem escrever e chama pelo WhatsApp em um toque.",
+      "cta": "Experimente no seu clube",
+      "secondary": "Ver como funciona",
+      "note": "Sem instalar nada. Funciona no celular e no tablet do balcão.",
+      "cardLabel": "Exemplo de jogo com uma vaga livre",
+      "when": "Hoje, 20:00",
+      "missing": "Falta 1",
+      "free": "Livre",
+      "whatsapp": "Escrever pelo WhatsApp"
+    },
+    "benefits": {
+      "eyebrow": "Para o clube",
+      "title": "Menos mensagens soltas, mais jogos completos",
+      "players": {
+        "title": "Sua base de jogadores, organizada",
+        "body": "Categoria, posição, horários e localidade em uma única lista. Você filtra em segundos em vez de procurar em conversas."
+      },
+      "quarter": {
+        "title": "Falta o quarto, resolvido",
+        "body": "Você informa quem já está e o app mostra quem se encaixa. Você escolhe a quem escrever."
+      },
+      "consent": {
+        "title": "Cadastro com consentimento",
+        "body": "Os jogadores se cadastram por link, QR ou no tablet e aceitam os avisos de forma explícita."
+      }
+    },
+    "steps": {
+      "eyebrow": "Como funciona",
+      "title": "Da lista ao jogo em três passos",
+      "share": {
+        "title": "Compartilhe o link do clube",
+        "body": "Coloque no seu Instagram, no grupo de WhatsApp ou em um QR no balcão."
+      },
+      "signup": {
+        "title": "Os jogadores se cadastram",
+        "body": "Preenchem seus dados em um minuto pelo celular, sem instalar nada."
+      },
+      "complete": {
+        "title": "Complete o jogo",
+        "body": "Quando falta um, você filtra e escreve pelo WhatsApp em um toque."
+      }
+    },
+    "faq": {
+      "eyebrow": "Perguntas",
+      "title": "O que os clubes costumam perguntar",
+      "q1": {
+        "q": "O app escreve sozinho para os jogadores?",
+        "a": "Não. O contato é sempre uma ação do clube: o app organiza e filtra, e monta o link do WhatsApp. Você decide a quem escrever."
+      },
+      "q2": {
+        "q": "Os jogadores precisam instalar algo?",
+        "a": "Não. Eles se cadastram pelo navegador do celular, com o link ou o QR do clube, ou no tablet do balcão."
+      },
+      "q3": {
+        "q": "O que acontece com os dados dos jogadores?",
+        "a": "Cada jogador aceita de forma explícita ao se cadastrar e pode pedir para ver, corrigir ou apagar seus dados. Cada clube vê apenas os seus próprios jogadores."
+      },
+      "q4": {
+        "q": "Funciona no celular e no tablet?",
+        "a": "Sim. Foi pensado para o celular, para o tablet do balcão e para o computador do clube."
+      }
+    },
+    "cta": {
+      "title": "Seu clube já tem os jogadores. Falta organizá-los.",
+      "button": "Experimente no seu clube"
+    },
+    "footer": {
+      "login": "Entrar"
+    }
   }
 }

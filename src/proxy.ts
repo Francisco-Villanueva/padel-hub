@@ -11,14 +11,13 @@ const LANDING = /^\/(es|en|pt)\/?$/;
 // Guard OPTIMISTA: solo mira la firma y el vencimiento del access token (sin base de datos).
 // La autorización real se repite en cada página y acción con requireSession() / withTenant().
 export default async function proxy(req: NextRequest) {
-  // La portada (/es, /en, /pt) no tiene contenido propio: manda a cada persona a su panel, o al login si no tiene sesión.
+  // La portada (/es, /en, /pt) es la landing pública. Solo quien ya tiene sesión vigente va directo a su panel;
+  // el resto la ve (su "Ingresar" pasa por /api/auth/refresh, que renueva la sesión si queda un refresh válido).
   const landing = LANDING.exec(req.nextUrl.pathname);
   if (landing) {
     const locale = landing[1];
     const session = await verifyAccessToken(req.cookies.get(ACCESS_COOKIE)?.value, jwtKey(process.env.JWT_SECRET));
     if (session) return NextResponse.redirect(new URL(`/${locale}/${session.clubId ? 'app' : session.isSuperadmin ? 'admin' : 'login'}`, req.url));
-    // Sin access token válido: si quedó un refresh vigente el endpoint renueva la sesión; si no, va al login.
-    return NextResponse.redirect(new URL(`/api/auth/refresh?next=${encodeURIComponent(`/${locale}/app`)}`, req.url));
   }
 
   const m = PROTECTED.exec(req.nextUrl.pathname);
