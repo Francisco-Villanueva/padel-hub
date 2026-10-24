@@ -91,6 +91,12 @@
     "settings": "Ajustes",
     "clubsAdmin": "Clubes"
   },
+  "install": {
+    "button": "Instalar app",
+    "iosTitle": "Instalá PadelHub en tu iPhone",
+    "iosBody": "Tocá el botón Compartir de Safari y elegí «Agregar a inicio». Así abrís PadelHub como una app más.",
+    "close": "Entendido"
+  },
   "players": {
     "title": "Jugadores",
     "new": "Nuevo jugador",

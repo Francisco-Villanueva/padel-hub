@@ -1,6 +1,7 @@
 import { useTranslations } from "next-intl";
 import { Avatar } from "./avatar";
 import { AppNav } from "./app-nav";
+import { InstallButton } from "./install-button";
 import { LanguageSwitcher } from "./language-switcher";
 import { Logo } from "./logo";
 import type { NavItem } from "./nav-items";
@@ -48,6 +49,7 @@ export function AppShell({
               {heading}
             </div>
             <div className="flex shrink-0 items-center gap-2">
+              <InstallButton />
               <LanguageSwitcher />
               <LogoutButton variant="icon" className="lg:hidden" />
             </div>
