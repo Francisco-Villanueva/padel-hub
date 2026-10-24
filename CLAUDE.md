@@ -44,7 +44,7 @@ Leer `node_modules/next/dist/docs/` antes de usar una API. Lo que ya nos mordió
 ```
 src/
   proxy.ts                 i18n + guard OPTIMISTA de /app y /admin (solo firma/vencimiento del JWT)
-  app/[locale]/            login, app/ (panel del club), admin/ (superadmin)
+  app/[locale]/            (marketing)/ = landing pública en /es|/en|/pt, login, app/ (panel del club), admin/ (superadmin)
   app/api/auth/            login, refresh, logout, switch-club
   server/
     db/schema.ts           esquema Drizzle · tenant.ts (withTenant/withPlatform) · client.ts (Neon, server-only)
@@ -52,7 +52,7 @@ src/
     services/              reglas de negocio; reciben el `tx` y no conocen HTTP
     club-context.ts        sesión + club activo, una consulta por request
   lib/                     código compartido cliente/servidor (phone.ts, player-schema.ts)
-  components/              UI compartida (ui.ts = clases, app-nav, language-switcher…)
+  components/              UI compartida (ui.ts = clases, app-nav, language-switcher…) · landing/ (secciones de la landing)
   i18n/ · messages/{es,en,pt}.json
 drizzle/                   migraciones (0000 = tablas, 0001 = roles/RLS/grants, a mano)
 tests/                     vitest; helpers.ts levanta PGlite con las migraciones reales

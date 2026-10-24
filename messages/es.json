@@ -550,5 +550,92 @@
         "generic": "Algo salió mal. Intentá de nuevo."
       }
     }
+  },
+  "landing": {
+    "meta": {
+      "title": "PadelHub: completá el turno con la comunidad de tu club",
+      "description": "PadelHub ordena a los jugadores de tu club por categoría, posición y horario. Cuando falta uno, ves a quién escribirle y lo hacés por WhatsApp en un toque."
+    },
+    "nav": {
+      "howItWorks": "Cómo funciona",
+      "forClubs": "Para clubes",
+      "faq": "Preguntas",
+      "login": "Ingresar",
+      "cta": "Probalo en tu club",
+      "menu": "Menú",
+      "main": "Navegación principal"
+    },
+    "hero": {
+      "eyebrow": "Para clubes de pádel",
+      "title": "Completá el turno con la <accent>comunidad</accent> que ya tiene tu club.",
+      "lead": "PadelHub ordena a los jugadores por categoría, posición y horario. Cuando falta uno, ves a quién escribirle y lo hacés por WhatsApp en un toque.",
+      "cta": "Probalo en tu club",
+      "secondary": "Ver cómo funciona",
+      "note": "Sin instalar nada. Funciona en el celular y en la tablet del mostrador.",
+      "cardLabel": "Ejemplo de turno con un lugar libre",
+      "when": "Hoy, 20:00",
+      "missing": "Falta 1",
+      "free": "Libre",
+      "whatsapp": "Escribir por WhatsApp"
+    },
+    "benefits": {
+      "eyebrow": "Para el club",
+      "title": "Menos mensajes sueltos, más partidos completos",
+      "players": {
+        "title": "Tu base de jugadores, ordenada",
+        "body": "Categoría, posición, horarios y localidad en una sola lista. Filtrás en segundos en vez de buscar en chats."
+      },
+      "quarter": {
+        "title": "Falta el cuarto, resuelto",
+        "body": "Cargás quiénes ya están y la app te muestra a los que encajan. Vos elegís a quién escribirle."
+      },
+      "consent": {
+        "title": "Alta con consentimiento",
+        "body": "Los jugadores se anotan por link, QR o en la tablet, y aceptan los avisos de forma explícita."
+      }
+    },
+    "steps": {
+      "eyebrow": "Cómo funciona",
+      "title": "De la lista al partido en tres pasos",
+      "share": {
+        "title": "Compartí el link del club",
+        "body": "Ponelo en tu Instagram, en el grupo de WhatsApp o en un QR en el mostrador."
+      },
+      "signup": {
+        "title": "Los jugadores se anotan",
+        "body": "Completan sus datos en un minuto desde el celular, sin instalar nada."
+      },
+      "complete": {
+        "title": "Completá el turno",
+        "body": "Cuando falta uno, filtrás y escribís por WhatsApp con un toque."
+      }
+    },
+    "faq": {
+      "eyebrow": "Preguntas",
+      "title": "Lo que suelen preguntar los clubes",
+      "q1": {
+        "q": "¿La app les escribe sola a los jugadores?",
+        "a": "No. El contacto es siempre una acción del club: la app ordena y filtra, y arma el link de WhatsApp. Vos decidís a quién escribirle."
+      },
+      "q2": {
+        "q": "¿Los jugadores tienen que instalar algo?",
+        "a": "No. Se anotan desde el navegador del celular, con el link o el QR del club, o en la tablet del mostrador."
+      },
+      "q3": {
+        "q": "¿Qué pasa con los datos de los jugadores?",
+        "a": "Cada jugador acepta de forma explícita al anotarse y puede pedir que le muestren, corrijan o borren sus datos. Cada club ve solo a sus propios jugadores."
+      },
+      "q4": {
+        "q": "¿Funciona en el celular y en la tablet?",
+        "a": "Sí. Está pensada para el celular, para la tablet del mostrador y para la computadora del club."
+      }
+    },
+    "cta": {
+      "title": "Tu club ya tiene los jugadores. Falta ordenarlos.",
+      "button": "Probalo en tu club"
+    },
+    "footer": {
+      "login": "Ingresar"
+    }
   }
 }

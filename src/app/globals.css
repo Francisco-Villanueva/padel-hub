@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+*{
+  scroll-behavior: smooth;
+}
 /*
  * Sistema visual de PadelHub.
  * Colores semánticos: la UI usa estos nombres (bg-surface, text-muted, border-line…) y el modo oscuro
@@ -104,6 +107,9 @@
 @layer base {
   html {
     background: var(--surface);
+    /* Los anclas de la landing no quedan tapados por el encabezado fijo. */
+    scroll-padding-top: 5rem;
+    scroll-behavior: smooth;
   }
   body {
     background: var(--surface);
