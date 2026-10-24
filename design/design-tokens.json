@@ -1,0 +1,402 @@
+{
+  "name": "PadelHub",
+  "version": 1,
+  "color": {
+    "themes": [
+      {
+        "id": "light",
+        "name": "Claro"
+      },
+      {
+        "id": "dark",
+        "name": "Oscuro"
+      }
+    ],
+    "tokens": [
+      {
+        "name": "surface",
+        "value": {
+          "light": "#f5f7f4",
+          "dark": "#0d1714"
+        },
+        "usage": "Fondo de página del panel del club y del formulario público."
+      },
+      {
+        "name": "surface-raised",
+        "value": {
+          "light": "#ffffff",
+          "dark": "#15231f"
+        },
+        "usage": "Tarjetas, campos y paneles sobre `surface`."
+      },
+      {
+        "name": "surface-sunken",
+        "value": {
+          "light": "#e9eee9",
+          "dark": "#09110e"
+        },
+        "usage": "Fondos hundidos: encabezados de tabla, chips estáticos, slots ocupados neutros."
+      },
+      {
+        "name": "ink",
+        "value": {
+          "light": "#10201b",
+          "dark": "#eef3ef"
+        },
+        "usage": "Texto principal sobre `surface`, `surface-raised` y `surface-sunken`."
+      },
+      {
+        "name": "ink-muted",
+        "value": {
+          "light": "#4a5b55",
+          "dark": "#a9b9b2"
+        },
+        "usage": "Texto secundario, ayudas y metadatos sobre `surface`, `surface-raised` y `surface-sunken`."
+      },
+      {
+        "name": "line",
+        "value": {
+          "light": "#cfd9d3",
+          "dark": "#2b3d37"
+        },
+        "usage": "Divisores y bordes decorativos de tarjetas. No usar para bordes de controles."
+      },
+      {
+        "name": "line-strong",
+        "value": {
+          "light": "#7d8e87",
+          "dark": "#6f847b"
+        },
+        "usage": "Bordes de campos, chips y botones secundarios (3:1 sobre las superficies)."
+      },
+      {
+        "name": "brand",
+        "value": {
+          "light": "#0b6b4f",
+          "dark": "#3fc08f"
+        },
+        "usage": "Verde cancha. Acción primaria, selección, enlaces y estado activo. Texto legible sobre `surface`, `surface-raised` y `brand-tint`."
+      },
+      {
+        "name": "brand-hover",
+        "value": {
+          "light": "#095640",
+          "dark": "#6dd4a9"
+        },
+        "usage": "Hover y presionado de elementos `brand`."
+      },
+      {
+        "name": "on-brand",
+        "value": {
+          "light": "#ffffff",
+          "dark": "#06130e"
+        },
+        "usage": "Texto e íconos sobre relleno `brand` y `brand-hover`."
+      },
+      {
+        "name": "brand-tint",
+        "value": {
+          "light": "#dff1e8",
+          "dark": "#163a2d"
+        },
+        "usage": "Relleno suave de éxito/activo, slots ocupados y avatares. Texto `brand` encima."
+      },
+      {
+        "name": "ball",
+        "value": {
+          "light": "#d7f23a",
+          "dark": "#d7f23a"
+        },
+        "usage": "Amarillo pelota. Solo como relleno de señal de urgencia (\"Falta 1\") y acento de marca. Nunca como texto sobre superficies claras."
+      },
+      {
+        "name": "on-ball",
+        "value": {
+          "light": "#10201b",
+          "dark": "#10201b"
+        },
+        "usage": "Texto sobre relleno `ball`."
+      },
+      {
+        "name": "danger",
+        "value": {
+          "light": "#b3261e",
+          "dark": "#ff8a80"
+        },
+        "usage": "Errores, pago fallido, cuenta bloqueada. Texto legible sobre `surface`, `surface-raised` y `danger-tint`. Siempre acompañado de ícono y palabra."
+      },
+      {
+        "name": "on-danger",
+        "value": {
+          "light": "#ffffff",
+          "dark": "#3d0d0a"
+        },
+        "usage": "Texto sobre relleno `danger`."
+      },
+      {
+        "name": "danger-tint",
+        "value": {
+          "light": "#fbe4e1",
+          "dark": "#3d1a17"
+        },
+        "usage": "Fondo de alertas y badges de error. Texto `danger` o `ink` encima."
+      },
+      {
+        "name": "warning",
+        "value": {
+          "light": "#7a4e00",
+          "dark": "#f2b84b"
+        },
+        "usage": "Prueba por vencer, período de gracia. Texto legible sobre `warning-tint` y `surface`."
+      },
+      {
+        "name": "warning-tint",
+        "value": {
+          "light": "#fdf0d0",
+          "dark": "#3a2c0e"
+        },
+        "usage": "Fondo de alertas y badges de advertencia."
+      },
+      {
+        "name": "info",
+        "value": {
+          "light": "#1d5fa8",
+          "dark": "#8bbcf0"
+        },
+        "usage": "Información neutra y avisos del sistema. Texto legible sobre `info-tint` y `surface`."
+      },
+      {
+        "name": "info-tint",
+        "value": {
+          "light": "#e0edfa",
+          "dark": "#14283f"
+        },
+        "usage": "Fondo de alertas y badges informativos."
+      },
+      {
+        "name": "focus",
+        "value": "{info}",
+        "usage": "Anillo de foco: 2px sólido, 3:1 o más sobre todas las superficies en ambos temas."
+      }
+    ]
+  },
+  "type": {
+    "fonts": [],
+    "families": {
+      "display": "\"Barlow Condensed\", \"Arial Narrow\", sans-serif",
+      "sans": "\"Figtree\", system-ui, -apple-system, \"Segoe UI\", sans-serif"
+    },
+    "groups": [
+      {
+        "name": "Display",
+        "family": "display",
+        "styles": [
+          {
+            "name": "display-xl",
+            "fontSize": "56px",
+            "lineHeight": "54px",
+            "fontWeight": 700,
+            "usage": "Nombre del club en el formulario público y portadas."
+          },
+          {
+            "name": "display-lg",
+            "fontSize": "40px",
+            "lineHeight": "40px",
+            "fontWeight": 700,
+            "usage": "Títulos de página del panel."
+          },
+          {
+            "name": "display-md",
+            "fontSize": "28px",
+            "lineHeight": "30px",
+            "fontWeight": 700,
+            "usage": "Números grandes (cupos, totales) y títulos de sección."
+          }
+        ]
+      },
+      {
+        "name": "Títulos",
+        "family": "sans",
+        "styles": [
+          {
+            "name": "heading-lg",
+            "fontSize": "22px",
+            "lineHeight": "28px",
+            "fontWeight": 700,
+            "usage": "Título de tarjeta o panel."
+          },
+          {
+            "name": "heading-md",
+            "fontSize": "18px",
+            "lineHeight": "24px",
+            "fontWeight": 600,
+            "usage": "Nombre de jugador, subtítulos."
+          }
+        ]
+      },
+      {
+        "name": "Texto",
+        "family": "sans",
+        "styles": [
+          {
+            "name": "body",
+            "fontSize": "15px",
+            "lineHeight": "22px",
+            "fontWeight": 400,
+            "usage": "Texto corrido y valores de campos."
+          },
+          {
+            "name": "body-sm",
+            "fontSize": "13px",
+            "lineHeight": "18px",
+            "fontWeight": 400,
+            "usage": "Datos secundarios en tablas y tarjetas."
+          },
+          {
+            "name": "label",
+            "fontSize": "14px",
+            "lineHeight": "16px",
+            "fontWeight": 600,
+            "usage": "Botones, etiquetas de campo y chips."
+          },
+          {
+            "name": "caption",
+            "fontSize": "12px",
+            "lineHeight": "16px",
+            "fontWeight": 500,
+            "usage": "Ayudas, mensajes de error y pie de página."
+          }
+        ]
+      },
+      {
+        "name": "Marketing",
+        "family": "display",
+        "styles": [
+          {
+            "name": "display-2xl",
+            "fontSize": "80px",
+            "lineHeight": "76px",
+            "fontWeight": 700,
+            "usage": "Titular de portada de la landing en escritorio."
+          },
+          {
+            "name": "display-3xl",
+            "fontSize": "120px",
+            "lineHeight": "110px",
+            "fontWeight": 700,
+            "usage": "Titular de piezas para redes (post, story, portada). Solo en formatos de 1080 px o más."
+          }
+        ]
+      },
+      {
+        "name": "Marketing texto",
+        "family": "sans",
+        "styles": [
+          {
+            "name": "lead",
+            "fontSize": "22px",
+            "lineHeight": "32px",
+            "fontWeight": 500,
+            "usage": "Bajada debajo de un titular de landing o de una pieza para redes."
+          },
+          {
+            "name": "eyebrow",
+            "fontSize": "14px",
+            "lineHeight": "16px",
+            "fontWeight": 700,
+            "usage": "Rótulo corto sobre un titular. Mayúsculas con 0.08em de espaciado."
+          }
+        ]
+      }
+    ]
+  },
+  "spacing": {
+    "tokens": [
+      {
+        "name": "space-1",
+        "value": "4px",
+        "usage": "Separación mínima entre ícono y texto."
+      },
+      {
+        "name": "space-2",
+        "value": "8px",
+        "usage": "Entre chips y entre controles de un mismo grupo."
+      },
+      {
+        "name": "space-3",
+        "value": "12px",
+        "usage": "Padding horizontal de campos y chips."
+      },
+      {
+        "name": "space-4",
+        "value": "16px",
+        "usage": "Padding de botones y alertas; separación entre campos."
+      },
+      {
+        "name": "space-5",
+        "value": "24px",
+        "usage": "Padding de tarjetas; separación entre bloques."
+      },
+      {
+        "name": "space-6",
+        "value": "32px",
+        "usage": "Separación entre secciones del panel."
+      },
+      {
+        "name": "space-8",
+        "value": "48px",
+        "usage": "Márgenes de página en escritorio."
+      }
+    ]
+  },
+  "radius": {
+    "tokens": [
+      {
+        "name": "radius-sm",
+        "value": "6px",
+        "usage": "Badges y etiquetas pequeñas."
+      },
+      {
+        "name": "radius-md",
+        "value": "10px",
+        "usage": "Botones, campos, alertas, slots."
+      },
+      {
+        "name": "radius-lg",
+        "value": "16px",
+        "usage": "Tarjetas y paneles."
+      },
+      {
+        "name": "radius-pill",
+        "value": "999px",
+        "usage": "Chips y avatares."
+      }
+    ]
+  },
+  "shadow": {
+    "tokens": [
+      {
+        "name": "shadow-card",
+        "value": {
+          "light": "0 1px 2px rgba(16,32,27,0.08), 0 4px 12px -2px rgba(16,32,27,0.08)",
+          "dark": "0 1px 2px rgba(0,0,0,0.5), 0 4px 12px -2px rgba(0,0,0,0.4)"
+        },
+        "usage": "Tarjetas sobre `surface`."
+      }
+    ]
+  },
+  "size": {
+    "tokens": [
+      {
+        "name": "control-md",
+        "value": "40px",
+        "usage": "Alto de botones y campos en escritorio."
+      },
+      {
+        "name": "control-lg",
+        "value": "48px",
+        "usage": "Alto de botones y campos en celular y modo tablet (área táctil)."
+      }
+    ]
+  }
+}

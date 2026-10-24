@@ -23,7 +23,8 @@ const nextConfig: NextConfig = {
     }];
   },
   // Habilita forbidden() (403 con pantalla propia). Es experimental en Next 16.
-  experimental: { authInterrupts: true },
+  // serverActions.bodySizeLimit: el logo del club (hasta 1 MB) viaja como archivo en un formulario; el tope por defecto (1 MB) lo cortaría.
+  experimental: { authInterrupts: true, serverActions: { bodySizeLimit: "2mb" } },
   cacheComponents: true,
   partialPrefetching: true,
   turbopack: {

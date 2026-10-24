@@ -43,7 +43,7 @@ export function FilterBar({ initial, categories }: { initial: FilterValues; cate
   // La primera opción ("Todas las categorías") ya nombra el filtro: la etiqueta queda solo para lectores de pantalla.
   const select = (key: keyof FilterValues, label: string, allLabel: string, options: Option[]) => (
     <div>
-      <label htmlFor={`f-${key}`} className="sr-only">{label}</label>
+      <label htmlFor={`f-${key}`} className={ui.label}>{label}</label>
       <select
         id={`f-${key}`}
         className={cx(ui.input, values[key] && "border-brand/60 bg-brand-tint/40 font-medium")}

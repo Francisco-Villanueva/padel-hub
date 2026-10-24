@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Suspense } from "react";
 import { AppShell } from "@/components/app-shell";
-import { Avatar } from "@/components/avatar";
+import { ClubMark } from "@/components/club-mark";
 import type { NavItem } from "@/components/nav-items";
 import { getClubContext } from "@/server/club-context";
 
@@ -29,7 +29,7 @@ async function Shell({ locale, children }: { locale: string; children: React.Rea
       userRole={club.name}
       heading={
         <>
-          <span className="hidden sm:inline-flex"><Avatar name={club.name} square /></span>
+          <span className="hidden sm:inline-flex"><ClubMark name={club.name} logoUrl={club.logoUrl} /></span>
           <span className="truncate text-base font-semibold">{club.name}</span>
         </>
       }

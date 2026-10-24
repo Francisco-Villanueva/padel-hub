@@ -44,6 +44,21 @@ export const clubs = pgTable('clubs', {
   check('clubs_color_accent_chk', sql`${t.colorAccent} ~ '^#[0-9a-fA-F]{6}$'`),
 ]);
 
+// Logo del club ---------------------------------------------------------------------------
+// La imagen ya procesada (WebP chico, sin metadatos) vive en la base: sin servicio de archivos aparte, con RLS como el resto
+// y con backup junto con los datos. `clubs.logo_url` guarda la URL pública versionada (/api/logo/<slug>?v=...) o null.
+const bytea = customType<{ data: Buffer; driverData: Buffer }>({ dataType: () => 'bytea' });
+
+export const clubLogos = pgTable('club_logos', {
+  clubId: uuid('club_id').primaryKey().references(() => clubs.id, { onDelete: 'cascade' }),
+  contentType: text('content_type').notNull().default('image/webp'),
+  data: bytea('data').notNull(),
+  updatedAt: ts('updated_at').notNull().defaultNow().$onUpdate(() => new Date()),
+}, (t) => [
+  check('club_logos_type_chk', sql`${t.contentType} = 'image/webp'`),
+  check('club_logos_size_chk', sql`octet_length(${t.data}) between 1 and 600000`),
+]);
+
 // Usuarios y sesiones -------------------------------------------------------------
 export const users = pgTable('users', {
   id: uuid('id').primaryKey().defaultRandom(),

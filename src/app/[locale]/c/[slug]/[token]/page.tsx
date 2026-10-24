@@ -2,14 +2,14 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Suspense } from "react";
-import { Avatar, initials } from "@/components/avatar";
+import { ClubMark } from "@/components/club-mark";
 import { categoryOptions } from "@/components/category-label";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { LocaleChips } from "@/components/locale-chips";
 import { FormSkeleton } from "@/components/skeleton";
 import { withPlatform } from "@/server/db/client";
 import { resolveSignupTarget } from "@/server/services/public-signup";
-import { textOn } from "@/lib/color";
+import { clubBrandCss } from "@/lib/color";
 import { SignupFlow } from "./signup-form";
 
 // Link privado de cada club: no se indexa y no se muestra en buscadores.
@@ -26,19 +26,17 @@ async function Signup({ params }: { params: PageProps<"/[locale]/c/[slug]/[token
   const categories = categoryOptions(t);
   const kiosk = target.kind === "tablet";
   const flow = <SignupFlow slug={slug} token={token} clubName={target.name} country={target.country} categories={categories} kiosk={kiosk} />;
-  // Color de marca del club: solo en tema claro (en oscuro un color elegido para fondo blanco puede no leerse). El valor ya viene validado como #rrggbb.
-  const brandCss = target.colorPrimary && /^#[0-9a-f]{6}$/i.test(target.colorPrimary)
-    ? `@media (prefers-color-scheme: light){:root{--brand:${target.colorPrimary};--brand-hover:${target.colorPrimary};--on-brand:${textOn(target.colorPrimary)}}}`
-    : null;
+  // Colores del club (principal y de acento), en tema claro y oscuro, acotados al contenedor .club-brand. Mismos valores que ve el dueño en la vista previa.
+  const brandCss = clubBrandCss(target.colorPrimary, target.colorAccent);
   const footer = <footer className="pt-8 text-xs text-ink-muted">{t("app.poweredBy")}</footer>;
 
   if (kiosk) {
     return (
       <>
       {brandCss && <style>{brandCss}</style>}
-      <div className="min-h-dvh bg-surface text-ink md:grid md:grid-cols-[20rem_minmax(0,1fr)] lg:grid-cols-[22rem_minmax(0,1fr)]">
+      <div className="club-brand min-h-dvh bg-surface text-ink md:grid md:grid-cols-[20rem_minmax(0,1fr)] lg:grid-cols-[22rem_minmax(0,1fr)]">
         <aside className="flex flex-col gap-8 bg-brand p-6 text-on-brand md:min-h-dvh md:p-10">
-          <span aria-hidden className="flex size-14 items-center justify-center rounded-md bg-surface-raised text-sm font-bold text-brand">{initials(target.name)}</span>
+          <ClubMark name={target.name} logoUrl={target.logoUrl} size="xl" tone="raised" />
           <div className="space-y-3 md:my-auto">
             <p className="text-sm font-semibold opacity-90">{target.name}</p>
             <h1 className="font-display text-5xl font-bold leading-none md:text-6xl">{t("signup.title")}</h1>
@@ -58,11 +56,11 @@ async function Signup({ params }: { params: PageProps<"/[locale]/c/[slug]/[token
   return (
     <>
     {brandCss && <style>{brandCss}</style>}
-    <div className="flex min-h-dvh flex-col bg-surface text-ink">
-      <header className="border-b border-line bg-surface-raised">
+    <div className="club-brand flex min-h-dvh flex-col bg-surface text-ink">
+      <header className="bg-brand text-on-brand">
         <div className="mx-auto flex min-h-16 max-w-xl items-center justify-between gap-3 px-4">
           <div className="flex min-w-0 items-center gap-3">
-            <Avatar name={target.name} square />
+            <ClubMark name={target.name} logoUrl={target.logoUrl} tone="ink" />
             <span className="truncate text-base font-semibold">{target.name}</span>
           </div>
           <LanguageSwitcher />

@@ -11,7 +11,7 @@ async function Brand({ locale }: { locale: string }) {
   const [b] = await withTenant(session.clubId, (tx) => getBrand(tx));
   return (
     <BrandForm
-      initial={{ name: b.name, colorPrimary: b.colorPrimary ?? "", colorAccent: b.colorAccent ?? "", locale: b.locale, timezone: b.timezone, contactEmail: b.contactEmail ?? "" }}
+      initial={{ name: b.name, colorPrimary: b.colorPrimary ?? "", colorAccent: b.colorAccent ?? "", locale: b.locale, timezone: b.timezone, contactEmail: b.contactEmail ?? "", logoUrl: b.logoUrl ?? "" }}
     />
   );
 }

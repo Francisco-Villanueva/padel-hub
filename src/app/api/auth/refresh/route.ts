@@ -12,7 +12,9 @@ export async function GET(req: NextRequest) {
   const locale = LOCALES.find((l) => next.startsWith(`/${l}/`) || next === `/${l}`) ?? 'es';
   const raw = req.cookies.get(REFRESH_COOKIE)?.value;
   const toLogin = () => {
-    const res = NextResponse.redirect(new URL(`/${locale}/login?next=${encodeURIComponent(next)}`, req.url));
+    // Si el destino es el panel por defecto (portada o /app) no hace falta recordarlo: el login ya lleva a cada uno a su inicio.
+    const back = next === `/${locale}/app` ? '' : `?next=${encodeURIComponent(next)}`;
+    const res = NextResponse.redirect(new URL(`/${locale}/login${back}`, req.url));
     clearAuthCookies(res);
     return res;
   };

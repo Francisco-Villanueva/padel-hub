@@ -54,6 +54,8 @@ Variables en Vercel (las **tres** y nada más):
 **`DATABASE_URL_MIGRATE` no se sube nunca a Vercel.** Las variables de Vercel también llegan a las funciones en ejecución, y el dueño de las tablas saltea RLS: si se filtrara, se perdería el aislamiento entre clubes.
 
 ## 4. Primera puesta en marcha de producción
+> **Todos los comandos de este documento se corren desde la carpeta `app/`** (donde está `package.json`). Desde la carpeta de arriba falla con `Cannot find module ...scripts/...`.
+
 Con `ENV_FILE` se elige la base sobre la que operan los scripts y las migraciones; sin definir usa `.env.local` (desarrollo). Cada script imprime el host de la base antes de actuar: confirmalo.
 
 PowerShell:

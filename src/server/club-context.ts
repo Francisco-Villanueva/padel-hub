@@ -10,7 +10,7 @@ import { clubs } from './db/schema';
 export const getClubContext = cache(async (locale: string) => {
   const session = await requireClubSession(locale);
   const [club] = await withTenant(session.clubId, (tx) =>
-    tx.select({ id: clubs.id, slug: clubs.slug, name: clubs.name, country: clubs.country, locale: clubs.locale }).from(clubs).where(eq(clubs.id, session.clubId)));
+    tx.select({ id: clubs.id, slug: clubs.slug, name: clubs.name, country: clubs.country, locale: clubs.locale, logoUrl: clubs.logoUrl }).from(clubs).where(eq(clubs.id, session.clubId)));
   // Club borrado o inaccesible con una sesión todavía vigente: se vuelve a autenticar en vez de romper con undefined.
   if (!club) redirect(`/${locale}/login`);
   return { session, club };

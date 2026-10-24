@@ -137,7 +137,7 @@ function SignupForm({ slug, token, clubName, country, categories, kiosk, onResta
           <legend className={ui.label}>{tc("players.form.gender")}{req}</legend>
           <div className="flex flex-wrap gap-2">
             {GENDERS.map((g, i) => (
-              <ChoiceChip key={g} type="radio" name="gender" value={g} defaultChecked={str("gender") === g} required={i === 0} large={kiosk}>{tc(`gender.${g}`)}</ChoiceChip>
+              <ChoiceChip key={g} type="radio" name="gender" value={g} defaultChecked={str("gender") === g} required={i === 0} large={kiosk} tone="ball">{tc(`gender.${g}`)}</ChoiceChip>
             ))}
           </div>
         </fieldset>
@@ -146,14 +146,14 @@ function SignupForm({ slug, token, clubName, country, categories, kiosk, onResta
       <fieldset>
         <legend className={ui.label}>{tc("players.form.position")}{opt}</legend>
         <div className="flex flex-wrap gap-2">
-          {POSITIONS.map((p) => <ChoiceChip key={p} type="radio" name="position" value={p} defaultChecked={str("position") === p} large={kiosk}>{tc(`position.${p}`)}</ChoiceChip>)}
+          {POSITIONS.map((p) => <ChoiceChip key={p} type="radio" name="position" value={p} defaultChecked={str("position") === p} large={kiosk} tone="ball">{tc(`position.${p}`)}</ChoiceChip>)}
         </div>
       </fieldset>
 
       <fieldset>
         <legend className={ui.label}>{t("slots")}</legend>
         <div className="flex flex-wrap gap-2">
-          {SLOTS.map((s) => <ChoiceChip key={s} type="checkbox" name="slots" value={s} defaultChecked={slots.includes(s)} large={kiosk}>{tc(`slot.${s}`)}</ChoiceChip>)}
+          {SLOTS.map((s) => <ChoiceChip key={s} type="checkbox" name="slots" value={s} defaultChecked={slots.includes(s)} large={kiosk} tone="ball">{tc(`slot.${s}`)}</ChoiceChip>)}
         </div>
       </fieldset>
 

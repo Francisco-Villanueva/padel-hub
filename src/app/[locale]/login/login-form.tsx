@@ -80,6 +80,7 @@ export function LoginScreen({ next, expired }: { next: string; expired?: boolean
       <main className="flex min-h-dvh flex-col items-center justify-center gap-6 px-4 py-10">
         <Logo alt={tApp("name")} className="h-9" />
         <form
+          method="post"
           className={cx(ui.card, "enter w-full max-w-lg space-y-4 sm:p-6")}
           onSubmit={(e) => {
             e.preventDefault();
@@ -134,7 +135,9 @@ export function LoginScreen({ next, expired }: { next: string; expired?: boolean
             <h1 className="font-display text-3xl font-bold leading-tight">{t("heading")}</h1>
             <p className="text-ink-muted">{t("subtitle")}</p>
           </div>
+          {/* method="post": si se envía antes de que cargue el JavaScript, la clave nunca viaja en la URL (con GET quedaba en la barra y el historial). */}
           <form
+            method="post"
             className="flex flex-col gap-4"
             onSubmit={(e) => {
               e.preventDefault();

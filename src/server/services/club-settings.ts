@@ -17,7 +17,7 @@ export async function updateBrand(tx: Tx, ctx: { clubId: string; userId: string 
 export function getBrand(tx: Tx) {
   return tx.select({
     id: clubs.id, name: clubs.name, locale: clubs.locale, timezone: clubs.timezone, country: clubs.country,
-    colorPrimary: clubs.colorPrimary, colorAccent: clubs.colorAccent, contactEmail: clubs.contactEmail,
+    colorPrimary: clubs.colorPrimary, colorAccent: clubs.colorAccent, contactEmail: clubs.contactEmail, logoUrl: clubs.logoUrl,
   }).from(clubs).limit(1);
 }
 
