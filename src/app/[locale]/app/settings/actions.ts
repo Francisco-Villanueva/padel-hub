@@ -5,7 +5,10 @@ import { brandSchema, newStaffSchema } from "@/lib/club-schema";
 import { hashPassword, passwordProblem } from "@/server/auth/password";
 import { getClubContext } from "@/server/club-context";
 import { withPlatform, withTenant } from "@/server/db/client";
+import { LOGO_MAX_BYTES } from "@/lib/logo";
 import { LOCALES } from "@/server/db/schema";
+import { LogoError, processLogo } from "@/server/logo-image";
+import { removeLogo, saveLogo } from "@/server/services/club-logo";
 import { rotateLink, setLinkActive, updateBrand, type LinkKind } from "@/server/services/club-settings";
 import { addStaff, removeStaff, resetPassword, UserError } from "@/server/services/club-users";
 
@@ -45,6 +48,38 @@ export async function saveBrandAction(_prev: SettingsState, fd: FormData): Promi
   }
   refresh(); // el nombre del club también se ve en la barra superior
   return { status: "ok", values: form };
+}
+
+// Logo: lo sube solo el dueño. El archivo se valida y se vuelve a codificar en el servidor (ver logo-image.ts); el tipo que declara el navegador no cuenta.
+export async function saveLogoAction(_prev: SettingsState, fd: FormData): Promise<SettingsState> {
+  const o = await owner(fd);
+  if (!o) return fail("forbidden");
+  const file = fd.get("logo");
+  if (!(file instanceof File) || file.size === 0) return fail("no_file");
+  if (file.size > LOGO_MAX_BYTES) return fail("too_large");
+  try {
+    const { data } = await processLogo(new Uint8Array(await file.arrayBuffer()));
+    await withTenant(o.ctx.clubId, (tx) => saveLogo(tx, { ...o.ctx, slug: o.club.slug }, data));
+  } catch (e) {
+    if (e instanceof LogoError) return fail(e.code);
+    console.error(e);
+    return fail("generic");
+  }
+  refresh(); // el logo también se ve en la barra del panel
+  return { status: "ok" };
+}
+
+export async function removeLogoAction(_prev: SettingsState, fd: FormData): Promise<SettingsState> {
+  const o = await owner(fd);
+  if (!o) return fail("forbidden");
+  try {
+    await withTenant(o.ctx.clubId, (tx) => removeLogo(tx, o.ctx));
+  } catch (e) {
+    console.error(e);
+    return fail("generic");
+  }
+  refresh();
+  return { status: "ok" };
 }
 
 export async function addStaffAction(_prev: SettingsState, fd: FormData): Promise<SettingsState> {

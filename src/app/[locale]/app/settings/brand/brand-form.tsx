@@ -2,13 +2,14 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import { useActionState, useState } from "react";
-import { initials } from "@/components/avatar";
+import { ClubMark } from "@/components/club-mark";
 import { cx, ui } from "@/components/ui";
 import { CLUB_LOCALES, TIMEZONES } from "@/lib/club-schema";
 import { lowContrastWithWhite, textOn } from "@/lib/color";
 import { saveBrandAction, type SettingsState } from "../actions";
+import { LogoCard } from "./logo-card";
 
-export type BrandValues = { name: string; colorPrimary: string; colorAccent: string; locale: string; timezone: string; contactEmail: string };
+export type BrandValues = { name: string; colorPrimary: string; colorAccent: string; locale: string; timezone: string; contactEmail: string; logoUrl: string };
 
 const HEX = /^#[0-9a-fA-F]{6}$/;
 const LOCALE_NAMES: Record<string, string> = { es: "Español", en: "English", pt: "Português" };
@@ -56,6 +57,8 @@ function Inner({ initial, onDiscard }: { initial: BrandValues; onDiscard: () => 
 
   return (
     <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
+      <div className="space-y-6">
+      <LogoCard name={v.name} logoUrl={initial.logoUrl} />
       <form action={action} className={cx(ui.card, "enter space-y-5")}>
         <input type="hidden" name="locale" value={locale} />
         {state.status === "error" && state.error && (
@@ -66,14 +69,6 @@ function Inner({ initial, onDiscard }: { initial: BrandValues; onDiscard: () => 
         <div>
           <label htmlFor="name" className={ui.label}>{t("settings.brand.name")}</label>
           <input id="name" name="name" required minLength={2} maxLength={80} value={v.name} onChange={(e) => set("name")(e.target.value)} className={ui.input} aria-invalid={bad("name") || undefined} />
-        </div>
-
-        <div>
-          <p className={ui.label}>{t("settings.brand.logoTitle")}</p>
-          <div className="flex items-center gap-3 rounded-md border border-dashed border-line-strong p-3">
-            <span aria-hidden className="flex size-12 shrink-0 items-center justify-center rounded-md bg-brand text-sm font-bold text-on-brand">{initials(v.name)}</span>
-            <p className="text-sm text-ink-muted">{t("settings.brand.logoSoon")}</p>
-          </div>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
@@ -117,12 +112,13 @@ function Inner({ initial, onDiscard }: { initial: BrandValues; onDiscard: () => 
           <button type="submit" disabled={pending} className={cx(ui.btn, ui.btnPrimary)}>{pending ? t("settings.saving") : t("settings.save")}</button>
         </div>
       </form>
+      </div>
 
       <aside className="space-y-2" aria-label={t("settings.brand.preview")}>
         <p className="text-sm font-semibold">{t("settings.brand.preview")}</p>
         <div className="overflow-hidden rounded-lg border border-line bg-surface-raised shadow-card">
           <div className="flex items-center gap-3 px-4 py-3" style={{ background: previewBg, color: previewFg }}>
-            <span aria-hidden className="flex size-9 items-center justify-center rounded-md bg-ink text-xs font-bold text-surface">{initials(v.name)}</span>
+            <ClubMark name={v.name} logoUrl={initial.logoUrl || null} size="sm" tone="ink" />
             <span className="truncate font-semibold">{v.name || "—"}</span>
           </div>
           <div className="space-y-3 p-4">

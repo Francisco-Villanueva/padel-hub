@@ -25,9 +25,10 @@ const resolve = (slug: string, token: string) => t.withPlatform((tx) => resolveS
 describe('alta pública', () => {
   it('devuelve el color de marca del club (o null) para pintar el formulario', async () => {
     expect((await resolve('club-a', 'tok-link-a'))?.colorPrimary).toBeNull();
-    await t.withPlatform((tx) => tx.update(clubs).set({ colorPrimary: '#e4572e' }).where(eq(clubs.id, s.a.id)));
-    expect((await resolve('club-a', 'tok-link-a'))?.colorPrimary).toBe('#e4572e');
-    await t.withPlatform((tx) => tx.update(clubs).set({ colorPrimary: null }).where(eq(clubs.id, s.a.id)));
+    expect((await resolve('club-a', 'tok-link-a'))?.colorAccent).toBeNull();
+    await t.withPlatform((tx) => tx.update(clubs).set({ colorPrimary: '#e4572e', colorAccent: '#d7f23a' }).where(eq(clubs.id, s.a.id)));
+    expect((await resolve('club-a', 'tok-link-a'))).toMatchObject({ colorPrimary: '#e4572e', colorAccent: '#d7f23a' });
+    await t.withPlatform((tx) => tx.update(clubs).set({ colorPrimary: null, colorAccent: null }).where(eq(clubs.id, s.a.id)));
   });
 
   it('resuelve el club solo con el par slug + token válido y activo', async () => {

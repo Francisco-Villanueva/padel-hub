@@ -8,7 +8,7 @@ import { hitRateLimit } from './rate-limit';
 
 export type SignupKind = 'link' | 'tablet';
 type Locale = 'es' | 'en' | 'pt';
-export interface SignupTarget { clubId: string; slug: string; name: string; country: string; locale: Locale; kind: SignupKind; colorPrimary: string | null }
+export interface SignupTarget { clubId: string; slug: string; name: string; country: string; locale: Locale; kind: SignupKind; colorPrimary: string | null; colorAccent: string | null; logoUrl: string | null }
 
 // Por IP, para frenar scripts; por link, para que un link filtrado no llene la base.
 export const SIGNUP_LIMIT_PER_IP = { max: 20, windowSec: 600 };
@@ -20,11 +20,11 @@ export const MIN_FILL_MS = 3000;
 export async function resolveSignupTarget(tx: Tx, slug: string, token: string): Promise<SignupTarget | null> {
   if (!/^[a-z0-9-]{3,40}$/.test(slug) || !/^[A-Za-z0-9_-]{4,64}$/.test(token)) return null;
   const res = await tx.execute(sql`
-    select c.id, c.slug, c.name, c.country, c.locale, c.color_primary, l.kind
+    select c.id, c.slug, c.name, c.country, c.locale, c.color_primary, c.color_accent, c.logo_url, l.kind
     from resolve_signup_link(${slug}, ${token}) l
     join public_club_by_slug(${slug}) c on c.id = l.club_id`);
-  const r = (res as unknown as { rows: { id: string; slug: string; name: string; country: string; locale: Locale; kind: SignupKind; color_primary: string | null }[] }).rows[0];
-  return r ? { clubId: r.id, slug: r.slug, name: r.name, country: r.country, locale: r.locale, kind: r.kind, colorPrimary: r.color_primary } : null;
+  const r = (res as unknown as { rows: { id: string; slug: string; name: string; country: string; locale: Locale; kind: SignupKind; color_primary: string | null; color_accent: string | null; logo_url: string | null }[] }).rows[0];
+  return r ? { clubId: r.id, slug: r.slug, name: r.name, country: r.country, locale: r.locale, kind: r.kind, colorPrimary: r.color_primary, colorAccent: r.color_accent, logoUrl: r.logo_url } : null;
 }
 
 /** Va dentro de withPlatform(). `ipKey` es un hash, nunca la IP en claro. */

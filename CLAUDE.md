@@ -95,7 +95,10 @@ Toda vista nueva se diseña y se **verifica** en escritorio, tablet y celular (h
 - Las conexiones de producción están en `.env.neon-production`, con ese nombre a propósito: Next carga solo `.env.production.local` en `next start`/`build`, y eso apuntaría pruebas locales a producción. No renombrar.
 - `DATABASE_URL` (app_user, pooled) · `DATABASE_URL_PLATFORM` (platform_user, pooled) · `DATABASE_URL_MIGRATE` (dueño, directa, solo migraciones y scripts) · `JWT_SECRET` (32+ caracteres). En Vercel van las tres primeras; nunca `DATABASE_URL_MIGRATE`.
 - Cambios de esquema: editar `schema.ts` → `npm run db:generate` → revisar el SQL → probar en `dev` → recién después `production`. Lo que Drizzle no genera (extensiones, RLS, grants, funciones) va en migraciones SQL a mano (`drizzle-kit generate --custom`).
-- Credenciales de ejemplo del club demo (solo en `dev`, datos ficticios): `dueno@demo.padelhub.dev` y `empleado@demo.padelhub.dev`, clave `demo-padel-2026`.
+- Credenciales del club demo (solo en `dev`, datos ficticios): dueño `demo@padelhub.com` y empleado `empleado@demo.padelhub.dev`, clave `demo-padel-2026` (verificado contra la base `dev`; si cambian, el usuario real se ve con una consulta a `users`).
+
+## Logo del club
+Se sube en Ajustes > Marca (solo el dueño). El archivo se valida por sus bytes y se **vuelve a codificar a WebP de hasta 512 px en el servidor** (`src/server/logo-image.ts`, con `sharp`): nunca se guarda ni se sirve el original (sin SVG ni GIF, sin metadatos). Vive en la tabla `club_logos` (bytea, RLS por club) y `clubs.logo_url` guarda la URL pública versionada `/api/logo/<slug>?v=...`, que sirve la ruta pública con caché inmutable. Se muestra con `<ClubMark>` (logo o iniciales) en el formulario público y en el panel.
 
 ## Pruebas
 - Los tests corren contra PGlite con las migraciones reales y simulan los roles con `SET LOCAL ROLE`, así RLS y grants se prueban de verdad. Cada servicio nuevo necesita tests de aislamiento entre clubes además de los felices.
