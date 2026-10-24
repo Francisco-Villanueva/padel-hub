@@ -3,10 +3,10 @@ import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { contrastRatio } from '../src/lib/color';
 
-// Guarda del design system: los tokens de globals.css coinciden con docs/design/design-tokens.json
+// Guarda del design system: los tokens de globals.css coinciden con design/design-tokens.json
 // y los pares de texto/fondo cumplen los contrastes que el sistema promete (AA = 4.5:1, bordes de controles = 3:1).
 const css = readFileSync(path.resolve(__dirname, '../src/app/globals.css'), 'utf8');
-const spec = JSON.parse(readFileSync(path.resolve(__dirname, '../../docs/design/design-tokens.json'), 'utf8')) as {
+const spec = JSON.parse(readFileSync(path.resolve(__dirname, '../design/design-tokens.json'), 'utf8')) as {
   color: { tokens: { name: string; value: string | { light: string; dark: string } }[] };
 };
 
