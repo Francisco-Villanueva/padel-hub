@@ -550,5 +550,66 @@
         "generic": "Algo deu errado. Tente de novo."
       }
     }
+  },
+  "email": {
+    "common": {
+      "brand": "PadelHub",
+      "poweredBy": "Desenvolvido pela Duxio",
+      "security": "Segurança",
+      "greeting": "Olá {name},",
+      "fallback": "Se o botão não funcionar, copie e cole este link no navegador:"
+    },
+    "role": {
+      "owner": "dono",
+      "staff": "funcionário"
+    },
+    "invite": {
+      "subject": "{inviter} convidou você para {club} no PadelHub",
+      "preheader": "Ative sua conta e escolha sua senha. O link vence em 7 dias.",
+      "label": "Convite",
+      "title": "Você foi convidado para {club}",
+      "body": "{inviter} adicionou você como <b>{role}</b> em <b>{club}</b>. Ative sua conta e escolha sua senha para entrar no painel.",
+      "cta": "Ativar minha conta",
+      "expiry": "O link vence em 7 dias e só funciona uma vez.",
+      "footer": "Você recebe este e-mail porque {inviter} cadastrou seu endereço no PadelHub. Se você não esperava o convite, ignore: nenhuma conta é criada até você ativá-la."
+    },
+    "reset": {
+      "subject": "Redefina sua senha do PadelHub",
+      "preheader": "Use este link para escolher uma nova senha. Vence em 1 hora.",
+      "title": "Redefina sua senha",
+      "body": "Recebemos um pedido para redefinir a senha da sua conta. Toque no botão para escolher uma nova.",
+      "cta": "Escolher uma nova senha",
+      "expiry": "O link vence em 1 hora e só funciona uma vez.",
+      "noticeTitle": "Não pediu esta alteração?",
+      "noticeBody": "Ignore este e-mail. Sua senha atual continua funcionando.",
+      "footer": "Escrevemos porque foi solicitada a redefinição da senha de {email} no PadelHub."
+    },
+    "changed": {
+      "subject": "Você alterou sua senha do PadelHub",
+      "preheader": "Se foi você, não precisa fazer nada.",
+      "title": "Você alterou sua senha",
+      "body": "Sua senha do PadelHub foi alterada em <b>{when}</b>.",
+      "noticeTitle": "Não foi você?",
+      "noticeBody": "Redefina sua senha agora e avise o dono do seu clube.",
+      "cta": "Redefinir minha senha",
+      "footer": "Este aviso é enviado sempre que a senha de {email} é alterada."
+    },
+    "welcome": {
+      "subject": "{club} já está no PadelHub",
+      "preheader": "Compartilhe o link de cadastro e comece a reunir seus jogadores.",
+      "label": "Boas-vindas",
+      "title": "{club} já está no PadelHub",
+      "intro": "Criamos o espaço do seu clube. Três passos para começar:",
+      "step1Title": "Compartilhe o link de cadastro",
+      "step1Body": "Coloque no seu Instagram, no grupo de WhatsApp ou em um QR no balcão.",
+      "step2Title": "Teste o tablet",
+      "step2Body": "Deixe o modo tablet no balcão para que se cadastrem depois de jogar.",
+      "step3Title": "Complete o primeiro horário",
+      "step3Body": "Quando faltar um, filtre por categoria e horário e escreva pelo WhatsApp.",
+      "cta": "Entrar no painel",
+      "ctaActivate": "Ativar minha conta e entrar",
+      "joinLabel": "O link de cadastro do seu clube:",
+      "footer": "Você recebe este e-mail porque é dono de {club} no PadelHub."
+    }
   }
 }

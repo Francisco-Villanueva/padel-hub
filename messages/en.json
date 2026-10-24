@@ -550,5 +550,66 @@
         "generic": "Something went wrong. Try again."
       }
     }
+  },
+  "email": {
+    "common": {
+      "brand": "PadelHub",
+      "poweredBy": "Developed by Duxio",
+      "security": "Security",
+      "greeting": "Hi {name},",
+      "fallback": "If the button doesn't work, copy and paste this link into your browser:"
+    },
+    "role": {
+      "owner": "owner",
+      "staff": "staff member"
+    },
+    "invite": {
+      "subject": "{inviter} invited you to {club} on PadelHub",
+      "preheader": "Activate your account and choose your password. The link expires in 7 days.",
+      "label": "Invitation",
+      "title": "You're invited to {club}",
+      "body": "{inviter} added you as <b>{role}</b> at <b>{club}</b>. Activate your account and choose your password to enter the panel.",
+      "cta": "Activate my account",
+      "expiry": "The link expires in 7 days and works only once.",
+      "footer": "You're receiving this email because {inviter} entered your address in PadelHub. If you weren't expecting the invitation, ignore it: no account is created until you activate it."
+    },
+    "reset": {
+      "subject": "Reset your PadelHub password",
+      "preheader": "Use this link to choose a new password. It expires in 1 hour.",
+      "title": "Reset your password",
+      "body": "We received a request to reset your account password. Tap the button to choose a new one.",
+      "cta": "Choose a new password",
+      "expiry": "The link expires in 1 hour and works only once.",
+      "noticeTitle": "Didn't request this?",
+      "noticeBody": "Ignore this email. Your current password keeps working.",
+      "footer": "We're writing because a password reset was requested for {email} on PadelHub."
+    },
+    "changed": {
+      "subject": "You changed your PadelHub password",
+      "preheader": "If it was you, you don't need to do anything.",
+      "title": "You changed your password",
+      "body": "Your PadelHub password was changed on <b>{when}</b>.",
+      "noticeTitle": "Wasn't you?",
+      "noticeBody": "Reset your password now and let your club owner know.",
+      "cta": "Reset my password",
+      "footer": "This notice is sent every time the password for {email} changes."
+    },
+    "welcome": {
+      "subject": "{club} is now on PadelHub",
+      "preheader": "Share the sign-up link and start gathering your players.",
+      "label": "Welcome",
+      "title": "{club} is now on PadelHub",
+      "intro": "We set up your club's space. Three steps to get started:",
+      "step1Title": "Share the sign-up link",
+      "step1Body": "Put it on your Instagram, in the WhatsApp group or on a QR code at the counter.",
+      "step2Title": "Try the tablet",
+      "step2Body": "Leave tablet mode at the counter so players sign up after playing.",
+      "step3Title": "Fill your first slot",
+      "step3Body": "When you're a player short, filter by category and time and message them on WhatsApp.",
+      "cta": "Go to the panel",
+      "ctaActivate": "Activate my account and enter",
+      "joinLabel": "Your club's sign-up link:",
+      "footer": "You're receiving this email because you own {club} on PadelHub."
+    }
   }
 }

@@ -550,5 +550,66 @@
         "generic": "Algo salió mal. Intentá de nuevo."
       }
     }
+  },
+  "email": {
+    "common": {
+      "brand": "PadelHub",
+      "poweredBy": "Desarrollado por Duxio",
+      "security": "Seguridad",
+      "greeting": "Hola {name},",
+      "fallback": "Si el botón no funciona, copiá y pegá este link en el navegador:"
+    },
+    "role": {
+      "owner": "dueño",
+      "staff": "empleado"
+    },
+    "invite": {
+      "subject": "{inviter} te invitó a {club} en PadelHub",
+      "preheader": "Activá tu cuenta y elegí tu contraseña. El link vence en 7 días.",
+      "label": "Invitación",
+      "title": "Te invitaron a {club}",
+      "body": "{inviter} te sumó como <b>{role}</b> en <b>{club}</b>. Activá tu cuenta y elegí tu contraseña para entrar al panel.",
+      "cta": "Activar mi cuenta",
+      "expiry": "El link vence en 7 días y sirve una sola vez.",
+      "footer": "Recibís este correo porque {inviter} cargó tu dirección en PadelHub. Si no esperabas la invitación, ignoralo: no se crea ninguna cuenta hasta que la actives."
+    },
+    "reset": {
+      "subject": "Restablecé tu contraseña de PadelHub",
+      "preheader": "Usá este link para elegir una contraseña nueva. Vence en 1 hora.",
+      "title": "Restablecé tu contraseña",
+      "body": "Recibimos un pedido para restablecer la contraseña de tu cuenta. Tocá el botón para elegir una nueva.",
+      "cta": "Elegir una contraseña nueva",
+      "expiry": "El link vence en 1 hora y sirve una sola vez.",
+      "noticeTitle": "¿No pediste este cambio?",
+      "noticeBody": "Ignorá este correo. Tu contraseña actual sigue funcionando.",
+      "footer": "Te escribimos porque se pidió restablecer la contraseña de {email} en PadelHub."
+    },
+    "changed": {
+      "subject": "Cambiaste tu contraseña de PadelHub",
+      "preheader": "Si fuiste vos, no tenés que hacer nada.",
+      "title": "Cambiaste tu contraseña",
+      "body": "Tu contraseña de PadelHub se cambió el <b>{when}</b>.",
+      "noticeTitle": "¿No fuiste vos?",
+      "noticeBody": "Restablecé tu contraseña ahora y avisale al dueño de tu club.",
+      "cta": "Restablecer mi contraseña",
+      "footer": "Este aviso se envía cada vez que cambia la contraseña de {email}."
+    },
+    "welcome": {
+      "subject": "{club} ya está en PadelHub",
+      "preheader": "Compartí el link de alta y empezá a juntar a tus jugadores.",
+      "label": "Bienvenida",
+      "title": "{club} ya está en PadelHub",
+      "intro": "Creamos el espacio de tu club. Tres pasos para empezar:",
+      "step1Title": "Compartí el link de alta",
+      "step1Body": "Ponelo en tu Instagram, en el grupo de WhatsApp o en un QR en el mostrador.",
+      "step2Title": "Probá la tablet",
+      "step2Body": "Dejá el modo tablet en el mostrador para que se anoten después de jugar.",
+      "step3Title": "Completá el primer turno",
+      "step3Body": "Cuando falte uno, filtrá por categoría y horario y escribí por WhatsApp.",
+      "cta": "Entrar al panel",
+      "ctaActivate": "Activar mi cuenta y entrar",
+      "joinLabel": "El link de alta de tu club:",
+      "footer": "Recibís este correo porque sos dueño de {club} en PadelHub."
+    }
   }
 }

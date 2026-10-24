@@ -55,15 +55,15 @@ export async function setClubStatus(tx: Tx, ctx: { userId: string }, id: string,
 
 export type CreateClubError = 'slug_taken' | 'email_taken';
 
-export async function createClubAsAdmin(tx: Tx, ctx: { userId: string }, input: NewClubInput, passwordHash: string): Promise<{ id: string } | { error: CreateClubError }> {
+export async function createClubAsAdmin(tx: Tx, ctx: { userId: string }, input: NewClubInput, passwordHash: string, opts: { pending?: boolean } = {}): Promise<{ id: string; ownerId: string } | { error: CreateClubError }> {
   const [slugTaken] = await tx.select({ id: clubs.id }).from(clubs).where(eq(clubs.slug, input.slug));
   if (slugTaken) return { error: 'slug_taken' };
   const [emailTaken] = await tx.select({ id: users.id }).from(users).where(eq(users.email, input.ownerEmail));
   if (emailTaken) return { error: 'email_taken' };
-  const { club } = await createClub(tx, {
+  const { club, ownerId } = await createClub(tx, {
     slug: input.slug, name: input.name, country: input.country, timezone: input.timezone, locale: input.locale,
-    owner: { email: input.ownerEmail, name: input.ownerName, passwordHash },
+    owner: { email: input.ownerEmail, name: input.ownerName, passwordHash, pending: opts.pending },
   });
   await tx.insert(auditLog).values({ clubId: club.id, userId: ctx.userId, action: 'club.create' });
-  return { id: club.id };
+  return { id: club.id, ownerId };
 }

@@ -12,7 +12,7 @@ export class UserError extends Error {
 }
 
 export function listMembers(tx: Tx) {
-  return tx.select({ userId: users.id, name: users.name, email: users.email, role: clubMembers.role, disabledAt: users.disabledAt, since: clubMembers.createdAt })
+  return tx.select({ userId: users.id, name: users.name, email: users.email, role: clubMembers.role, disabledAt: users.disabledAt, activatedAt: users.activatedAt, since: clubMembers.createdAt })
     .from(clubMembers).innerJoin(users, eq(users.id, clubMembers.userId))
     .orderBy(clubMembers.role, users.name);
 }
