@@ -4,7 +4,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { useActionState, useState } from "react";
 import { Modal } from "@/components/modal";
 import { cx, ui } from "@/components/ui";
-import { resetOwnerPasswordAction, setClubStatusAction, type AdminState } from "./actions";
+import { resendOwnerInviteAction, resetOwnerPasswordAction, setClubStatusAction, type AdminState } from "./actions";
 
 const idle = { status: "idle" } as AdminState;
 
@@ -41,6 +41,46 @@ export function ClubStatusButton({ clubId, clubName, suspended, small, className
         }
       >
         {state.status === "error" && <p role="alert" className={ui.error}>{t("detail.errors.generic")}</p>}
+      </Modal>
+    </>
+  );
+}
+
+/** Reenviar la invitación al dueño que todavía no activó su cuenta. */
+export function OwnerResendButton({ clubId, ownerId, ownerName, ownerEmail }: { clubId: string; ownerId: string; ownerName: string; ownerEmail: string }) {
+  const t = useTranslations("admin.detail");
+  const ts = useTranslations("settings.users");
+  const tc = useTranslations("common");
+  const locale = useLocale();
+  const [open, setOpen] = useState(false);
+  const [state, action, pending] = useActionState(async (prev: AdminState, fd: FormData) => {
+    const res = await resendOwnerInviteAction(prev, fd);
+    if (res.status === "ok") setOpen(false);
+    return res;
+  }, idle);
+  return (
+    <>
+      <button type="button" onClick={() => setOpen(true)} className={cx(ui.btn, ui.btnPrimary, "w-full")} aria-label={`${ts("resend")}: ${ownerName}`}>{ts("resend")}</button>
+      <Modal
+        open={open}
+        onClose={() => setOpen(false)}
+        title={ts("resendTitle")}
+        description={ts("resendBody", { name: ownerName, email: ownerEmail })}
+        actions={
+          <>
+            <button type="button" onClick={() => setOpen(false)} className={cx(ui.btn, ui.btnSecondary)}>{tc("cancel")}</button>
+            <button type="submit" form="owner-resend" disabled={pending} className={cx(ui.btn, ui.btnPrimary)}>{pending ? ts("inviting") : ts("resend")}</button>
+          </>
+        }
+      >
+        <form id="owner-resend" action={action} className="space-y-2">
+          <input type="hidden" name="locale" value={locale} />
+          <input type="hidden" name="clubId" value={clubId} />
+          <input type="hidden" name="userId" value={ownerId} />
+          {state.status === "error" && (
+            <p role="alert" className={ui.error}>{state.error && ["email_failed", "not_pending", "rate_limited", "email_disabled"].includes(state.error) ? ts(`errors.${state.error}`) : t("errors.generic")}</p>
+          )}
+        </form>
       </Modal>
     </>
   );

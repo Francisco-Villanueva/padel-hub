@@ -6,6 +6,7 @@ import { initials } from "@/components/avatar";
 import { LocaleChips } from "@/components/locale-chips";
 import { Logo } from "@/components/logo";
 import { cx, ui } from "@/components/ui";
+import { Link } from "@/i18n/navigation";
 
 type Club = { clubId: string; name: string; role: string };
 
@@ -37,7 +38,7 @@ function ErrorAlert({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function LoginScreen({ next, expired }: { next: string; expired?: boolean }) {
+export function LoginScreen({ next, expired, notice, showForgot }: { next: string; expired?: boolean; notice?: "reset" | "activated"; showForgot?: boolean }) {
   const t = useTranslations("auth");
   const tApp = useTranslations("app");
   const locale = useLocale();
@@ -145,7 +146,10 @@ export function LoginScreen({ next, expired }: { next: string; expired?: boolean
               submit(String(f.get("email")), String(f.get("password")));
             }}
           >
-            {expired && !error && (
+            {notice && !error && (
+              <p role="status" className={cx(ui.notice, ui.noticeOk, "border border-brand")}>{t(notice === "reset" ? "noticeReset" : "noticeActivated")}</p>
+            )}
+            {expired && !error && !notice && (
               <p role="status" className={cx(ui.notice, ui.noticeInfo, "border border-info")}>{t("expired")}</p>
             )}
             {error && <ErrorAlert>{error}</ErrorAlert>}
@@ -156,6 +160,8 @@ export function LoginScreen({ next, expired }: { next: string; expired?: boolean
             <div>
               <label htmlFor="password" className={ui.label}>{t("password")}</label>
               <input id="password" name="password" type="password" required autoComplete="current-password" maxLength={200} className={ui.input} />
+              {/* Solo si esta instancia puede mandar correos: sin proveedor configurado el enlace no llevaría a nada. */}
+              {showForgot && <p className="mt-2 text-right"><Link href="/restablecer" className={cx(ui.link, "text-sm")}>{t("forgot")}</Link></p>}
             </div>
             <button disabled={busy} className={cx(ui.btn, ui.btnPrimary, "mt-1 w-full")}>{busy ? t("entering") : t("enter")}</button>
           </form>

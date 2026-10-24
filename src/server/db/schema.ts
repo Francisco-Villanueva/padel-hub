@@ -70,6 +70,8 @@ export const users = pgTable('users', {
   failedLogins: smallint('failed_logins').notNull().default(0),
   lockedUntil: ts('locked_until'),
   disabledAt: ts('disabled_at'),
+  // Por defecto una cuenta nace activada (tiene contraseña). Una invitación la crea en NULL explícito y queda pendiente hasta elegir contraseña: sin ella no puede iniciar sesión.
+  activatedAt: ts('activated_at').defaultNow(),
   createdAt: ts('created_at').notNull().defaultNow(),
 }, () => [check('users_locale_chk', localeCheck('locale'))]);
 

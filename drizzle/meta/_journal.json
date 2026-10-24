@@ -36,6 +36,13 @@
       "when": 1792847390404,
       "tag": "0004_club_logos",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1792849862148,
+      "tag": "0005_users_activated_at",
+      "breakpoints": true
     }
   ]
 }

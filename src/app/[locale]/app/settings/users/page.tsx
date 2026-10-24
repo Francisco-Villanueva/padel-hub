@@ -4,6 +4,7 @@ import { ListSkeleton } from "@/components/skeleton";
 import { cx, ui } from "@/components/ui";
 import { getClubContext } from "@/server/club-context";
 import { withTenant } from "@/server/db/client";
+import { emailEnabled } from "@/server/email/send";
 import { listMembers } from "@/server/services/club-users";
 import { UsersPanel } from "./users-panel";
 
@@ -18,7 +19,7 @@ async function Users({ locale }: { locale: string }) {
 
   return (
     <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
-      <UsersPanel members={members.map((m) => ({ userId: m.userId, name: m.name, email: m.email, role: m.role }))} />
+      <UsersPanel mailEnabled={emailEnabled()} members={members.map((m) => ({ userId: m.userId, name: m.name, email: m.email, role: m.role, pending: m.activatedAt === null }))} />
       <section className={cx(ui.card, "enter")}>
         <h2 className="text-xl font-bold">{t("rolesTitle")}</h2>
         <table className="mt-3 w-full text-sm">

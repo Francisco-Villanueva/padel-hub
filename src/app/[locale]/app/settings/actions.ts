@@ -1,7 +1,7 @@
 "use server";
 
 import { refresh } from "next/cache";
-import { brandSchema, newStaffSchema } from "@/lib/club-schema";
+import { brandSchema, inviteStaffSchema, newStaffSchema } from "@/lib/club-schema";
 import { hashPassword, passwordProblem } from "@/server/auth/password";
 import { getClubContext } from "@/server/club-context";
 import { withPlatform, withTenant } from "@/server/db/client";
@@ -10,6 +10,8 @@ import { LOCALES } from "@/server/db/schema";
 import { LogoError, processLogo } from "@/server/logo-image";
 import { removeLogo, saveLogo } from "@/server/services/club-logo";
 import { rotateLink, setLinkActive, updateBrand, type LinkKind } from "@/server/services/club-settings";
+import { AccountError } from "@/server/services/account";
+import { getAccount } from "@/server/services/account-instance";
 import { addStaff, removeStaff, resetPassword, UserError } from "@/server/services/club-users";
 
 export type SettingsState = {
@@ -98,6 +100,45 @@ export async function addStaffAction(_prev: SettingsState, fd: FormData): Promis
     return fail("generic", { name: raw.name, email: raw.email });
   }
   refresh();
+  return { status: "ok" };
+}
+
+// Invitación por correo (si esta instancia puede mandar correos): crea la cuenta sin contraseña y manda el link para activarla.
+// Se espera el envío para poder decirle al dueño si falló; en ese caso la cuenta igual quedó creada y se puede reenviar.
+export async function inviteStaffAction(_prev: SettingsState, fd: FormData): Promise<SettingsState> {
+  const o = await owner(fd);
+  if (!o) return fail("forbidden");
+  const raw = strings(fd, ["name", "email"]);
+  const parsed = inviteStaffSchema.safeParse(raw);
+  if (!parsed.success) return fail("validation", raw, parsed.error.issues.map((i) => String(i.path[0])));
+  try {
+    const { deferred } = await getAccount().inviteStaff(o.ctx, parsed.data);
+    const sent = await deferred();
+    refresh();
+    if (sent.status === "failed" || sent.status === "disabled") return fail("email_failed", raw);
+  } catch (e) {
+    if (e instanceof AccountError) return fail(e.code, raw, e.code === "email_taken" ? ["email"] : []);
+    console.error(e);
+    return fail("generic", raw);
+  }
+  return { status: "ok" };
+}
+
+export async function resendInviteAction(_prev: SettingsState, fd: FormData): Promise<SettingsState> {
+  const o = await owner(fd);
+  const id = String(fd.get("userId") ?? "");
+  if (!o) return fail("forbidden");
+  if (!UUID.test(id)) return fail("not_found");
+  try {
+    const { deferred } = await getAccount().resendInvite(o.ctx, id);
+    const sent = await deferred();
+    refresh();
+    if (sent.status === "failed" || sent.status === "disabled") return fail("email_failed");
+  } catch (e) {
+    if (e instanceof AccountError) return fail(e.code);
+    console.error(e);
+    return fail("generic");
+  }
   return { status: "ok" };
 }
 

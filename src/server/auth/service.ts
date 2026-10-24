@@ -92,7 +92,8 @@ export function createAuthService(deps: AuthDeps) {
 
         const [user] = await tx.select().from(users).where(eq(users.email, email)).limit(1);
         const valid = await deps.verifyPassword(user?.passwordHash ?? deps.dummyHash, input.password);
-        if (!user || user.disabledAt) return { status: 'invalid_credentials' };
+        // Una cuenta invitada que todavía no eligió contraseña no puede entrar (su hash es un secreto que nadie conoce).
+        if (!user || user.disabledAt || user.activatedAt === null) return { status: 'invalid_credentials' };
 
         const t = now();
         if (user.lockedUntil && user.lockedUntil > t) return { status: 'locked' };

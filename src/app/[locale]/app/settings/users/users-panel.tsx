@@ -5,10 +5,10 @@ import { useActionState, useState } from "react";
 import { Avatar } from "@/components/avatar";
 import { Modal } from "@/components/modal";
 import { cx, ui } from "@/components/ui";
-import { addStaffAction, removeStaffAction, resetStaffPasswordAction, type SettingsState } from "../actions";
+import { addStaffAction, inviteStaffAction, removeStaffAction, resendInviteAction, resetStaffPasswordAction, type SettingsState } from "../actions";
 
-export type Member = { userId: string; name: string; email: string; role: "owner" | "staff" };
-type Dialog = { type: "add" } | { type: "password"; user: Member } | { type: "remove"; user: Member } | null;
+export type Member = { userId: string; name: string; email: string; role: "owner" | "staff"; pending: boolean };
+type Dialog = { type: "add" } | { type: "password"; user: Member } | { type: "remove"; user: Member } | { type: "resend"; user: Member } | null;
 type Act = (prev: SettingsState, fd: FormData) => Promise<SettingsState>;
 
 /** Ejecuta la acción y, si salió bien, cierra el diálogo. El estado del formulario se descarta al desmontarlo. */
@@ -23,25 +23,26 @@ function useDialogAction(action: Act, onDone: () => void) {
 function ErrorText({ state, id }: { state: SettingsState; id: string }) {
   const t = useTranslations("settings");
   if (state.status !== "error" || !state.error) return null;
-  const known = ["email_taken", "password_short", "not_found", "not_staff", "validation", "generic", "forbidden"];
+  const known = ["email_taken", "password_short", "not_found", "not_staff", "validation", "generic", "forbidden", "email_failed", "not_pending", "rate_limited", "email_disabled"];
   return <p id={id} role="alert" className={ui.error}>{known.includes(state.error) ? t(`users.errors.${state.error}`) : t(`errors.${state.error}`)}</p>;
 }
 
-function AddForm({ onClose }: { onClose: () => void }) {
+function AddForm({ onClose, invite }: { onClose: () => void; invite: boolean }) {
   const t = useTranslations("settings.users");
   const tc = useTranslations("common");
   const locale = useLocale();
-  const [state, action, pending] = useDialogAction(addStaffAction, onClose);
+  const [state, action, pending] = useDialogAction(invite ? inviteStaffAction : addStaffAction, onClose);
   const bad = (f: string) => state.fields?.includes(f) || undefined;
   return (
     <Modal
       open
       onClose={onClose}
-      title={t("addTitle")}
+      title={t(invite ? "inviteTitle" : "addTitle")}
+      description={invite ? t("inviteBody") : undefined}
       actions={
         <>
           <button type="button" onClick={onClose} className={cx(ui.btn, ui.btnSecondary)}>{tc("cancel")}</button>
-          <button type="submit" form="add-staff" disabled={pending} className={cx(ui.btn, ui.btnPrimary)}>{pending ? t("creating") : t("create")}</button>
+          <button type="submit" form="add-staff" disabled={pending} className={cx(ui.btn, ui.btnPrimary)}>{pending ? t(invite ? "inviting" : "creating") : t(invite ? "invite" : "create")}</button>
         </>
       }
     >
@@ -55,11 +56,13 @@ function AddForm({ onClose }: { onClose: () => void }) {
           <label htmlFor="staff-email" className={ui.label}>{t("email")}</label>
           <input id="staff-email" name="email" type="email" required maxLength={254} defaultValue={state.values?.email} className={ui.input} aria-invalid={bad("email")} aria-describedby="staff-error" autoComplete="off" />
         </div>
+        {!invite && (
         <div>
           <label htmlFor="staff-password" className={ui.label}>{t("initialPassword")}</label>
           <input id="staff-password" name="password" type="password" required minLength={10} maxLength={200} className={ui.input} aria-invalid={bad("password")} aria-describedby="staff-error" autoComplete="new-password" />
           <p className={ui.hint}>{t("passwordHint")}</p>
         </div>
+        )}
         <ErrorText state={state} id="staff-error" />
       </form>
     </Modal>
@@ -95,6 +98,33 @@ function PasswordForm({ user, onClose }: { user: Member; onClose: () => void }) 
   );
 }
 
+function ResendForm({ user, onClose }: { user: Member; onClose: () => void }) {
+  const t = useTranslations("settings.users");
+  const tc = useTranslations("common");
+  const locale = useLocale();
+  const [state, action, pending] = useDialogAction(resendInviteAction, onClose);
+  return (
+    <Modal
+      open
+      onClose={onClose}
+      title={t("resendTitle")}
+      description={t("resendBody", { name: user.name, email: user.email })}
+      actions={
+        <>
+          <button type="button" onClick={onClose} className={cx(ui.btn, ui.btnSecondary)}>{tc("cancel")}</button>
+          <button type="submit" form="resend-invite" disabled={pending} className={cx(ui.btn, ui.btnPrimary)}>{pending ? t("inviting") : t("resend")}</button>
+        </>
+      }
+    >
+      <form id="resend-invite" action={action}>
+        <input type="hidden" name="locale" value={locale} />
+        <input type="hidden" name="userId" value={user.userId} />
+        <ErrorText state={state} id="resend-error" />
+      </form>
+    </Modal>
+  );
+}
+
 function RemoveForm({ user, onClose }: { user: Member; onClose: () => void }) {
   const t = useTranslations("settings.users");
   const tc = useTranslations("common");
@@ -122,7 +152,7 @@ function RemoveForm({ user, onClose }: { user: Member; onClose: () => void }) {
   );
 }
 
-export function UsersPanel({ members }: { members: Member[] }) {
+export function UsersPanel({ members, mailEnabled }: { members: Member[]; mailEnabled: boolean }) {
   const t = useTranslations("settings.users");
   const tr = useTranslations("auth.role");
   const [dialog, setDialog] = useState<Dialog>(null);
@@ -142,20 +172,30 @@ export function UsersPanel({ members }: { members: Member[] }) {
               <p className="truncate text-sm text-ink-muted">{m.email}</p>
             </div>
             <span className={m.role === "owner" ? ui.badgeAccent : ui.badge}>{tr(m.role)}</span>
-            <span className={ui.badgeAccent}>
-              <svg aria-hidden viewBox="0 0 24 24" className="size-3" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12 5 5L20 7" /></svg>
-              {t("active")}
-            </span>
+            {m.pending ? (
+              <span className={ui.badgeWarning}>{t("pending")}</span>
+            ) : (
+              <span className={ui.badgeAccent}>
+                <svg aria-hidden viewBox="0 0 24 24" className="size-3" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12 5 5L20 7" /></svg>
+                {t("active")}
+              </span>
+            )}
             {m.role === "staff" && (
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
+                {m.pending && mailEnabled && (
+                  <button type="button" onClick={() => setDialog({ type: "resend", user: m })} className={cx(ui.btnSm, ui.btnGhost)} aria-label={`${t("resend")}: ${m.name}`}>{t("resend")}</button>
+                )}
+                {!m.pending && (
                 <button type="button" onClick={() => setDialog({ type: "password", user: m })} className={cx(ui.btnSm, ui.btnGhost)} aria-label={`${t("password")}: ${m.name}`}>{t("password")}</button>
+                )}
                 <button type="button" onClick={() => setDialog({ type: "remove", user: m })} className={cx(ui.btnSm, ui.btnDanger)} aria-label={`${t("remove")}: ${m.name}`}>{t("remove")}</button>
               </div>
             )}
           </li>
         ))}
       </ul>
-      {dialog?.type === "add" && <AddForm onClose={close} />}
+      {dialog?.type === "add" && <AddForm onClose={close} invite={mailEnabled} />}
+      {dialog?.type === "resend" && <ResendForm user={dialog.user} onClose={close} />}
       {dialog?.type === "password" && <PasswordForm user={dialog.user} onClose={close} />}
       {dialog?.type === "remove" && <RemoveForm user={dialog.user} onClose={close} />}
     </div>

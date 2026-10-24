@@ -29,6 +29,12 @@ export const newStaffSchema = z.object({
 });
 export type NewStaffInput = z.infer<typeof newStaffSchema>;
 
+export const inviteStaffSchema = z.object({
+  name: z.string().trim().min(2).max(80),
+  email: z.string().trim().toLowerCase().max(254).email(),
+});
+export type InviteStaffInput = z.infer<typeof inviteStaffSchema>;
+
 export const newClubSchema = z.object({
   slug: z.string().trim().toLowerCase().regex(/^[a-z0-9-]{3,40}$/),
   name: z.string().trim().min(2).max(80),

@@ -51,6 +51,19 @@ Variables en Vercel (las **tres** y nada más):
 | `DATABASE_URL_PLATFORM` | conexión pooled del rol `platform_user` (login, superadmin) |
 | `JWT_SECRET` | 32+ caracteres; distinto en cada ambiente (cambiarlo cierra todas las sesiones) |
 
+### Correos (Resend): variables opcionales
+Sin estas tres, la app funciona igual pero **sin correos**: "¿Olvidaste tu contraseña?" no se muestra y las invitaciones de usuarios se reemplazan por el alta con clave inicial.
+
+| Variable | Qué es |
+|---|---|
+| `RESEND_API_KEY` | clave de Resend (distinta en Production y Preview) |
+| `EMAIL_FROM` | remitente, p. ej. `PadelHub <no-reply@tu-dominio>`. Requiere dominio verificado en Resend (SPF/DKIM); sin dominio solo sirve `onboarding@resend.dev` y únicamente hacia tu propio email |
+| `APP_URL` | URL pública del ambiente, sin barra final (la usan los enlaces de los correos) |
+
+- Modos: `resend` (las tres definidas), `console` (solo desarrollo local: imprime el correo sin enlaces sensibles) y `disabled` (cualquier despliegue sin variables). Nunca hay modo `console` en Vercel.
+- Vista previa de las plantillas en local: `/api/dev/emails/invite|reset|passwordChanged|welcome?locale=es` (responde 404 en producción).
+- La migración `0005_users_activated_at` debe aplicarse a producción **antes** de mergear a `main`.
+
 **`DATABASE_URL_MIGRATE` no se sube nunca a Vercel.** Las variables de Vercel también llegan a las funciones en ejecución, y el dueño de las tablas saltea RLS: si se filtrara, se perdería el aislamiento entre clubes.
 
 ## 4. Primera puesta en marcha de producción

@@ -76,7 +76,10 @@
     "chooseClubSubtitle": "Seu usuário tem acesso a mais de um clube.",
     "heroTitle": "Complete o horário com a sua comunidade.",
     "heroBody": "Encontre o jogador certo por categoria, posição e horário, e escreva para ele no WhatsApp.",
-    "expired": "Sua sessão expirou. Entre de novo para continuar."
+    "expired": "Sua sessão expirou. Entre de novo para continuar.",
+    "forgot": "Esqueceu sua senha?",
+    "noticeReset": "Você alterou sua senha. Entre com a nova.",
+    "noticeActivated": "Sua conta está ativa. Entre com seu e-mail e sua senha."
   },
   "nav": {
     "players": "Jogadores",
@@ -417,7 +420,11 @@
         "not_staff": "O dono não pode ser alterado por aqui.",
         "validation": "Confira os campos destacados.",
         "generic": "Algo deu errado. Tente de novo.",
-        "forbidden": "Somente o dono do clube pode fazer isso."
+        "forbidden": "Somente o dono do clube pode fazer isso.",
+        "email_failed": "A conta foi criada, mas não foi possível enviar o e-mail. Feche esta janela e use \"Reenviar convite\".",
+        "not_pending": "Essa pessoa já ativou a conta.",
+        "rate_limited": "Você já reenviou o convite várias vezes. Aguarde um pouco.",
+        "email_disabled": "O envio de e-mails ainda não está configurado."
       },
       "rolesTitle": "O que cada papel pode fazer",
       "rolesAction": "Ação",
@@ -430,7 +437,15 @@
         "delete": "Excluir jogadores",
         "users": "Gerenciar usuários",
         "brand": "Marca e links"
-      }
+      },
+      "inviteTitle": "Convidar funcionário",
+      "inviteBody": "Enviamos um e-mail para ativar a conta e escolher a senha. O link vence em 7 dias.",
+      "invite": "Enviar convite",
+      "inviting": "Enviando…",
+      "pending": "Aguardando ativação",
+      "resend": "Reenviar convite",
+      "resendTitle": "Reenviar convite",
+      "resendBody": "Enviaremos um novo link para {email}. O anterior deixa de funcionar."
     },
     "links": {
       "enabled": "Ativo",
@@ -547,8 +562,119 @@
         "slug_taken": "Já existe um clube com esse identificador.",
         "email_taken": "Esse email já tem uma conta.",
         "validation": "Confira os campos destacados.",
-        "generic": "Algo deu errado. Tente de novo."
-      }
+        "generic": "Algo deu errado. Tente de novo.",
+        "email_disabled": "O envio de e-mails ainda não está configurado: crie o clube com senha inicial."
+      },
+      "ownerAccess": "Como o dono entra",
+      "modeInvite": "Convidar por e-mail",
+      "modeInviteHint": "Ele recebe um link para ativar a conta e escolher a senha. Recomendado.",
+      "modePassword": "Criar com senha inicial",
+      "modePasswordHint": "Você define a senha e a repassa por um canal seguro."
     }
+  },
+  "email": {
+    "common": {
+      "brand": "PadelHub",
+      "poweredBy": "Desenvolvido pela Duxio",
+      "security": "Segurança",
+      "greeting": "Olá {name},",
+      "fallback": "Se o botão não funcionar, copie e cole este link no navegador:"
+    },
+    "role": {
+      "owner": "dono",
+      "staff": "funcionário"
+    },
+    "invite": {
+      "subject": "{inviter} convidou você para {club} no PadelHub",
+      "preheader": "Ative sua conta e escolha sua senha. O link vence em 7 dias.",
+      "label": "Convite",
+      "title": "Você foi convidado para {club}",
+      "body": "{inviter} adicionou você como <b>{role}</b> em <b>{club}</b>. Ative sua conta e escolha sua senha para entrar no painel.",
+      "cta": "Ativar minha conta",
+      "expiry": "O link vence em 7 dias e só funciona uma vez.",
+      "footer": "Você recebe este e-mail porque {inviter} cadastrou seu endereço no PadelHub. Se você não esperava o convite, ignore: nenhuma conta é criada até você ativá-la."
+    },
+    "reset": {
+      "subject": "Redefina sua senha do PadelHub",
+      "preheader": "Use este link para escolher uma nova senha. Vence em 1 hora.",
+      "title": "Redefina sua senha",
+      "body": "Recebemos um pedido para redefinir a senha da sua conta. Toque no botão para escolher uma nova.",
+      "cta": "Escolher uma nova senha",
+      "expiry": "O link vence em 1 hora e só funciona uma vez.",
+      "noticeTitle": "Não pediu esta alteração?",
+      "noticeBody": "Ignore este e-mail. Sua senha atual continua funcionando.",
+      "footer": "Escrevemos porque foi solicitada a redefinição da senha de {email} no PadelHub."
+    },
+    "changed": {
+      "subject": "Você alterou sua senha do PadelHub",
+      "preheader": "Se foi você, não precisa fazer nada.",
+      "title": "Você alterou sua senha",
+      "body": "Sua senha do PadelHub foi alterada em <b>{when}</b>.",
+      "noticeTitle": "Não foi você?",
+      "noticeBody": "Redefina sua senha agora e avise o dono do seu clube.",
+      "cta": "Redefinir minha senha",
+      "footer": "Este aviso é enviado sempre que a senha de {email} é alterada."
+    },
+    "welcome": {
+      "subject": "{club} já está no PadelHub",
+      "preheader": "Compartilhe o link de cadastro e comece a reunir seus jogadores.",
+      "label": "Boas-vindas",
+      "title": "{club} já está no PadelHub",
+      "intro": "Criamos o espaço do seu clube. Três passos para começar:",
+      "step1Title": "Compartilhe o link de cadastro",
+      "step1Body": "Coloque no seu Instagram, no grupo de WhatsApp ou em um QR no balcão.",
+      "step2Title": "Teste o tablet",
+      "step2Body": "Deixe o modo tablet no balcão para que se cadastrem depois de jogar.",
+      "step3Title": "Complete o primeiro horário",
+      "step3Body": "Quando faltar um, filtre por categoria e horário e escreva pelo WhatsApp.",
+      "cta": "Entrar no painel",
+      "ctaActivate": "Ativar minha conta e entrar",
+      "joinLabel": "O link de cadastro do seu clube:",
+      "footer": "Você recebe este e-mail porque é dono de {club} no PadelHub."
+    }
+  },
+  "recovery": {
+    "requestTitle": "Redefinir senha",
+    "requestLead": "Informe seu e-mail e enviaremos um link para escolher outra senha.",
+    "email": "E-mail",
+    "send": "Enviar o link",
+    "sending": "Enviando…",
+    "sent": "Se o e-mail existir, enviamos o link. Vence em 1 hora.",
+    "back": "Voltar para entrar",
+    "rateLimited": "Você pediu links demais. Aguarde um pouco e tente de novo.",
+    "generic": "Não foi possível processar o pedido. Tente novamente.",
+    "unavailableTitle": "Ainda não podemos enviar e-mails",
+    "unavailableBody": "Peça ao dono do seu clube que altere sua senha em Ajustes.",
+    "newTitle": "Escolha uma nova senha",
+    "password": "Nova senha",
+    "repeat": "Repita",
+    "mismatch": "As senhas não coincidem.",
+    "ruleLength": "Pelo menos 10 caracteres",
+    "ruleMatch": "As duas coincidem",
+    "save": "Salvar senha",
+    "saving": "Salvando…",
+    "weak": "A senha precisa ter entre 10 e 200 caracteres.",
+    "invalid": "Este link venceu ou já foi usado. Peça um novo.",
+    "invalidTitle": "Este link não funciona mais",
+    "invalidBody": "Venceu ou já foi usado. Peça um novo e enviaremos novamente.",
+    "requestAnother": "Pedir outro link"
+  },
+  "activate": {
+    "title": "Ative sua conta",
+    "invitedAs": "Você foi convidado como {role}",
+    "name": "Seu nome",
+    "password": "Senha",
+    "repeat": "Repita",
+    "submit": "Ativar minha conta",
+    "submitting": "Ativando…",
+    "expiry": "O convite vence em 7 dias.",
+    "ruleLength": "Pelo menos 10 caracteres",
+    "ruleMatch": "As duas coincidem",
+    "mismatch": "As senhas não coincidem.",
+    "weak": "A senha precisa ter entre 10 e 200 caracteres.",
+    "invalid": "Este convite venceu ou já foi usado.",
+    "invalidTitle": "Este convite não funciona mais",
+    "invalidBody": "Venceu ou já foi usado. Peça ao dono do seu clube que o envie novamente.",
+    "goLogin": "Ir para entrar"
   }
 }

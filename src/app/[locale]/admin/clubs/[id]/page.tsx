@@ -11,7 +11,8 @@ import { relativeTime } from "@/lib/relative-time";
 import { requireSuperadmin } from "@/server/auth/session";
 import { withPlatform } from "@/server/db/client";
 import { clubDetail } from "@/server/services/admin-clubs";
-import { ClubStatusButton, OwnerPasswordButton } from "../../club-actions";
+import { ClubStatusButton, OwnerPasswordButton, OwnerResendButton } from "../../club-actions";
+import { emailEnabled } from "@/server/email/send";
 
 export const metadata: Metadata = { robots: { index: false, follow: false } };
 
@@ -24,6 +25,7 @@ async function Detail({ params }: { params: PageProps<"/[locale]/admin/clubs/[id
   await requireSuperadmin(locale);
   if (!UUID.test(id)) notFound();
   const t = await getTranslations("admin.detail");
+  const ts = await getTranslations("settings.users");
   const format = await getFormatter();
   const d = await withPlatform((tx) => clubDetail(tx, id));
   if (!d) notFound();
@@ -89,7 +91,14 @@ async function Detail({ params }: { params: PageProps<"/[locale]/admin/clubs/[id
                     <p className="truncate text-sm text-ink-muted">{d.owner.email}</p>
                   </div>
                 </div>
-                <OwnerPasswordButton clubId={club.id} ownerId={d.owner.id} ownerName={d.owner.name} />
+                {d.owner.activatedAt === null ? (
+                  <>
+                    <p><span className={ui.badgeWarning}>{ts("pending")}</span></p>
+                    {emailEnabled() && <OwnerResendButton clubId={club.id} ownerId={d.owner.id} ownerName={d.owner.name} ownerEmail={d.owner.email} />}
+                  </>
+                ) : (
+                  <OwnerPasswordButton clubId={club.id} ownerId={d.owner.id} ownerName={d.owner.name} />
+                )}
               </>
             ) : (
               <p className="text-sm text-ink-muted">{t("owner.none")}</p>

@@ -10,7 +10,8 @@ export interface CreateClubInput {
   timezone?: string;
   locale?: 'es' | 'en' | 'pt';
   contactEmail?: string;
-  owner: { email: string; name: string; passwordHash: string };
+  /** `pending`: el dueño entra por invitación (la cuenta queda sin activar hasta que elija su contraseña). */
+  owner: { email: string; name: string; passwordHash: string; pending?: boolean };
 }
 
 /** Token del link de alta: 128 bits, sin caracteres que rompan la URL. */
@@ -30,6 +31,7 @@ export async function createClub(tx: Tx, input: CreateClubInput) {
 
   const [owner] = await tx.insert(users).values({
     email: input.owner.email, name: input.owner.name, passwordHash: input.owner.passwordHash,
+    ...(input.owner.pending ? { activatedAt: null } : {}),
   }).returning({ id: users.id });
   await tx.insert(clubMembers).values({ clubId: club.id, userId: owner.id, role: 'owner' });
 
