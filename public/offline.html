@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>PadelHub</title>
+<style>
+  :root { --surface:#f5f7f4; --ink:#10201b; --muted:#4a5b55; --brand:#0b6b4f; --on-brand:#fff; }
+  @media (prefers-color-scheme: dark) { :root { --surface:#0d1714; --ink:#eef3ef; --muted:#a9b9b2; --brand:#d7f23a; --on-brand:#10201b; } }
+  * { box-sizing: border-box; }
+  body { margin:0; min-height:100vh; display:grid; place-items:center; padding:24px; background:var(--surface); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",sans-serif; text-align:center; }
+  main { max-width:22rem; }
+  img { width:72px; height:72px; border-radius:18px; }
+  h1 { margin:20px 0 8px; font-size:1.5rem; }
+  p { margin:0 0 24px; color:var(--muted); line-height:1.5; }
+  button { min-height:44px; padding:0 24px; border:0; border-radius:10px; background:var(--brand); color:var(--on-brand); font:inherit; font-weight:600; cursor:pointer; }
+</style>
+</head>
+<body>
+<main>
+  <img src="/icons/icon-192.png" alt="" width="72" height="72">
+  <h1 id="title">Sin conexión</h1>
+  <p id="body">No pudimos conectarnos. Revisá tu internet y probá de nuevo.</p>
+  <button id="retry" type="button">Reintentar</button>
+</main>
+<script>
+  var T = {
+    es: ["Sin conexión", "No pudimos conectarnos. Revisá tu internet y probá de nuevo.", "Reintentar"],
+    en: ["You're offline", "We couldn't connect. Check your internet and try again.", "Try again"],
+    pt: ["Sem conexão", "Não conseguimos conectar. Verifique sua internet e tente de novo.", "Tentar de novo"]
+  };
+  var lang = (navigator.language || "es").slice(0, 2);
+  var t = T[lang] || T.es;
+  document.documentElement.lang = T[lang] ? lang : "es";
+  document.getElementById("title").textContent = t[0];
+  document.getElementById("body").textContent = t[1];
+  document.getElementById("retry").textContent = t[2];
+  document.getElementById("retry").onclick = function () { location.reload(); };
+  window.addEventListener("online", function () { location.reload(); });
+</script>
+</body>
+</html>

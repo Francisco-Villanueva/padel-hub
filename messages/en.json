@@ -91,6 +91,12 @@
     "settings": "Settings",
     "clubsAdmin": "Clubs"
   },
+  "install": {
+    "button": "Install app",
+    "iosTitle": "Install PadelHub on your iPhone",
+    "iosBody": "Tap Safari's Share button and choose “Add to Home Screen”. PadelHub will open like any other app.",
+    "close": "Got it"
+  },
   "players": {
     "title": "Players",
     "new": "New player",
