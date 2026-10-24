@@ -1,0 +1,535 @@
+{
+  "app": {
+    "name": "PadelHub",
+    "tagline": "Find the right player to fill your court.",
+    "poweredBy": "Developed by Duxio"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "search": "Search",
+    "loading": "Loading…",
+    "close": "Close",
+    "copy": "Copy",
+    "copied": "Copied!",
+    "seeAll": "See all"
+  },
+  "problem": {
+    "title": "Something went wrong",
+    "body": "We hit an unexpected problem. Please try again in a few seconds.",
+    "retry": "Try again",
+    "notFoundTitle": "We couldn't find that page",
+    "notFoundBody": "The link may be broken or the page no longer exists.",
+    "home": "Back to home",
+    "forbiddenTitle": "This action is for the owner only",
+    "forbiddenBody": "Ask the club owner to do it or to change your role.",
+    "backPlayers": "Back to players",
+    "backAdmin": "Back to clubs",
+    "loadErrorTitle": "We couldn't load this page",
+    "loadErrorBody": "Check your connection and try again."
+  },
+  "gender": {
+    "male": "Male",
+    "female": "Female"
+  },
+  "position": {
+    "drive": "Right side",
+    "reves": "Left side",
+    "drive_zurdo": "Left-handed right side"
+  },
+  "slot": {
+    "manana": "Morning",
+    "tarde_temprano": "Early afternoon",
+    "tarde": "Afternoon",
+    "noche": "Evening"
+  },
+  "category": {
+    "name": "Cat. {level}"
+  },
+  "auth": {
+    "title": "Sign in",
+    "email": "Email",
+    "password": "Password",
+    "signIn": "Sign in",
+    "signingIn": "Signing in…",
+    "signOut": "Sign out",
+    "chooseClub": "Which club do you want to enter?",
+    "role": {
+      "owner": "Owner",
+      "staff": "Staff"
+    },
+    "signedInAs": "Signed in as {role}.",
+    "superadminArea": "Duxio admin panel.",
+    "errors": {
+      "invalid_credentials": "Incorrect email or password.",
+      "locked": "Account temporarily locked after too many attempts. Try again in 15 minutes.",
+      "rate_limited": "Too many attempts. Please wait a few minutes.",
+      "no_access": "Your user has no access to any active club.",
+      "invalid_request": "Please check the data you entered.",
+      "forbidden": "The request could not be completed.",
+      "generic": "Something went wrong. Please try again."
+    },
+    "heading": "Sign in to your club",
+    "subtitle": "With the email and password your club gave you.",
+    "enter": "Sign in",
+    "entering": "Signing in…",
+    "chooseClubSubtitle": "Your user has access to more than one club.",
+    "heroTitle": "Fill the court with your community.",
+    "heroBody": "Find the right player by category, position and availability, and message them on WhatsApp.",
+    "expired": "Your session expired. Sign in again to continue."
+  },
+  "nav": {
+    "players": "Players",
+    "menu": "Menu",
+    "language": "Language",
+    "main": "Main navigation",
+    "clubs": "Clubs",
+    "superadmin": "Superadmin",
+    "superadminNote": "You can see every club on the platform.",
+    "home": "Home",
+    "cuarto": "Need a fourth",
+    "settings": "Settings",
+    "clubsAdmin": "Clubs"
+  },
+  "players": {
+    "title": "Players",
+    "new": "New player",
+    "search": "Search player",
+    "filters": "Filters",
+    "clear": "Clear filters",
+    "category": "Category",
+    "allCategories": "All categories",
+    "gender": "Gender",
+    "allGenders": "All",
+    "position": "Position",
+    "allPositions": "All",
+    "slot": "Time",
+    "allSlots": "Any",
+    "count": "{count, plural, one {# player} other {# players}}",
+    "emptyTitle": "No players yet",
+    "emptyHint": "Add the first one to start building your player base.",
+    "noResultsTitle": "No results",
+    "noResultsHint": "Try other filters or clear the search.",
+    "cols": {
+      "name": "Player",
+      "category": "Category",
+      "position": "Position",
+      "slots": "Availability",
+      "contact": "Contact",
+      "lastContact": "Last contact"
+    },
+    "noCategory": "No category",
+    "noPosition": "No position",
+    "whatsapp": "WhatsApp",
+    "edit": "Edit",
+    "delete": "Delete",
+    "page": "Page {page} of {total}",
+    "prev": "Previous",
+    "next": "Next",
+    "created": "Player added.",
+    "deleted": "Player deleted.",
+    "saved": "Changes saved.",
+    "form": {
+      "createTitle": "New player",
+      "editTitle": "Edit player",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "gender": "Gender",
+      "category": "Category",
+      "position": "Position",
+      "slots": "Available times",
+      "phone": "Phone (WhatsApp)",
+      "phoneHint": "With or without country code. E.g. 291 412 3456",
+      "instagram": "Instagram (optional)",
+      "instagramHint": "Username or profile link",
+      "locality": "City (optional)",
+      "notes": "Internal notes (optional)",
+      "notesHint": "Only your club sees these.",
+      "consent": "I confirm the player agreed to let the club store their data and contact them by WhatsApp or phone.",
+      "save": "Save changes",
+      "create": "Add player",
+      "saving": "Saving…",
+      "cancel": "Cancel",
+      "back": "Back to players",
+      "deleteTitle": "Delete player",
+      "deleteHint": "They will no longer appear in your list. Only the club owner can do this.",
+      "confirmDelete": "Delete this player?",
+      "select": "Not specified",
+      "createLead": "Enter the details exactly as the player gave them to you.",
+      "consentHint": "Recorded as a manual sign-up, with your user and the date.",
+      "sideTitle": "What happens when you save",
+      "sideBody": "The player is added to your list and shows up in searches. If you do not tick the consent box, you will not be able to message them on WhatsApp."
+    },
+    "errors": {
+      "invalid_phone": "The phone number is not valid.",
+      "phone_taken": "A player with that phone already exists in your club.",
+      "not_found": "Player not found.",
+      "consent_required": "You must confirm the player's consent.",
+      "validation": "Please check the highlighted fields.",
+      "forbidden": "You do not have permission to do this.",
+      "generic": "Something went wrong. Please try again."
+    },
+    "export": "Export CSV",
+    "neverContacted": "Never contacted",
+    "contactedAgo": "{when}",
+    "crumb": "Players",
+    "subtitle": "{locality}signed up via {source} on {date}",
+    "history": {
+      "title": "Contact history",
+      "empty": "Nobody has contacted this player yet.",
+      "by": "{when} · {name}",
+      "reason": {
+        "falta_cuarto": "Need a fourth",
+        "evento": "Event",
+        "otro": "Other"
+      }
+    },
+    "consentCard": {
+      "title": "Consent",
+      "accepted": "Accepted",
+      "version": "Text version",
+      "language": "Language",
+      "origin": "Source",
+      "none": "This player has no recorded consent. Do not message them until they accept.",
+      "active": "Consent on file",
+      "missing": "No consent",
+      "lang": {
+        "es": "Spanish",
+        "en": "English",
+        "pt": "Portuguese"
+      }
+    },
+    "exportDialog": {
+      "title": "Export players",
+      "scopeFilters": "Current filters only",
+      "scopeAll": "Whole list",
+      "count": "{count, plural, one {# player} other {# players}}",
+      "phones": "Include phone numbers",
+      "warnTitle": "This file contains personal data",
+      "warnBody": "Law 25.326: use it only for the club. Who exported it and when is recorded.",
+      "password": "Confirm your password",
+      "passwordHint": "We ask for it on sensitive actions.",
+      "download": "Download CSV",
+      "downloading": "Preparing…",
+      "errors": {
+        "invalid_password": "The password is not correct.",
+        "rate_limited": "Too many attempts. Wait a few minutes.",
+        "forbidden": "Only the club owner can export.",
+        "generic": "The export failed. Try again."
+      },
+      "columns": {
+        "firstName": "First name",
+        "lastName": "Last name",
+        "gender": "Gender",
+        "category": "Category",
+        "position": "Position",
+        "slots": "Availability",
+        "phone": "Phone",
+        "instagram": "Instagram",
+        "locality": "Locality",
+        "source": "Source",
+        "createdAt": "Sign-up date"
+      }
+    },
+    "emptyAction": "Add player"
+  },
+  "signup": {
+    "title": "Join the community",
+    "lead": "Fill in your details in a minute. The club will message you on WhatsApp when there is a game for you.",
+    "kioskLead": "Sign up after you play. It takes a minute and the club will message you on WhatsApp when there is a game.",
+    "whatsapp": "WhatsApp",
+    "whatsappHint": "With area code, no leading 0 or 15",
+    "category": "Category",
+    "categoryPlaceholder": "Pick your category",
+    "optional": "(optional)",
+    "slots": "When can you play?",
+    "instagram": "Instagram",
+    "instagramHint": "Without the @",
+    "submit": "Join",
+    "submitting": "Sending…",
+    "protected": "Protected against spam.",
+    "restartHint": "Resets by itself after saving",
+    "consent": "I agree that {club} stores my data (first name, last name, gender, category, playing position, availability, phone number and, if I add it, Instagram) and uses it to contact me by WhatsApp or phone with invitations to matches, court slots, tournaments and leagues.",
+    "consentMore": "Read the full text",
+    "consentInfo": "Data controller: {club}. Platform: PadelHub, developed by Duxio, which processes the data on behalf of the club.\nPurpose: organizing the club's matches and events and contacting you to invite you. Your data is not sold or shared with other clubs or third parties.\nProviding your data is optional, and you can ask at any time to access, correct or delete it by writing to the club.",
+    "consentInfoAr": "In Argentina, data subjects may exercise their right of access free of charge at intervals of no less than six months (art. 14, para. 3, Law 25.326). The Agency for Access to Public Information, the supervisory body for Law 25.326, handles complaints about non-compliance with personal data protection rules.",
+    "doneTitle": "All set, {name}!",
+    "doneBody": "You are now in {club}'s player list. The club will message you on WhatsApp when there is a game for you.",
+    "another": "Add another player",
+    "existsTitle": "You were already registered",
+    "existsBody": "This phone number is already in {club}. We did not change your details.",
+    "existsHelp": "If something changed, like your category or availability, let the club know and they will update it.",
+    "language": "Language",
+    "errors": {
+      "invalid_phone": "The phone number is not valid. Check the area code.",
+      "invalid_category": "Pick a category from the list.",
+      "validation": "Check the highlighted fields.",
+      "consent_required": "You need to accept the consent to join.",
+      "rate_limited": "Too many attempts. Wait a few minutes and try again.",
+      "too_fast": "Wait a moment and try again.",
+      "generic": "Something went wrong. Try again."
+    },
+    "locality": "Locality"
+  },
+  "source": {
+    "link": "Link",
+    "tablet": "Tablet",
+    "manual": "Manual",
+    "import": "Imported"
+  },
+  "home": {
+    "title": "Home",
+    "subtitle": "Here is what happened at {club} in the last 30 days.",
+    "addPlayer": "Add player",
+    "cuarto": "Need a fourth",
+    "stats": {
+      "players": "Players",
+      "playersHint": "in the club list",
+      "recent": "New sign-ups",
+      "recentHint": "in the last 30 days",
+      "contacted": "Contacted",
+      "contactedHint": "on WhatsApp this week",
+      "noConsent": "No consent",
+      "noConsentHint": "you cannot message them"
+    },
+    "latest": "Latest sign-ups",
+    "latestEmpty": "No players yet. Share the sign-up link or add the first one.",
+    "link": {
+      "title": "Sign-up link",
+      "hint": "Share it on WhatsApp or put it in your Instagram bio.",
+      "label": "Public link",
+      "tabletLabel": "Tablet mode link",
+      "none": "There are no sign-up links yet."
+    },
+    "noConsentAlertTitle": "{count, plural, one {# player without consent} other {# players without consent}}",
+    "noConsentAlertBody": "Do not contact them until they agree to receive messages.",
+    "noConsentAlertCta": "View"
+  },
+  "cuarto": {
+    "title": "Need a fourth",
+    "lead": "Add who is already in and pick who to message. You decide; the app only sorts and filters.",
+    "match": "The match",
+    "missing": "Need {count}",
+    "complete": "Full",
+    "free": "Open",
+    "remove": "Remove {name}",
+    "when": "When",
+    "whenPlaceholder": "Today, 8 pm",
+    "filters": "Filters",
+    "candidates": "Candidates ({count})",
+    "sortHint": "Players not contacted recently come first",
+    "add": "Add",
+    "added": "Already in the match",
+    "write": "Message",
+    "writeLong": "Message on WhatsApp",
+    "never": "Never contacted",
+    "contacted": "Contacted {when}",
+    "empty": "No candidates match those filters",
+    "emptyHint": "Try removing a filter.",
+    "full": "The match is already full.",
+    "shown": "Showing the first {shown} of {total}.",
+    "messageWhen": "Hi {name}, how are you? We need one more player for the match ({when}). Are you in?",
+    "messageNoWhen": "Hi {name}, how are you? We need one more player for a match at {club}. Are you in?",
+    "allCategories": "All",
+    "summaryNone": "No filters",
+    "now": "just now"
+  },
+  "settings": {
+    "title": "Settings",
+    "lead": "Only the club owner can change these details.",
+    "saved": "Changes saved.",
+    "tabs": {
+      "label": "Settings sections",
+      "brand": "Brand",
+      "users": "Users",
+      "links": "Sign-up links"
+    },
+    "errors": {
+      "validation": "Check the highlighted fields.",
+      "forbidden": "Only the club owner can do this.",
+      "generic": "Something went wrong. Try again."
+    },
+    "save": "Save changes",
+    "saving": "Saving…",
+    "discard": "Discard",
+    "brand": {
+      "name": "Club name",
+      "colorPrimary": "Primary color",
+      "colorAccent": "Accent color",
+      "colorHint": "Leave empty to use the PadelHub colors.",
+      "contrastTitle": "The primary color has low contrast with white",
+      "contrastBody": "To keep it readable, the text on that color will be dark.",
+      "locale": "Club language",
+      "timezone": "Time zone",
+      "email": "Contact email",
+      "emailHint": "Club contact for data access or deletion requests.",
+      "logoTitle": "Logo",
+      "logoSoon": "You will be able to upload a logo later. For now the club initials are used.",
+      "preview": "How the public form looks",
+      "previewTitle": "Join the community"
+    },
+    "users": {
+      "add": "Add staff member",
+      "cols": {
+        "user": "User",
+        "role": "Role",
+        "status": "Status"
+      },
+      "active": "Active",
+      "remove": "Remove from club",
+      "removeTitle": "Remove from club",
+      "removeBody": "{name} will no longer have access to this club. Their account is not deleted.",
+      "password": "Change password",
+      "passwordTitle": "Change {name}'s password",
+      "passwordBody": "Their open sessions are closed. Share the new password through a secure channel.",
+      "newPassword": "New password",
+      "addTitle": "Add staff member",
+      "name": "Name",
+      "email": "Email",
+      "initialPassword": "Initial password",
+      "passwordHint": "At least 10 characters. It is not sent by email: pass it on through a secure channel.",
+      "create": "Create user",
+      "creating": "Creating…",
+      "actionsFor": "Actions for {name}",
+      "errors": {
+        "email_taken": "That email already has a PadelHub account.",
+        "password_short": "The password must be at least 10 characters.",
+        "not_found": "User not found.",
+        "not_staff": "The owner cannot be modified from here.",
+        "validation": "Check the highlighted fields.",
+        "generic": "Something went wrong. Try again.",
+        "forbidden": "Only the club owner can do this."
+      },
+      "rolesTitle": "What each role can do",
+      "rolesAction": "Action",
+      "yes": "Yes",
+      "no": "No",
+      "roles": {
+        "players": "View and edit players",
+        "cuarto": "Need a fourth and contact",
+        "export": "Export CSV",
+        "delete": "Delete players",
+        "users": "Manage users",
+        "brand": "Brand and links"
+      }
+    },
+    "links": {
+      "enabled": "Active",
+      "disabledNote": "Disabled: the link does not work.",
+      "switchFor": "Enable {name}",
+      "copy": "Copy",
+      "public": {
+        "title": "Public link",
+        "hint": "For WhatsApp, your Instagram bio or a sign on the court.",
+        "label": "Link",
+        "langHint": "Players can choose Spanish, English or Portuguese."
+      },
+      "tablet": {
+        "title": "Tablet mode",
+        "hint": "Full-screen form for the front desk. It resets itself after each player is saved.",
+        "label": "Tablet link",
+        "open": "Open tablet mode",
+        "fixedHint": "Open it on the tablet and leave it there."
+      },
+      "rotate": {
+        "title": "Rotate the link",
+        "body": "Old links stop working immediately.",
+        "cta": "Rotate",
+        "confirmTitle": "Rotate the link?",
+        "confirmBody": "Links already shared will stop working and you will need to share the new one."
+      }
+    }
+  },
+  "admin": {
+    "clubs": {
+      "title": "Clubs",
+      "count": "{count, plural, one {# club} other {# clubs}} on the platform.",
+      "create": "Create club",
+      "search": "Search",
+      "searchPlaceholder": "Name or slug",
+      "filterLabel": "Status",
+      "filter": {
+        "all": "All",
+        "active": "Active",
+        "suspended": "Suspended"
+      },
+      "cols": {
+        "club": "Club",
+        "country": "Country",
+        "players": "Players",
+        "users": "Users",
+        "status": "Status",
+        "created": "Created"
+      },
+      "status": {
+        "active": "Active",
+        "suspended": "Suspended"
+      },
+      "view": "View",
+      "suspend": "Suspend",
+      "reactivate": "Reactivate",
+      "empty": "No clubs match those filters."
+    },
+    "detail": {
+      "crumb": "Clubs",
+      "sub": "/{slug} · {country} · created on {date}",
+      "suspendedTitle": "Club suspended",
+      "suspendedBody": "Its users cannot sign in and the sign-up link is closed. No data was deleted.",
+      "stats": {
+        "players": "Players",
+        "users": "Users",
+        "recent": "Sign-ups, last 30 days",
+        "lastLogin": "Last sign-in",
+        "never": "Never"
+      },
+      "data": {
+        "title": "Club details",
+        "slug": "Slug",
+        "country": "Country",
+        "locale": "Language",
+        "timezone": "Time zone"
+      },
+      "owner": {
+        "title": "Owner",
+        "resetPassword": "Change the owner's password",
+        "none": "This club has no owner."
+      },
+      "audit": {
+        "title": "Club audit log",
+        "action": "Action",
+        "user": "User",
+        "when": "When",
+        "empty": "Nothing recorded yet."
+      },
+      "suspendTitle": "Suspend club",
+      "suspendBody": "{name} stops working: its users cannot sign in and the sign-up link closes. No data is deleted.",
+      "reactivateTitle": "Reactivate club",
+      "reactivateBody": "{name} works again with all its data.",
+      "errors": {
+        "generic": "Something went wrong. Try again."
+      }
+    },
+    "new": {
+      "title": "Create club",
+      "lead": "It is created with the sign-up links and an owner with an initial password.",
+      "slug": "Identifier (slug)",
+      "slugHint": "Lowercase letters, numbers and hyphens. It goes in the sign-up link.",
+      "name": "Club name",
+      "country": "Country",
+      "locale": "Language",
+      "timezone": "Time zone",
+      "ownerName": "Owner's name",
+      "ownerEmail": "Owner's email",
+      "ownerPassword": "Initial password",
+      "ownerPasswordHint": "At least 10 characters. It is not sent by email.",
+      "submit": "Create club",
+      "submitting": "Creating…",
+      "errors": {
+        "slug_taken": "A club with that identifier already exists.",
+        "email_taken": "That email already has an account.",
+        "validation": "Check the highlighted fields.",
+        "generic": "Something went wrong. Try again."
+      }
+    }
+  }
+}

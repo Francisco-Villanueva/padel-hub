@@ -1,0 +1,133 @@
+"use server";
+
+import { refresh } from "next/cache";
+import { brandSchema, newStaffSchema } from "@/lib/club-schema";
+import { hashPassword, passwordProblem } from "@/server/auth/password";
+import { getClubContext } from "@/server/club-context";
+import { withPlatform, withTenant } from "@/server/db/client";
+import { LOCALES } from "@/server/db/schema";
+import { rotateLink, setLinkActive, updateBrand, type LinkKind } from "@/server/services/club-settings";
+import { addStaff, removeStaff, resetPassword, UserError } from "@/server/services/club-users";
+
+export type SettingsState = {
+  status: "idle" | "ok" | "error";
+  error?: string; // clave de settings.errors.* o settings.users.errors.*
+  fields?: string[];
+  values?: Record<string, string>;
+};
+
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const fail = (error: string, values?: SettingsState["values"], fields: string[] = []): SettingsState => ({ status: "error", error, fields, values });
+
+/** Todas las acciones de Ajustes son del dueño: se valida acá, no en la interfaz. clubId y userId salen de la sesión. */
+async function owner(fd: FormData) {
+  const loc = String(fd.get("locale") ?? "es");
+  const locale = (LOCALES as readonly string[]).includes(loc) ? loc : "es";
+  const { session, club } = await getClubContext(locale);
+  return session.role === "owner" ? { session, club, ctx: { clubId: session.clubId, userId: session.userId } } : null;
+}
+
+const strings = (fd: FormData, keys: string[]) => Object.fromEntries(keys.map((k) => [k, String(fd.get(k) ?? "")]));
+
+export async function saveBrandAction(_prev: SettingsState, fd: FormData): Promise<SettingsState> {
+  const o = await owner(fd);
+  if (!o) return fail("forbidden");
+  // `locale` es el idioma de la interfaz (campo oculto); el idioma del club viaja como `clubLocale`.
+  const form = strings(fd, ["name", "colorPrimary", "colorAccent", "clubLocale", "timezone", "contactEmail"]);
+  const raw = { ...form, locale: form.clubLocale };
+  const parsed = brandSchema.safeParse(raw);
+  if (!parsed.success) return fail("validation", form, parsed.error.issues.map((i) => String(i.path[0])));
+  try {
+    await withTenant(o.ctx.clubId, (tx) => updateBrand(tx, o.ctx, parsed.data));
+  } catch (e) {
+    console.error(e);
+    return fail("generic", form);
+  }
+  refresh(); // el nombre del club también se ve en la barra superior
+  return { status: "ok", values: form };
+}
+
+export async function addStaffAction(_prev: SettingsState, fd: FormData): Promise<SettingsState> {
+  const o = await owner(fd);
+  if (!o) return fail("forbidden");
+  const raw = strings(fd, ["name", "email", "password"]);
+  if (passwordProblem(raw.password)) return fail("password_short", { name: raw.name, email: raw.email }, ["password"]);
+  const parsed = newStaffSchema.safeParse(raw);
+  if (!parsed.success) return fail("validation", { name: raw.name, email: raw.email }, parsed.error.issues.map((i) => String(i.path[0])));
+  try {
+    const passwordHash = await hashPassword(parsed.data.password);
+    await withPlatform((tx) => addStaff(tx, o.ctx, parsed.data, passwordHash));
+  } catch (e) {
+    if (e instanceof UserError) return fail(e.code, { name: raw.name, email: raw.email }, e.code === "email_taken" ? ["email"] : []);
+    console.error(e);
+    return fail("generic", { name: raw.name, email: raw.email });
+  }
+  refresh();
+  return { status: "ok" };
+}
+
+export async function removeStaffAction(_prev: SettingsState, fd: FormData): Promise<SettingsState> {
+  const o = await owner(fd);
+  const id = String(fd.get("userId") ?? "");
+  if (!o) return fail("forbidden");
+  if (!UUID.test(id)) return fail("not_found");
+  try {
+    await withTenant(o.ctx.clubId, (tx) => removeStaff(tx, o.ctx, id));
+  } catch (e) {
+    if (e instanceof UserError) return fail(e.code);
+    console.error(e);
+    return fail("generic");
+  }
+  refresh();
+  return { status: "ok" };
+}
+
+export async function resetStaffPasswordAction(_prev: SettingsState, fd: FormData): Promise<SettingsState> {
+  const o = await owner(fd);
+  const id = String(fd.get("userId") ?? "");
+  const password = String(fd.get("password") ?? "");
+  if (!o) return fail("forbidden");
+  if (!UUID.test(id)) return fail("not_found");
+  if (passwordProblem(password)) return fail("password_short", undefined, ["password"]);
+  try {
+    const passwordHash = await hashPassword(password);
+    await withPlatform((tx) => resetPassword(tx, o.ctx, id, passwordHash));
+  } catch (e) {
+    if (e instanceof UserError) return fail(e.code);
+    console.error(e);
+    return fail("generic");
+  }
+  return { status: "ok" };
+}
+
+const kindOf = (fd: FormData): LinkKind | null => (fd.get("kind") === "tablet" ? "tablet" : fd.get("kind") === "link" ? "link" : null);
+
+export async function setLinkActiveAction(_prev: SettingsState, fd: FormData): Promise<SettingsState> {
+  const o = await owner(fd);
+  const kind = kindOf(fd);
+  if (!o) return fail("forbidden");
+  if (!kind) return fail("generic");
+  try {
+    await withTenant(o.ctx.clubId, (tx) => setLinkActive(tx, o.ctx, kind, fd.get("active") === "true"));
+  } catch (e) {
+    console.error(e);
+    return fail("generic");
+  }
+  refresh();
+  return { status: "ok" };
+}
+
+export async function rotateLinkAction(_prev: SettingsState, fd: FormData): Promise<SettingsState> {
+  const o = await owner(fd);
+  const kind = kindOf(fd);
+  if (!o) return fail("forbidden");
+  if (!kind) return fail("generic");
+  try {
+    await withTenant(o.ctx.clubId, (tx) => rotateLink(tx, o.ctx, kind));
+  } catch (e) {
+    console.error(e);
+    return fail("generic");
+  }
+  refresh();
+  return { status: "ok" };
+}

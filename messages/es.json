@@ -1,0 +1,535 @@
+{
+  "app": {
+    "name": "PadelHub",
+    "tagline": "Encontrá al jugador justo para completar tu turno.",
+    "poweredBy": "Desarrollado por Duxio"
+  },
+  "common": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "search": "Buscar",
+    "loading": "Cargando…",
+    "close": "Cerrar",
+    "copy": "Copiar",
+    "copied": "¡Copiado!",
+    "seeAll": "Ver todos"
+  },
+  "problem": {
+    "title": "Algo salió mal",
+    "body": "Tuvimos un problema inesperado. Probá de nuevo en unos segundos.",
+    "retry": "Reintentar",
+    "notFoundTitle": "No encontramos esa página",
+    "notFoundBody": "El enlace puede estar roto o la página ya no existe.",
+    "home": "Volver al inicio",
+    "forbiddenTitle": "Esta acción es solo para el dueño",
+    "forbiddenBody": "Pedile al dueño del club que lo haga o que te cambie el rol.",
+    "backPlayers": "Volver a jugadores",
+    "backAdmin": "Volver a clubes",
+    "loadErrorTitle": "No pudimos cargar esta página",
+    "loadErrorBody": "Revisá tu conexión e intentá de nuevo."
+  },
+  "gender": {
+    "male": "Hombre",
+    "female": "Mujer"
+  },
+  "position": {
+    "drive": "Drive",
+    "reves": "Revés",
+    "drive_zurdo": "Drive zurdo"
+  },
+  "slot": {
+    "manana": "Mañana",
+    "tarde_temprano": "Tarde temprano",
+    "tarde": "Tarde",
+    "noche": "Noche"
+  },
+  "category": {
+    "name": "{level, select, 1 {1ra} 2 {2da} 3 {3ra} 4 {4ta} 5 {5ta} 6 {6ta} 7 {7ma} 8 {8va} other {Cat. {level}}}"
+  },
+  "auth": {
+    "title": "Ingresar",
+    "email": "Email",
+    "password": "Contraseña",
+    "signIn": "Ingresar",
+    "signingIn": "Ingresando…",
+    "signOut": "Salir",
+    "chooseClub": "¿A qué club querés entrar?",
+    "role": {
+      "owner": "Dueño",
+      "staff": "Empleado"
+    },
+    "signedInAs": "Sesión iniciada como {role}.",
+    "superadminArea": "Panel de Duxio.",
+    "errors": {
+      "invalid_credentials": "Email o contraseña incorrectos.",
+      "locked": "Cuenta bloqueada temporalmente por demasiados intentos. Probá de nuevo en 15 minutos.",
+      "rate_limited": "Demasiados intentos. Esperá unos minutos.",
+      "no_access": "Tu usuario no tiene acceso a ningún club activo.",
+      "invalid_request": "Revisá los datos ingresados.",
+      "forbidden": "No se pudo completar la solicitud.",
+      "generic": "Algo salió mal. Intentá de nuevo."
+    },
+    "heading": "Entrar a tu club",
+    "subtitle": "Con el email y la contraseña que te dio tu club.",
+    "enter": "Entrar",
+    "entering": "Entrando…",
+    "chooseClubSubtitle": "Tu usuario tiene acceso a más de un club.",
+    "heroTitle": "Completá el turno con tu comunidad.",
+    "heroBody": "Encontrá al jugador justo por categoría, posición y horario, y escribile por WhatsApp.",
+    "expired": "Tu sesión venció. Volvé a entrar para seguir."
+  },
+  "nav": {
+    "players": "Jugadores",
+    "menu": "Menú",
+    "language": "Idioma",
+    "main": "Navegación principal",
+    "clubs": "Clubes",
+    "superadmin": "Superadmin",
+    "superadminNote": "Ves todos los clubes de la plataforma.",
+    "home": "Inicio",
+    "cuarto": "Falta el cuarto",
+    "settings": "Ajustes",
+    "clubsAdmin": "Clubes"
+  },
+  "players": {
+    "title": "Jugadores",
+    "new": "Nuevo jugador",
+    "search": "Buscar jugador",
+    "filters": "Filtros",
+    "clear": "Limpiar filtros",
+    "category": "Categoría",
+    "allCategories": "Todas las categorías",
+    "gender": "Género",
+    "allGenders": "Todos",
+    "position": "Posición",
+    "allPositions": "Todas",
+    "slot": "Horario",
+    "allSlots": "Cualquiera",
+    "count": "{count, plural, one {# jugador} other {# jugadores}}",
+    "emptyTitle": "Todavía no hay jugadores",
+    "emptyHint": "Sumá el primero para empezar a armar tu base.",
+    "noResultsTitle": "Sin resultados",
+    "noResultsHint": "Probá con otros filtros o limpiá la búsqueda.",
+    "cols": {
+      "name": "Jugador",
+      "category": "Categoría",
+      "position": "Posición",
+      "slots": "Horarios",
+      "contact": "Contacto",
+      "lastContact": "Último contacto"
+    },
+    "noCategory": "Sin categoría",
+    "noPosition": "Sin posición",
+    "whatsapp": "WhatsApp",
+    "edit": "Editar",
+    "delete": "Borrar",
+    "page": "Página {page} de {total}",
+    "prev": "Anterior",
+    "next": "Siguiente",
+    "created": "Jugador agregado.",
+    "deleted": "Jugador eliminado.",
+    "saved": "Cambios guardados.",
+    "form": {
+      "createTitle": "Nuevo jugador",
+      "editTitle": "Editar jugador",
+      "firstName": "Nombre",
+      "lastName": "Apellido",
+      "gender": "Género",
+      "category": "Categoría",
+      "position": "Posición",
+      "slots": "Horarios disponibles",
+      "phone": "Teléfono (WhatsApp)",
+      "phoneHint": "Con o sin código de país. Ej.: 291 412 3456",
+      "instagram": "Instagram (opcional)",
+      "instagramHint": "Usuario o link del perfil",
+      "locality": "Localidad (opcional)",
+      "notes": "Notas internas (opcional)",
+      "notesHint": "Solo las ve tu club.",
+      "consent": "Confirmo que el jugador aceptó que el club guarde sus datos y lo contacte por WhatsApp o teléfono.",
+      "save": "Guardar cambios",
+      "create": "Agregar jugador",
+      "saving": "Guardando…",
+      "cancel": "Cancelar",
+      "back": "Volver a jugadores",
+      "deleteTitle": "Eliminar jugador",
+      "deleteHint": "Dejará de aparecer en tu base. Solo el dueño del club puede hacerlo.",
+      "confirmDelete": "¿Eliminar a este jugador?",
+      "select": "Sin especificar",
+      "createLead": "Cargá los datos tal como te los dio el jugador.",
+      "consentHint": "Queda registrado como alta manual, con tu usuario y la fecha.",
+      "sideTitle": "Qué pasa al guardar",
+      "sideBody": "El jugador queda en tu base y aparece en las búsquedas. Si no marcás el consentimiento, no vas a poder escribirle por WhatsApp."
+    },
+    "errors": {
+      "invalid_phone": "El teléfono no es válido.",
+      "phone_taken": "Ya hay un jugador con ese teléfono en tu club.",
+      "not_found": "No se encontró al jugador.",
+      "consent_required": "Tenés que confirmar el consentimiento del jugador.",
+      "validation": "Revisá los campos marcados.",
+      "forbidden": "No tenés permiso para hacer esto.",
+      "generic": "Algo salió mal. Intentá de nuevo."
+    },
+    "export": "Exportar CSV",
+    "neverContacted": "Sin contactar",
+    "contactedAgo": "{when}",
+    "crumb": "Jugadores",
+    "subtitle": "{locality}alta por {source} el {date}",
+    "history": {
+      "title": "Historial de contactos",
+      "empty": "Todavía no lo contactaron.",
+      "by": "{when} · {name}",
+      "reason": {
+        "falta_cuarto": "Falta el cuarto",
+        "evento": "Evento",
+        "otro": "Otro"
+      }
+    },
+    "consentCard": {
+      "title": "Consentimiento",
+      "accepted": "Aceptado",
+      "version": "Versión del texto",
+      "language": "Idioma",
+      "origin": "Origen",
+      "none": "Este jugador no tiene consentimiento registrado. No le escribas hasta que lo acepte.",
+      "active": "Consentimiento vigente",
+      "missing": "Sin consentimiento",
+      "lang": {
+        "es": "Español",
+        "en": "Inglés",
+        "pt": "Portugués"
+      }
+    },
+    "exportDialog": {
+      "title": "Exportar jugadores",
+      "scopeFilters": "Solo los filtros actuales",
+      "scopeAll": "Toda la base",
+      "count": "{count, plural, one {# jugador} other {# jugadores}}",
+      "phones": "Incluir teléfonos",
+      "warnTitle": "Este archivo tiene datos personales",
+      "warnBody": "Ley 25.326: usalo solo para el club. Queda registrado quién lo exportó y cuándo.",
+      "password": "Confirmá tu contraseña",
+      "passwordHint": "Lo pedimos en acciones sensibles.",
+      "download": "Descargar CSV",
+      "downloading": "Preparando…",
+      "errors": {
+        "invalid_password": "La contraseña no es correcta.",
+        "rate_limited": "Demasiados intentos. Esperá unos minutos.",
+        "forbidden": "Solo el dueño del club puede exportar.",
+        "generic": "No se pudo exportar. Intentá de nuevo."
+      },
+      "columns": {
+        "firstName": "Nombre",
+        "lastName": "Apellido",
+        "gender": "Género",
+        "category": "Categoría",
+        "position": "Posición",
+        "slots": "Horarios",
+        "phone": "Teléfono",
+        "instagram": "Instagram",
+        "locality": "Localidad",
+        "source": "Origen",
+        "createdAt": "Fecha de alta"
+      }
+    },
+    "emptyAction": "Agregar jugador"
+  },
+  "signup": {
+    "title": "Sumate a la comunidad",
+    "lead": "Completá tus datos en un minuto. El club te escribe por WhatsApp cuando haya un turno para vos.",
+    "kioskLead": "Anotate al terminar de jugar. Tardás un minuto y el club te escribe por WhatsApp cuando haya turno.",
+    "whatsapp": "WhatsApp",
+    "whatsappHint": "Con código de área, sin el 15",
+    "category": "Categoría",
+    "categoryPlaceholder": "Elegí tu categoría",
+    "optional": "(opcional)",
+    "slots": "¿Cuándo podés jugar?",
+    "instagram": "Instagram",
+    "instagramHint": "Sin la arroba",
+    "submit": "Sumarme",
+    "submitting": "Enviando…",
+    "protected": "Protegido contra spam.",
+    "restartHint": "Se reinicia sola después de guardar",
+    "consent": "Acepto que {club} guarde mis datos (nombre, apellido, género, categoría, posición, horarios, teléfono y, si los cargo, Instagram) y los use para contactarme por WhatsApp o teléfono con invitaciones a partidos, turnos, torneos y ligas.",
+    "consentMore": "Leer el texto completo",
+    "consentInfo": "Responsable de la base de datos: {club}. Plataforma: PadelHub, desarrollada por Duxio, que procesa los datos por cuenta del club.\nFinalidad: organizar partidos y eventos del club y contactarte para invitarte. No se venden ni se ceden tus datos a otros clubes ni a terceros.\nTus datos son opcionales y podés pedir en cualquier momento acceder a ellos, corregirlos o que los eliminemos, escribiéndole al club.",
+    "consentInfoAr": "En Argentina, el titular de los datos tiene la facultad de ejercer el derecho de acceso en forma gratuita a intervalos no inferiores a seis meses (art. 14, inc. 3, Ley 25.326). La Agencia de Acceso a la Información Pública, órgano de control de la Ley 25.326, tiene la atribución de atender las denuncias y reclamos que se interpongan con relación al incumplimiento de las normas sobre protección de datos personales.",
+    "doneTitle": "¡Listo, {name}!",
+    "doneBody": "Ya estás en la base de {club}. El club te va a escribir por WhatsApp cuando haya un turno para vos.",
+    "another": "Cargar otro jugador",
+    "existsTitle": "Ya estabas registrado",
+    "existsBody": "Este teléfono ya está en {club}. No cambiamos tus datos.",
+    "existsHelp": "Si algo cambió, como tu categoría o tus horarios, avisale al club y lo actualiza.",
+    "language": "Idioma",
+    "errors": {
+      "invalid_phone": "El teléfono no es válido. Revisá el código de área.",
+      "invalid_category": "Elegí una categoría de la lista.",
+      "validation": "Revisá los campos marcados.",
+      "consent_required": "Para sumarte tenés que aceptar el consentimiento.",
+      "rate_limited": "Hubo demasiados intentos. Esperá unos minutos y probá de nuevo.",
+      "too_fast": "Esperá un momento e intentá de nuevo.",
+      "generic": "Algo salió mal. Intentá de nuevo."
+    },
+    "locality": "Localidad"
+  },
+  "source": {
+    "link": "Link",
+    "tablet": "Tablet",
+    "manual": "Manual",
+    "import": "Importado"
+  },
+  "home": {
+    "title": "Inicio",
+    "subtitle": "Esto pasó en {club} en los últimos 30 días.",
+    "addPlayer": "Agregar jugador",
+    "cuarto": "Falta el cuarto",
+    "stats": {
+      "players": "Jugadores",
+      "playersHint": "en la base del club",
+      "recent": "Altas nuevas",
+      "recentHint": "en los últimos 30 días",
+      "contacted": "Contactados",
+      "contactedHint": "por WhatsApp esta semana",
+      "noConsent": "Sin consentimiento",
+      "noConsentHint": "no se les puede escribir"
+    },
+    "latest": "Últimas altas",
+    "latestEmpty": "Todavía no hay jugadores. Compartí el link de alta o agregá el primero.",
+    "link": {
+      "title": "Link de alta",
+      "hint": "Compartilo por WhatsApp o ponelo en la bio de Instagram.",
+      "label": "Link público",
+      "tabletLabel": "Link del modo tablet",
+      "none": "Todavía no hay links de alta."
+    },
+    "noConsentAlertTitle": "{count, plural, one {# jugador sin consentimiento} other {# jugadores sin consentimiento}}",
+    "noConsentAlertBody": "No los contactes hasta que acepten recibir avisos.",
+    "noConsentAlertCta": "Ver"
+  },
+  "cuarto": {
+    "title": "Falta el cuarto",
+    "lead": "Cargá quiénes ya están y elegí a quién escribirle. Vos decidís; la app solo ordena y filtra.",
+    "match": "El partido",
+    "missing": "Falta {count}",
+    "complete": "Completo",
+    "free": "Libre",
+    "remove": "Quitar a {name}",
+    "when": "Cuándo",
+    "whenPlaceholder": "Hoy, 20:00",
+    "filters": "Filtros",
+    "candidates": "Candidatos ({count})",
+    "sortHint": "Primero los que no fueron contactados hace poco",
+    "add": "Sumar",
+    "added": "Ya está en el partido",
+    "write": "Escribir",
+    "writeLong": "Escribir por WhatsApp",
+    "never": "Sin contactar",
+    "contacted": "Contactado {when}",
+    "empty": "No hay candidatos con esos filtros",
+    "emptyHint": "Probá sacar algún filtro.",
+    "full": "El partido ya está completo.",
+    "shown": "Mostrando los primeros {shown} de {total}.",
+    "messageWhen": "Hola {name}, ¿cómo andás? Falta uno para completar el partido ({when}). ¿Te prendés?",
+    "messageNoWhen": "Hola {name}, ¿cómo andás? Falta uno para completar un partido en {club}. ¿Te prendés?",
+    "allCategories": "Todas",
+    "summaryNone": "Sin filtros",
+    "now": "ahora"
+  },
+  "settings": {
+    "title": "Ajustes",
+    "lead": "Solo el dueño del club puede cambiar estos datos.",
+    "saved": "Cambios guardados.",
+    "tabs": {
+      "label": "Secciones de ajustes",
+      "brand": "Marca",
+      "users": "Usuarios",
+      "links": "Links de alta"
+    },
+    "errors": {
+      "validation": "Revisá los campos marcados.",
+      "forbidden": "Solo el dueño del club puede hacer esto.",
+      "generic": "Algo salió mal. Intentá de nuevo."
+    },
+    "save": "Guardar cambios",
+    "saving": "Guardando…",
+    "discard": "Descartar",
+    "brand": {
+      "name": "Nombre del club",
+      "colorPrimary": "Color principal",
+      "colorAccent": "Color de acento",
+      "colorHint": "Dejalo vacío para usar los colores de PadelHub.",
+      "contrastTitle": "El color principal tiene poco contraste con el blanco",
+      "contrastBody": "Para que se lea bien, el texto sobre ese color va a ser oscuro.",
+      "locale": "Idioma del club",
+      "timezone": "Zona horaria",
+      "email": "Email de contacto",
+      "emailHint": "Contacto del club para pedidos de acceso o baja de datos.",
+      "logoTitle": "Logo",
+      "logoSoon": "Podrás subir el logo más adelante. Por ahora se usan las iniciales del club.",
+      "preview": "Así se ve el formulario público",
+      "previewTitle": "Sumate a la comunidad"
+    },
+    "users": {
+      "add": "Agregar empleado",
+      "cols": {
+        "user": "Usuario",
+        "role": "Rol",
+        "status": "Estado"
+      },
+      "active": "Activo",
+      "remove": "Quitar del club",
+      "removeTitle": "Quitar del club",
+      "removeBody": "{name} deja de tener acceso a este club. Su cuenta no se borra.",
+      "password": "Cambiar contraseña",
+      "passwordTitle": "Cambiar contraseña de {name}",
+      "passwordBody": "Se cierran sus sesiones abiertas. Compartí la contraseña nueva por un canal seguro.",
+      "newPassword": "Contraseña nueva",
+      "addTitle": "Agregar empleado",
+      "name": "Nombre",
+      "email": "Email",
+      "initialPassword": "Contraseña inicial",
+      "passwordHint": "Mínimo 10 caracteres. No se envía por email: pasásela por un canal seguro.",
+      "create": "Crear usuario",
+      "creating": "Creando…",
+      "actionsFor": "Acciones para {name}",
+      "errors": {
+        "email_taken": "Ese email ya tiene una cuenta en PadelHub.",
+        "password_short": "La contraseña debe tener al menos 10 caracteres.",
+        "not_found": "No se encontró al usuario.",
+        "not_staff": "Al dueño no se lo puede modificar desde acá.",
+        "validation": "Revisá los campos marcados.",
+        "generic": "Algo salió mal. Intentá de nuevo.",
+        "forbidden": "Solo el dueño del club puede hacer esto."
+      },
+      "rolesTitle": "Qué puede hacer cada rol",
+      "rolesAction": "Acción",
+      "yes": "Sí",
+      "no": "No",
+      "roles": {
+        "players": "Ver y editar jugadores",
+        "cuarto": "Falta el cuarto y contactar",
+        "export": "Exportar CSV",
+        "delete": "Borrar jugadores",
+        "users": "Gestionar usuarios",
+        "brand": "Marca y links"
+      }
+    },
+    "links": {
+      "enabled": "Activo",
+      "disabledNote": "Desactivado: el link no funciona.",
+      "switchFor": "Activar {name}",
+      "copy": "Copiar",
+      "public": {
+        "title": "Link público",
+        "hint": "Para WhatsApp, la bio de Instagram o un cartel en la cancha.",
+        "label": "Link",
+        "langHint": "El jugador puede elegir español, inglés o portugués."
+      },
+      "tablet": {
+        "title": "Modo tablet",
+        "hint": "Pantalla completa para el mostrador. Se reinicia sola después de guardar a cada jugador.",
+        "label": "Link de la tablet",
+        "open": "Abrir modo tablet",
+        "fixedHint": "Abrilo en la tablet y dejalo fijo."
+      },
+      "rotate": {
+        "title": "Rotar el link",
+        "body": "Los links viejos dejan de funcionar al instante.",
+        "cta": "Rotar",
+        "confirmTitle": "¿Rotar el link?",
+        "confirmBody": "Los links ya compartidos dejarán de funcionar y vas a tener que compartir el nuevo."
+      }
+    }
+  },
+  "admin": {
+    "clubs": {
+      "title": "Clubes",
+      "count": "{count, plural, one {# club} other {# clubes}} en la plataforma.",
+      "create": "Crear club",
+      "search": "Buscar",
+      "searchPlaceholder": "Nombre o slug",
+      "filterLabel": "Estado",
+      "filter": {
+        "all": "Todos",
+        "active": "Activos",
+        "suspended": "Suspendidos"
+      },
+      "cols": {
+        "club": "Club",
+        "country": "País",
+        "players": "Jugadores",
+        "users": "Usuarios",
+        "status": "Estado",
+        "created": "Alta"
+      },
+      "status": {
+        "active": "Activo",
+        "suspended": "Suspendido"
+      },
+      "view": "Ver",
+      "suspend": "Suspender",
+      "reactivate": "Reactivar",
+      "empty": "No hay clubes con esos filtros."
+    },
+    "detail": {
+      "crumb": "Clubes",
+      "sub": "/{slug} · {country} · alta el {date}",
+      "suspendedTitle": "Club suspendido",
+      "suspendedBody": "Sus usuarios no pueden entrar y el link de alta está cerrado. No se borró ningún dato.",
+      "stats": {
+        "players": "Jugadores",
+        "users": "Usuarios",
+        "recent": "Altas últimos 30 días",
+        "lastLogin": "Último ingreso",
+        "never": "Nunca"
+      },
+      "data": {
+        "title": "Datos del club",
+        "slug": "Slug",
+        "country": "País",
+        "locale": "Idioma",
+        "timezone": "Zona horaria"
+      },
+      "owner": {
+        "title": "Dueño",
+        "resetPassword": "Cambiar contraseña del dueño",
+        "none": "Este club no tiene dueño."
+      },
+      "audit": {
+        "title": "Auditoría del club",
+        "action": "Acción",
+        "user": "Usuario",
+        "when": "Cuándo",
+        "empty": "Todavía no hay movimientos."
+      },
+      "suspendTitle": "Suspender club",
+      "suspendBody": "{name} deja de funcionar: sus usuarios no pueden entrar y el link de alta se cierra. No se borra ningún dato.",
+      "reactivateTitle": "Reactivar club",
+      "reactivateBody": "{name} vuelve a funcionar con todos sus datos.",
+      "errors": {
+        "generic": "Algo salió mal. Intentá de nuevo."
+      }
+    },
+    "new": {
+      "title": "Crear club",
+      "lead": "Se crea con los links de alta y un dueño con contraseña inicial.",
+      "slug": "Identificador (slug)",
+      "slugHint": "Minúsculas, números y guiones. Va en el link de alta.",
+      "name": "Nombre del club",
+      "country": "País",
+      "locale": "Idioma",
+      "timezone": "Zona horaria",
+      "ownerName": "Nombre del dueño",
+      "ownerEmail": "Email del dueño",
+      "ownerPassword": "Contraseña inicial",
+      "ownerPasswordHint": "Mínimo 10 caracteres. No se envía por email.",
+      "submit": "Crear club",
+      "submitting": "Creando…",
+      "errors": {
+        "slug_taken": "Ya hay un club con ese identificador.",
+        "email_taken": "Ese email ya tiene una cuenta.",
+        "validation": "Revisá los campos marcados.",
+        "generic": "Algo salió mal. Intentá de nuevo."
+      }
+    }
+  }
+}

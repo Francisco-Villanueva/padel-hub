@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # Los tipos de rutas de Next se generan al compilar; por eso el build va antes del typecheck.
+      - name: Build
+        run: npm run build
+        env:
+          JWT_SECRET: ci-only-secret-ci-only-secret-ci-only-secret
+      - run: npm run typecheck
+      - run: npm run lint
+      - name: Tests (Postgres en memoria, no usan Neon)
+        run: npm test
