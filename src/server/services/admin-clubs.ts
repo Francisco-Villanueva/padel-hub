@@ -32,7 +32,7 @@ export async function clubDetail(tx: Tx, id: string, now: Date = new Date()) {
   const [{ members }] = await tx.select({ members: sql<number>`count(*)::int` }).from(clubMembers).where(eq(clubMembers.clubId, id));
   const [{ lastLogin }] = await tx.select({ lastLogin: sql<string | null>`max(${refreshTokens.createdAt})` }).from(refreshTokens).where(eq(refreshTokens.clubId, id));
 
-  const [owner] = await tx.select({ id: users.id, name: users.name, email: users.email }).from(clubMembers)
+  const [owner] = await tx.select({ id: users.id, name: users.name, email: users.email, activatedAt: users.activatedAt }).from(clubMembers)
     .innerJoin(users, eq(users.id, clubMembers.userId)).where(and(eq(clubMembers.clubId, id), eq(clubMembers.role, 'owner'))).limit(1);
 
   const audit = await tx.select({ id: auditLog.id, action: auditLog.action, at: auditLog.createdAt, userName: users.name })

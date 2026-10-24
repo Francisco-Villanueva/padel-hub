@@ -76,7 +76,10 @@
     "chooseClubSubtitle": "Your user has access to more than one club.",
     "heroTitle": "Fill the court with your community.",
     "heroBody": "Find the right player by category, position and availability, and message them on WhatsApp.",
-    "expired": "Your session expired. Sign in again to continue."
+    "expired": "Your session expired. Sign in again to continue.",
+    "forgot": "Forgot your password?",
+    "noticeReset": "You changed your password. Sign in with the new one.",
+    "noticeActivated": "Your account is active. Sign in with your email and password."
   },
   "nav": {
     "players": "Players",
@@ -417,7 +420,11 @@
         "not_staff": "The owner cannot be modified from here.",
         "validation": "Check the highlighted fields.",
         "generic": "Something went wrong. Try again.",
-        "forbidden": "Only the club owner can do this."
+        "forbidden": "Only the club owner can do this.",
+        "email_failed": "The account was created, but we could not send the email. Close this window and use \"Resend invitation\".",
+        "not_pending": "That person has already activated their account.",
+        "rate_limited": "You've resent the invitation several times already. Wait a while.",
+        "email_disabled": "Email sending is not configured yet."
       },
       "rolesTitle": "What each role can do",
       "rolesAction": "Action",
@@ -430,7 +437,15 @@
         "delete": "Delete players",
         "users": "Manage users",
         "brand": "Brand and links"
-      }
+      },
+      "inviteTitle": "Invite staff member",
+      "inviteBody": "We'll email them a link to activate their account and choose a password. The link expires in 7 days.",
+      "invite": "Send invitation",
+      "inviting": "Sending…",
+      "pending": "Pending activation",
+      "resend": "Resend invitation",
+      "resendTitle": "Resend invitation",
+      "resendBody": "We'll send a new link to {email}. The previous one stops working."
     },
     "links": {
       "enabled": "Active",
@@ -547,8 +562,14 @@
         "slug_taken": "A club with that identifier already exists.",
         "email_taken": "That email already has an account.",
         "validation": "Check the highlighted fields.",
-        "generic": "Something went wrong. Try again."
-      }
+        "generic": "Something went wrong. Try again.",
+        "email_disabled": "Email sending is not configured yet: create the club with an initial password."
+      },
+      "ownerAccess": "How the owner signs in",
+      "modeInvite": "Invite them by email",
+      "modeInviteHint": "They get a link to activate their account and choose a password. Recommended.",
+      "modePassword": "Create with an initial password",
+      "modePasswordHint": "You set the password and share it through a secure channel."
     }
   },
   "email": {
@@ -611,5 +632,49 @@
       "joinLabel": "Your club's sign-up link:",
       "footer": "You're receiving this email because you own {club} on PadelHub."
     }
+  },
+  "recovery": {
+    "requestTitle": "Reset password",
+    "requestLead": "Enter your email and we'll send you a link to choose a new password.",
+    "email": "Email",
+    "send": "Email me the link",
+    "sending": "Sending…",
+    "sent": "If the email exists, we've sent the link. It expires in 1 hour.",
+    "back": "Back to sign in",
+    "rateLimited": "You've requested too many links. Wait a while and try again.",
+    "generic": "We couldn't process the request. Please try again.",
+    "unavailableTitle": "We can't send emails yet",
+    "unavailableBody": "Ask your club owner to change your password from Settings.",
+    "newTitle": "Choose a new password",
+    "password": "New password",
+    "repeat": "Repeat it",
+    "mismatch": "The passwords don't match.",
+    "ruleLength": "At least 10 characters",
+    "ruleMatch": "Both match",
+    "save": "Save password",
+    "saving": "Saving…",
+    "weak": "The password must be between 10 and 200 characters.",
+    "invalid": "This link has expired or was already used. Request a new one.",
+    "invalidTitle": "This link no longer works",
+    "invalidBody": "It expired or was already used. Request a new one and we will send it again.",
+    "requestAnother": "Request another link"
+  },
+  "activate": {
+    "title": "Activate your account",
+    "invitedAs": "You've been invited as {role}",
+    "name": "Your name",
+    "password": "Password",
+    "repeat": "Repeat it",
+    "submit": "Activate my account",
+    "submitting": "Activating…",
+    "expiry": "The invitation expires in 7 days.",
+    "ruleLength": "At least 10 characters",
+    "ruleMatch": "Both match",
+    "mismatch": "The passwords don't match.",
+    "weak": "The password must be between 10 and 200 characters.",
+    "invalid": "This invitation has expired or was already used.",
+    "invalidTitle": "This invitation no longer works",
+    "invalidBody": "It expired or was already used. Ask your club owner to send it again.",
+    "goLogin": "Go to sign in"
   }
 }

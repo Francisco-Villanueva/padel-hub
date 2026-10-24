@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { setRequestLocale } from "next-intl/server";
 import { Suspense } from "react";
 import { safeNext } from "@/server/auth/http";
+import { emailEnabled } from "@/server/email/send";
 import { LoginScreen } from "./login-form";
 
 async function Screen({ searchParams }: { searchParams: PageProps<"/[locale]/login">["searchParams"] }) {
@@ -9,7 +10,9 @@ async function Screen({ searchParams }: { searchParams: PageProps<"/[locale]/log
   const raw = Array.isArray(sp.next) ? sp.next[0] : sp.next;
   const next = safeNext(raw ?? null, "");
   // Si vino redirigido desde una página protegida, la sesión venció o falta: se lo explica en vez de mostrar el login "mudo".
-  return <LoginScreen next={next} expired={next !== ""} />;
+  const noticeRaw = Array.isArray(sp.notice) ? sp.notice[0] : sp.notice;
+  const notice = noticeRaw === "reset" || noticeRaw === "activated" ? noticeRaw : undefined;
+  return <LoginScreen next={next} expired={next !== ""} notice={notice} showForgot={emailEnabled()} />;
 }
 
 export const metadata: Metadata = { robots: { index: false, follow: false } };

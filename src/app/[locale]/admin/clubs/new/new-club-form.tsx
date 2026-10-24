@@ -1,7 +1,7 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { cx, ui } from "@/components/ui";
 import { CLUB_LOCALES, COUNTRIES, TIMEZONES } from "@/lib/club-schema";
 import { Link } from "@/i18n/navigation";
@@ -10,12 +10,13 @@ import { createClubAction, type AdminState } from "../../actions";
 const LOCALE_NAMES: Record<string, string> = { es: "Español", en: "English", pt: "Português" };
 const tzLabel = (tz: string) => tz.split("/").pop()!.replace(/_/g, " ");
 
-export function NewClubForm() {
+export function NewClubForm({ mailEnabled }: { mailEnabled: boolean }) {
   const t = useTranslations("admin.new");
   const tc = useTranslations("common");
   const locale = useLocale();
   const [state, action, pending] = useActionState(createClubAction, { status: "idle" } as AdminState);
   const v = state.values ?? {};
+  const [mode, setMode] = useState<"invite" | "password">(mailEnabled ? "invite" : "password");
   const bad = (f: string) => state.fields?.includes(f) || undefined;
   const countries = new Intl.DisplayNames([locale], { type: "region" });
   const err = (f: string) => (bad(f) && state.error && state.error !== "validation" ? <p id={`err-${f}`} className={ui.error}>{t(`errors.${state.error}`)}</p> : null);
@@ -65,11 +66,29 @@ export function NewClubForm() {
           <input id="ownerEmail" name="ownerEmail" type="email" required maxLength={254} defaultValue={v.ownerEmail} autoComplete="off" className={ui.input} aria-invalid={bad("ownerEmail")} aria-describedby="err-ownerEmail" />
           {err("ownerEmail")}
         </div>
-        <div className="sm:col-span-2">
-          <label htmlFor="ownerPassword" className={ui.label}>{t("ownerPassword")}</label>
-          <input id="ownerPassword" name="ownerPassword" type="password" required minLength={10} maxLength={200} autoComplete="new-password" className={ui.input} aria-invalid={bad("ownerPassword")} />
-          <p className={ui.hint}>{t("ownerPasswordHint")}</p>
-        </div>
+        {mailEnabled && (
+          <fieldset className="sm:col-span-2">
+            <legend className={ui.label}>{t("ownerAccess")}</legend>
+            <div className="grid gap-2 sm:grid-cols-2">
+              {(["invite", "password"] as const).map((m) => (
+                <label key={m} className="block">
+                  <input type="radio" name="ownerMode" value={m} checked={mode === m} onChange={() => setMode(m)} className="peer sr-only" />
+                  <span className="block cursor-pointer rounded-md border border-line-strong bg-surface-raised px-4 py-3 transition-colors hover:bg-surface-sunken peer-checked:border-2 peer-checked:border-brand peer-checked:bg-brand-tint peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-focus">
+                    <span className="block font-semibold">{t(m === "invite" ? "modeInvite" : "modePassword")}</span>
+                    <span className="block text-sm text-ink-muted">{t(m === "invite" ? "modeInviteHint" : "modePasswordHint")}</span>
+                  </span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
+        )}
+        {mode === "password" && (
+          <div className="sm:col-span-2">
+            <label htmlFor="ownerPassword" className={ui.label}>{t("ownerPassword")}</label>
+            <input id="ownerPassword" name="ownerPassword" type="password" required minLength={10} maxLength={200} autoComplete="new-password" className={ui.input} aria-invalid={bad("ownerPassword")} />
+            <p className={ui.hint}>{t("ownerPasswordHint")}</p>
+          </div>
+        )}
       </div>
 
       <div className="flex justify-end gap-2">

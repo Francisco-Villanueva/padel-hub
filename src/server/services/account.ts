@@ -111,17 +111,30 @@ export function createAccountService(deps: AccountDeps) {
     },
 
     /** Activa una cuenta invitada: elige su contraseña con el link del correo. */
-    async activate(input: { token: string; password: string }): Promise<{ status: 'ok' | 'invalid' | 'weak'; locale?: EmailLocale }> {
+    async activate(input: { token: string; password: string; name?: string }): Promise<{ status: 'ok' | 'invalid' | 'weak'; locale?: EmailLocale }> {
       if (deps.passwordProblem(input.password)) return { status: 'weak' };
       const hash = await deps.hashPassword(input.password);
       return deps.runners.withPlatform(async (tx) => {
         const t = now();
         const userId = await consumeToken(tx, input.token, 'invite', t);
         if (!userId) return { status: 'invalid' as const };
-        await tx.update(users).set({ passwordHash: hash, activatedAt: t, failedLogins: 0, lockedUntil: null }).where(eq(users.id, userId));
+        const name = input.name?.trim().slice(0, 80);
+        await tx.update(users).set({ passwordHash: hash, activatedAt: t, failedLogins: 0, lockedUntil: null, ...(name ? { name } : {}) }).where(eq(users.id, userId));
         await tx.insert(auditLog).values({ userId, action: 'users.activate' });
         const r = await recipient(tx, userId);
         return { status: 'ok' as const, locale: r?.locale };
+      });
+    },
+
+    /** Para la pantalla de activación: a qué club y con qué rol lo invitaron. Null si el link no sirve. No gasta el link. */
+    async invitationInfo(raw: string): Promise<{ name: string; role: 'owner' | 'staff'; clubName: string; locale: EmailLocale } | null> {
+      return deps.runners.withPlatform(async (tx) => {
+        const tk = await inspectToken(tx, raw, 'invite', now());
+        if (!tk) return null;
+        const [row] = await tx.select({ name: users.name, role: clubMembers.role, clubName: clubs.name, clubLocale: clubs.locale, userLocale: users.locale })
+          .from(users).innerJoin(clubMembers, eq(clubMembers.userId, users.id)).innerJoin(clubs, eq(clubs.id, clubMembers.clubId))
+          .where(and(eq(users.id, tk.userId), eq(clubs.status, 'active'))).orderBy(asc(clubMembers.createdAt)).limit(1);
+        return row ? { name: row.name, role: row.role, clubName: row.clubName, locale: asLocale(row.userLocale ?? row.clubLocale) } : null;
       });
     },
 

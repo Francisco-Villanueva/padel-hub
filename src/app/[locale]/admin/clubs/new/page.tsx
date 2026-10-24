@@ -5,6 +5,7 @@ import { PageHead } from "@/components/page-head";
 import { FormSkeleton } from "@/components/skeleton";
 import { Link } from "@/i18n/navigation";
 import { requireSuperadmin } from "@/server/auth/session";
+import { emailEnabled } from "@/server/email/send";
 import { NewClubForm } from "./new-club-form";
 
 export const metadata: Metadata = { robots: { index: false, follow: false } };
@@ -21,7 +22,7 @@ async function NewClub({ params }: { params: PageProps<"/[locale]/admin/clubs/ne
         title={t("new.title")}
         description={t("new.lead")}
       />
-      <NewClubForm />
+      <NewClubForm mailEnabled={emailEnabled()} />
     </div>
   );
 }

@@ -76,7 +76,10 @@
     "chooseClubSubtitle": "Tu usuario tiene acceso a más de un club.",
     "heroTitle": "Completá el turno con tu comunidad.",
     "heroBody": "Encontrá al jugador justo por categoría, posición y horario, y escribile por WhatsApp.",
-    "expired": "Tu sesión venció. Volvé a entrar para seguir."
+    "expired": "Tu sesión venció. Volvé a entrar para seguir.",
+    "forgot": "¿Olvidaste tu contraseña?",
+    "noticeReset": "Cambiaste tu contraseña. Entrá con la nueva.",
+    "noticeActivated": "Tu cuenta está activa. Entrá con tu email y tu contraseña."
   },
   "nav": {
     "players": "Jugadores",
@@ -417,7 +420,11 @@
         "not_staff": "Al dueño no se lo puede modificar desde acá.",
         "validation": "Revisá los campos marcados.",
         "generic": "Algo salió mal. Intentá de nuevo.",
-        "forbidden": "Solo el dueño del club puede hacer esto."
+        "forbidden": "Solo el dueño del club puede hacer esto.",
+        "email_failed": "La cuenta quedó creada, pero no pudimos enviar el email. Cerrá esta ventana y usá \"Reenviar invitación\".",
+        "not_pending": "Esa persona ya activó su cuenta.",
+        "rate_limited": "Ya le reenviaste la invitación varias veces. Esperá un rato.",
+        "email_disabled": "El envío de emails no está configurado todavía."
       },
       "rolesTitle": "Qué puede hacer cada rol",
       "rolesAction": "Acción",
@@ -430,7 +437,15 @@
         "delete": "Borrar jugadores",
         "users": "Gestionar usuarios",
         "brand": "Marca y links"
-      }
+      },
+      "inviteTitle": "Invitar empleado",
+      "inviteBody": "Le mandamos un email para que active su cuenta y elija su contraseña. El link vence en 7 días.",
+      "invite": "Enviar invitación",
+      "inviting": "Enviando…",
+      "pending": "Pendiente de activar",
+      "resend": "Reenviar invitación",
+      "resendTitle": "Reenviar invitación",
+      "resendBody": "Le mandamos un nuevo link a {email}. El anterior deja de servir."
     },
     "links": {
       "enabled": "Activo",
@@ -547,8 +562,14 @@
         "slug_taken": "Ya hay un club con ese identificador.",
         "email_taken": "Ese email ya tiene una cuenta.",
         "validation": "Revisá los campos marcados.",
-        "generic": "Algo salió mal. Intentá de nuevo."
-      }
+        "generic": "Algo salió mal. Intentá de nuevo.",
+        "email_disabled": "El envío de emails no está configurado todavía: creá el club con contraseña inicial."
+      },
+      "ownerAccess": "Cómo entra el dueño",
+      "modeInvite": "Invitarlo por email",
+      "modeInviteHint": "Recibe un link para activar su cuenta y elegir su contraseña. Recomendado.",
+      "modePassword": "Crear con contraseña inicial",
+      "modePasswordHint": "Vos definís la contraseña y se la pasás por un canal seguro."
     }
   },
   "email": {
@@ -611,5 +632,49 @@
       "joinLabel": "El link de alta de tu club:",
       "footer": "Recibís este correo porque sos dueño de {club} en PadelHub."
     }
+  },
+  "recovery": {
+    "requestTitle": "Restablecer contraseña",
+    "requestLead": "Ingresá tu email y te mandamos un enlace para elegir otra contraseña.",
+    "email": "Email",
+    "send": "Enviarme el enlace",
+    "sending": "Enviando…",
+    "sent": "Si el email existe, te mandamos el enlace. Vence en 1 hora.",
+    "back": "Volver a entrar",
+    "rateLimited": "Pediste demasiados enlaces. Esperá un rato y probá de nuevo.",
+    "generic": "No pudimos procesar el pedido. Probá de nuevo.",
+    "unavailableTitle": "Todavía no podemos enviar correos",
+    "unavailableBody": "Pedile al dueño de tu club que cambie tu contraseña desde Ajustes.",
+    "newTitle": "Elegí una contraseña nueva",
+    "password": "Contraseña nueva",
+    "repeat": "Repetila",
+    "mismatch": "Las contraseñas no coinciden.",
+    "ruleLength": "Al menos 10 caracteres",
+    "ruleMatch": "Las dos coinciden",
+    "save": "Guardar contraseña",
+    "saving": "Guardando…",
+    "weak": "La contraseña tiene que tener entre 10 y 200 caracteres.",
+    "invalid": "Este enlace venció o ya se usó. Pedí uno nuevo.",
+    "invalidTitle": "Este enlace ya no sirve",
+    "invalidBody": "Venció o ya se usó. Pedí uno nuevo y te lo mandamos de nuevo.",
+    "requestAnother": "Pedir otro enlace"
+  },
+  "activate": {
+    "title": "Activá tu cuenta",
+    "invitedAs": "Te invitaron como {role}",
+    "name": "Tu nombre",
+    "password": "Contraseña",
+    "repeat": "Repetila",
+    "submit": "Activar mi cuenta",
+    "submitting": "Activando…",
+    "expiry": "La invitación vence en 7 días.",
+    "ruleLength": "Al menos 10 caracteres",
+    "ruleMatch": "Las dos coinciden",
+    "mismatch": "Las contraseñas no coinciden.",
+    "weak": "La contraseña tiene que tener entre 10 y 200 caracteres.",
+    "invalid": "Esta invitación venció o ya se usó.",
+    "invalidTitle": "Esta invitación ya no sirve",
+    "invalidBody": "Venció o ya se usó. Pedile al dueño de tu club que te la mande de nuevo.",
+    "goLogin": "Ir a entrar"
   }
 }
