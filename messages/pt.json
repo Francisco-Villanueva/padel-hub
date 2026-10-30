@@ -567,22 +567,23 @@
       "forClubs": "Para clubes",
       "faq": "Perguntas",
       "login": "Entrar",
-      "cta": "Experimente no seu clube",
+      "cta": "Comece grátis",
       "menu": "Menu",
       "main": "Navegação principal"
     },
     "hero": {
-      "eyebrow": "Para clubes de padel",
+      "eyebrow": "30 dias grátis",
       "title": "Complete o jogo com a <accent>comunidade</accent> que o seu clube já tem.",
       "lead": "O PadelHub organiza os jogadores por categoria, posição e horário. Quando falta um, você vê a quem escrever e chama pelo WhatsApp em um toque.",
-      "cta": "Experimente no seu clube",
-      "secondary": "Ver como funciona",
-      "note": "Sem instalar nada. Funciona no celular e no tablet do balcão.",
+      "cta": "Comece grátis por 30 dias",
+      "secondary": "Agende uma demo",
+      "note": "Sem cartão. Cancele quando quiser. Deixamos tudo funcionando para você.",
       "cardLabel": "Exemplo de jogo com uma vaga livre",
       "when": "Hoje, 20:00",
       "missing": "Falta 1",
       "free": "Livre",
-      "whatsapp": "Escrever pelo WhatsApp"
+      "whatsapp": "Escrever pelo WhatsApp",
+      "proof": "Já está em uso na Argentina, no México e no Brasil"
     },
     "benefits": {
       "eyebrow": "Para o clube",
@@ -638,10 +639,39 @@
     },
     "cta": {
       "title": "Seu clube já tem os jogadores. Falta organizá-los.",
-      "button": "Experimente no seu clube"
+      "button": "Comece grátis por 30 dias"
     },
     "footer": {
       "login": "Entrar"
+    },
+    "promo": {
+      "text": "🎾 Experimente GRÁTIS por 30 dias · Sem cartão · Sem compromisso"
+    },
+    "pain": {
+      "eyebrow": "Quanto custa um horário vazio",
+      "title": "Um horário vazio por dia é dinheiro que fica na quadra",
+      "priceLabel": "Valor do horário ({currency})",
+      "weekLabel": "Horários vazios por semana",
+      "weekValue": "{count, plural, one {# horário} other {# horários}}",
+      "lose": "Você perde <b>{loss}</b> por mês.",
+      "cost": "O PadelHub custa {price}.",
+      "breakEven": "{n, plural, one {Preenchendo # horário você já pagou.} other {Preenchendo # horários você já pagou.}}",
+      "empty": "Informe o valor do horário para ver o seu número.",
+      "button": "Experimente grátis por 30 dias"
+    },
+    "pricing": {
+      "eyebrow": "Preço",
+      "title": "$0 no primeiro mês, depois {price}/mês",
+      "planName": "Plano Hub",
+      "setup": "Implantação e treinamento incluídos na ativação.",
+      "annual": "Pagando por ano: {annual} (20% a menos).",
+      "trial": "30 dias grátis, sem cartão.",
+      "button": "Comece grátis por 30 dias",
+      "planForArs": "1 a 3 quadras, até 300 jogadores.",
+      "planForUsd": "4 a 6 quadras, até 1.000 jogadores."
+    },
+    "whatsapp": {
+      "label": "Dúvidas? Fale com a gente"
     }
   }
 }

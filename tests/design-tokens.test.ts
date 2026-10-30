@@ -16,7 +16,7 @@ function block(re: RegExp): Record<string, string> {
   return Object.fromEntries([...m[1].matchAll(/--([a-z-]+):\s*(#[0-9a-fA-F]{6})\s*;/g)].map((x) => [x[1], x[2].toLowerCase()]));
 }
 const light = block(/:root\s*\{([\s\S]*?)\n\}/);
-const dark = block(/prefers-color-scheme:\s*dark\)\s*\{\s*:root\s*\{([\s\S]*?)\n\s*\}/);
+const dark = block(/:root\[data-theme="dark"\]\s*\{([\s\S]*?)\n\}/);
 const theme = { light, dark } as const;
 
 describe('tokens de color', () => {

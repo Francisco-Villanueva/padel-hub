@@ -567,22 +567,23 @@
       "forClubs": "Para clubes",
       "faq": "Preguntas",
       "login": "Ingresar",
-      "cta": "Probalo en tu club",
+      "cta": "Empezá gratis",
       "menu": "Menú",
       "main": "Navegación principal"
     },
     "hero": {
-      "eyebrow": "Para clubes de pádel",
+      "eyebrow": "30 días gratis",
       "title": "Completá el turno con la <accent>comunidad</accent> que ya tiene tu club.",
       "lead": "PadelHub ordena a los jugadores por categoría, posición y horario. Cuando falta uno, ves a quién escribirle y lo hacés por WhatsApp en un toque.",
-      "cta": "Probalo en tu club",
-      "secondary": "Ver cómo funciona",
-      "note": "Sin instalar nada. Funciona en el celular y en la tablet del mostrador.",
+      "cta": "Empezá gratis 30 días",
+      "secondary": "Agendá una demo",
+      "note": "Sin tarjeta. Cancelás cuando quieras. Te lo dejamos andando nosotros.",
       "cardLabel": "Ejemplo de turno con un lugar libre",
       "when": "Hoy, 20:00",
       "missing": "Falta 1",
       "free": "Libre",
-      "whatsapp": "Escribir por WhatsApp"
+      "whatsapp": "Escribir por WhatsApp",
+      "proof": "Ya lo están usando en Argentina, México y Brasil"
     },
     "benefits": {
       "eyebrow": "Para el club",
@@ -638,10 +639,39 @@
     },
     "cta": {
       "title": "Tu club ya tiene los jugadores. Falta ordenarlos.",
-      "button": "Probalo en tu club"
+      "button": "Empezá gratis 30 días"
     },
     "footer": {
       "login": "Ingresar"
+    },
+    "promo": {
+      "text": "🎾 Probalo GRATIS 30 días · Sin tarjeta · Sin compromiso"
+    },
+    "pain": {
+      "eyebrow": "Cuánto te cuesta un turno vacío",
+      "title": "Un turno vacío por día es plata que se queda en la cancha",
+      "priceLabel": "Valor del turno ({currency})",
+      "weekLabel": "Turnos vacíos por semana",
+      "weekValue": "{count, plural, one {# turno} other {# turnos}}",
+      "lose": "Perdés <b>{loss}</b> por mes.",
+      "cost": "PadelHub cuesta {price}.",
+      "breakEven": "{n, plural, one {Con llenar # turno ya lo pagaste.} other {Con llenar # turnos ya lo pagaste.}}",
+      "empty": "Cargá el valor del turno para ver tu número.",
+      "button": "Probalo gratis 30 días"
+    },
+    "pricing": {
+      "eyebrow": "Precio",
+      "title": "$0 el primer mes, después {price}/mes",
+      "planName": "Plan Hub",
+      "setup": "Puesta en marcha y capacitación incluida al activar.",
+      "annual": "Pagando por año: {annual} (20% menos).",
+      "trial": "30 días gratis, sin tarjeta.",
+      "button": "Empezá gratis 30 días",
+      "planForArs": "1 a 3 canchas, hasta 300 jugadores.",
+      "planForUsd": "4 a 6 canchas, hasta 1.000 jugadores."
+    },
+    "whatsapp": {
+      "label": "¿Dudas? Escribinos"
     }
   }
 }
