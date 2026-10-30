@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { clubBrandCss, contrastRatio, ensureContrast, mix, textOn } from '../src/lib/color';
 
 const vars = (css: string, scope: 'light' | 'dark') => {
-  const block = scope === 'light' ? css.match(/^\.club-brand\{([^}]*)\}/)![1] : css.match(/@media \(prefers-color-scheme:dark\)\{\.club-brand\{([^}]*)\}/)![1];
+  const block = scope === 'light' ? css.match(/^\.club-brand\{([^}]*)\}/)![1] : css.match(/:root\[data-theme="dark"\] \.club-brand\{([^}]*)\}/)![1];
   return Object.fromEntries(block.split(';').map((d) => d.split(':'))) as Record<string, string>;
 };
 
@@ -30,7 +30,7 @@ describe('colores del club en el formulario público', () => {
   it('aplica el color principal y el de acento en claro Y en oscuro', () => {
     const css = clubBrandCss('#1B2A6B', '#FF7A1A')!;
     expect(css).toContain('.club-brand{');
-    expect(css).toContain('@media (prefers-color-scheme:dark)');
+    expect(css).toContain(':root[data-theme="dark"] .club-brand{');
     const light = vars(css, 'light'), dark = vars(css, 'dark');
     expect(light['--brand']).toBe('#1b2a6b');
     expect(light['--ball']).toBe('#ff7a1a');

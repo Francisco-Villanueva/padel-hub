@@ -9,7 +9,7 @@ const VARIANTS = {
 } as const;
 
 /**
- * Logo de PadelHub. Elige la versión clara u oscura con `prefers-color-scheme` (sin `dark:`).
+ * Logo de PadelHub. Muestra la versión clara u oscura según `html[data-theme]` (ver globals.css; sin `dark:`).
  * Se dimensiona por alto con `className` (p. ej. `h-6`); el ancho sale de la proporción.
  */
 export function Logo({
@@ -22,10 +22,13 @@ export function Logo({
   className?: string;
 }) {
   const v = VARIANTS[variant];
+  const cls = cx("block w-auto max-w-full", className ?? "h-6");
+  /* eslint-disable @next/next/no-img-element -- SVG de marca estático, no hay nada que optimizar */
   return (
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcSet={v.dark} />
-      <img src={v.light} alt={alt} style={{ aspectRatio: v.ratio }} className={cx("block w-auto max-w-full", className ?? "h-6")} />
-    </picture>
+    <>
+      <img src={v.light} alt={alt} style={{ aspectRatio: v.ratio }} className={cx(cls, "logo-light")} />
+      <img src={v.dark} alt={alt} style={{ aspectRatio: v.ratio }} className={cx(cls, "logo-dark")} loading="lazy" />
+    </>
   );
+  /* eslint-enable @next/next/no-img-element */
 }

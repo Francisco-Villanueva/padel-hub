@@ -567,22 +567,23 @@
       "forClubs": "For clubs",
       "faq": "FAQ",
       "login": "Log in",
-      "cta": "Try it at your club",
+      "cta": "Start free",
       "menu": "Menu",
       "main": "Main navigation"
     },
     "hero": {
-      "eyebrow": "For padel clubs",
+      "eyebrow": "30 days free",
       "title": "Fill the match with the <accent>community</accent> your club already has.",
       "lead": "PadelHub organizes players by level, position and schedule. When you're one short, you see who to message and do it on WhatsApp in one tap.",
-      "cta": "Try it at your club",
-      "secondary": "See how it works",
-      "note": "Nothing to install. Works on your phone and on the tablet at the front desk.",
+      "cta": "Start free for 30 days",
+      "secondary": "Book a demo",
+      "note": "No card. Cancel anytime. We set it up for you.",
       "cardLabel": "Example of a match with one open spot",
       "when": "Today, 8:00 PM",
       "missing": "1 missing",
       "free": "Open",
-      "whatsapp": "Message on WhatsApp"
+      "whatsapp": "Message on WhatsApp",
+      "proof": "Already in use in Argentina, Mexico and Brazil"
     },
     "benefits": {
       "eyebrow": "For the club",
@@ -638,10 +639,39 @@
     },
     "cta": {
       "title": "Your club already has the players. They just need organizing.",
-      "button": "Try it at your club"
+      "button": "Start free for 30 days"
     },
     "footer": {
       "login": "Log in"
+    },
+    "promo": {
+      "text": "🎾 Try it FREE for 30 days · No card · No commitment"
+    },
+    "pain": {
+      "eyebrow": "What an empty slot costs you",
+      "title": "One empty slot a day is money left on the court",
+      "priceLabel": "Slot price ({currency})",
+      "weekLabel": "Empty slots per week",
+      "weekValue": "{count, plural, one {# slot} other {# slots}}",
+      "lose": "You lose <b>{loss}</b> a month.",
+      "cost": "PadelHub costs {price}.",
+      "breakEven": "{n, plural, one {Fill # slot and it's already paid for.} other {Fill # slots and it's already paid for.}}",
+      "empty": "Enter your slot price to see your number.",
+      "button": "Try it free for 30 days"
+    },
+    "pricing": {
+      "eyebrow": "Pricing",
+      "title": "$0 the first month, then {price}/month",
+      "planName": "Hub plan",
+      "setup": "Setup and training included when you activate.",
+      "annual": "Paying yearly: {annual} (20% off).",
+      "trial": "30 days free, no card.",
+      "button": "Start free for 30 days",
+      "planForArs": "1 to 3 courts, up to 300 players.",
+      "planForUsd": "4 to 6 courts, up to 1,000 players."
+    },
+    "whatsapp": {
+      "label": "Questions? Message us"
     }
   }
 }
