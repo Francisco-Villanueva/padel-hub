@@ -5,6 +5,7 @@ import { useState } from "react";
 import { initials } from "@/components/avatar";
 import { LocaleChips } from "@/components/locale-chips";
 import { Logo } from "@/components/logo";
+import { PasswordInput } from "@/components/password-input";
 import { cx, ui } from "@/components/ui";
 
 type Club = { clubId: string; name: string; role: string };
@@ -155,7 +156,7 @@ export function LoginScreen({ next, expired }: { next: string; expired?: boolean
             </div>
             <div>
               <label htmlFor="password" className={ui.label}>{t("password")}</label>
-              <input id="password" name="password" type="password" required autoComplete="current-password" maxLength={200} className={ui.input} />
+              <PasswordInput id="password" name="password" required autoComplete="current-password" maxLength={200} />
             </div>
             <button disabled={busy} className={cx(ui.btn, ui.btnPrimary, "mt-1 w-full")}>{busy ? t("entering") : t("enter")}</button>
           </form>

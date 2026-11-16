@@ -90,6 +90,6 @@ export function clubBrandCss(primary: string | null | undefined, accent: string 
     `.club-brand{${light}}` +
     // Todo texto "de marca" de la página (enlaces, insignias, avisos) usa la variante legible sobre la superficie.
     (p ? `.club-brand .text-brand{color:var(--brand-text)}` : '') +
-    `@media (prefers-color-scheme:dark){.club-brand{${dark}}}`
+    `:root[data-theme="dark"] .club-brand{${dark}}`
   );
 }

@@ -3,6 +3,7 @@
 import { useLocale, useTranslations } from "next-intl";
 import { useActionState, useState } from "react";
 import { Modal } from "@/components/modal";
+import { PasswordInput } from "@/components/password-input";
 import { cx, ui } from "@/components/ui";
 import { exportCsvAction, type ExportState } from "./export-actions";
 
@@ -87,8 +88,8 @@ export function ExportDialog({ filteredCount, allCount, filterSummary, hasFilter
 
           <div>
             <label htmlFor="export-password" className={ui.label}>{t("exportDialog.password")}</label>
-            <input
-              id="export-password" name="password" type="password" required autoComplete="current-password" maxLength={200} className={ui.input}
+            <PasswordInput
+              id="export-password" name="password" required autoComplete="current-password" maxLength={200}
               aria-invalid={state.status === "error" && state.error === "invalid_password" ? true : undefined}
               aria-describedby={state.status === "error" ? "export-error" : undefined}
             />

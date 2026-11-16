@@ -86,7 +86,7 @@ Regla de capas: la UI no consulta la base. Páginas y server actions llaman a `s
 Toda vista nueva se diseña y se **verifica** en escritorio, tablet y celular (herramienta de navegador: `resize_window` con `1440x900`, `tablet` 768 y `mobile` 375; volver a `desktop` al terminar).
 - Convención: celular <640px (1 columna, controles ≥44px de alto), tablet 640–1279px (2 columnas, con barra lateral desde `lg`), escritorio ≥1280px (`xl`: tablas completas). Una tabla ancha se reemplaza por tarjetas por debajo de `xl`.
 - Filtros plegables en celular, visibles en tablet/escritorio. Acciones primarias fijas abajo en formularios largos de celular.
-- Clases compartidas en `src/components/ui.ts`. Colores = tokens semánticos de `globals.css` (`bg-surface`, `text-muted`, `border-line`, `bg-accent`…); el modo oscuro (`prefers-color-scheme`) cambia los valores de las variables, así que **no se usa `dark:`** ni colores `zinc-*`/`emerald-*` sueltos.
+- Clases compartidas en `src/components/ui.ts`. Colores = tokens semánticos de `globals.css` (`bg-surface`, `text-muted`, `border-line`, `bg-accent`…); el modo oscuro (solo con `<html data-theme="dark">`; por defecto la app es siempre clara, sin seguir al sistema) cambia los valores de las variables, así que **no se usa `dark:`** ni colores `zinc-*`/`emerald-*` sueltos.
 - Movimiento: `enter` (subir y aparecer) en la raíz del contenido de cada página y `style={stagger(i)}` en listas; `skeleton` en los fallbacks de `<Suspense>` (`components/skeleton.tsx`). Se respeta `prefers-reduced-motion`. No animar cada elemento: un solo gesto por vista.
 - Pie de página "Desarrollado por Duxio" en el panel.
 

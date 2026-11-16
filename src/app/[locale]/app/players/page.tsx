@@ -83,7 +83,7 @@ async function PlayersContent({ locale, searchParams }: { locale: string; search
       ) : (
         <>
           <PlayerCards rows={result.rows} t={t} locale={locale} />
-          <PlayerTable rows={result.rows} t={t} locale={locale} />
+          <PlayerTable rows={result.rows} t={t} />
           <Pagination page={result.page} pageCount={result.pageCount} params={params} t={t} />
         </>
       )}

@@ -4,6 +4,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { useActionState, useState } from "react";
 import { Avatar } from "@/components/avatar";
 import { Modal } from "@/components/modal";
+import { NewPasswordFields } from "@/components/password-input";
 import { cx, ui } from "@/components/ui";
 import { addStaffAction, removeStaffAction, resetStaffPasswordAction, type SettingsState } from "../actions";
 
@@ -55,11 +56,7 @@ function AddForm({ onClose }: { onClose: () => void }) {
           <label htmlFor="staff-email" className={ui.label}>{t("email")}</label>
           <input id="staff-email" name="email" type="email" required maxLength={254} defaultValue={state.values?.email} className={ui.input} aria-invalid={bad("email")} aria-describedby="staff-error" autoComplete="off" />
         </div>
-        <div>
-          <label htmlFor="staff-password" className={ui.label}>{t("initialPassword")}</label>
-          <input id="staff-password" name="password" type="password" required minLength={10} maxLength={200} className={ui.input} aria-invalid={bad("password")} aria-describedby="staff-error" autoComplete="new-password" />
-          <p className={ui.hint}>{t("passwordHint")}</p>
-        </div>
+        <NewPasswordFields id="staff-password" name="password" label={t("initialPassword")} hint={t("passwordHint")} invalid={!!bad("password")} describedBy="staff-error" />
         <ErrorText state={state} id="staff-error" />
       </form>
     </Modal>
@@ -84,11 +81,10 @@ function PasswordForm({ user, onClose }: { user: Member; onClose: () => void }) 
         </>
       }
     >
-      <form id="reset-pw" action={action} className="space-y-2">
+      <form id="reset-pw" action={action} className="space-y-4">
         <input type="hidden" name="locale" value={locale} />
         <input type="hidden" name="userId" value={user.userId} />
-        <label htmlFor="new-password" className={ui.label}>{t("newPassword")}</label>
-        <input id="new-password" name="password" type="password" required minLength={10} maxLength={200} className={ui.input} autoComplete="new-password" aria-describedby="pw-error" />
+        <NewPasswordFields id="new-password" name="password" label={t("newPassword")} describedBy="pw-error" />
         <ErrorText state={state} id="pw-error" />
       </form>
     </Modal>

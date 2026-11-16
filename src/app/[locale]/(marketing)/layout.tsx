@@ -1,4 +1,6 @@
 import { setRequestLocale } from "next-intl/server";
+import { PromoBar } from "@/components/landing/promo-bar";
+import { WhatsappFloat } from "@/components/landing/whatsapp-float";
 import { SiteFooter } from "@/components/landing/site-footer";
 import { SiteHeader } from "@/components/landing/site-header";
 
@@ -9,9 +11,13 @@ export default async function MarketingLayout({ children, params }: LayoutProps<
   setRequestLocale(locale);
   return (
     <>
-      <SiteHeader />
+      <div className="sticky top-0 z-40">
+        <PromoBar />
+        <SiteHeader />
+      </div>
       <main className="flex-1">{children}</main>
       <SiteFooter />
+      <WhatsappFloat />
     </>
   );
 }

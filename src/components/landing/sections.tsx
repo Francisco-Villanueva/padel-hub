@@ -1,6 +1,8 @@
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { cx, stagger, ui } from "../ui";
-import { contactHref } from "./contact";
+import { contactHref, demoHref } from "./contact";
+import { PainCalculator } from "./pain-calculator";
+import { formatMoney, planFor } from "./pricing";
 
 const wrap = "mx-auto w-full max-w-6xl px-4 lg:px-16";
 const eyebrow = "text-sm font-bold uppercase tracking-[0.08em] text-brand";
@@ -67,16 +69,17 @@ export function Hero() {
     <section className="py-10 md:py-16 lg:py-20">
       <div className={cx(wrap, "grid items-center gap-10 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] lg:gap-16")}>
         <div className="enter">
-          <p className={eyebrow}>{t("eyebrow")}</p>
+          <p className="inline-block rounded-sm bg-ball px-3 py-1 text-sm font-bold uppercase tracking-[0.08em] text-on-ball">{t("eyebrow")}</p>
           <h1 className="mt-4 font-display text-[52px] font-bold leading-[50px] text-ink md:text-[72px] md:leading-[70px] lg:text-[80px] lg:leading-[76px]">
             {t.rich("title", { accent: (c) => <span className="text-brand">{c}</span> })}
           </h1>
           <p className="mt-6 max-w-xl text-base font-medium text-ink-muted md:text-[22px] md:leading-8">{t("lead")}</p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <a href={contactHref()} className={cx(ui.btnBase, ui.btnPrimary, btnLg)}>{t("cta")}</a>
-            <a href="#como-funciona" className={cx(ui.btnBase, ui.btnSecondary, btnLg)}>{t("secondary")}</a>
+            <a href={demoHref()} className={cx(ui.btnBase, ui.btnSecondary, btnLg)}>{t("secondary")}</a>
           </div>
-          <p className="mt-5 text-xs font-medium text-ink-muted">{t("note")}</p>
+          <p className="mt-5 text-sm font-medium text-ink-muted">{t("note")}</p>
+          <p className="mt-3 text-sm font-semibold text-ink">{t("proof")}</p>
         </div>
         <div className="enter" style={stagger(2)}>
           <MatchCard />
@@ -107,6 +110,43 @@ export function Benefits() {
             </li>
           ))}
         </ul>
+      </div>
+    </section>
+  );
+}
+
+export function Pain() {
+  const t = useTranslations("landing.pain");
+  return (
+    <section id="calculadora" className="bg-surface-sunken py-16 md:py-20">
+      <div className={wrap}>
+        <p className={eyebrow}>{t("eyebrow")}</p>
+        <h2 className={h2}>{t("title")}</h2>
+        <div className="mt-10">
+          <PainCalculator ctaHref={contactHref()} />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export function Pricing() {
+  const t = useTranslations("landing.pricing");
+  const locale = useLocale();
+  const plan = planFor(locale);
+  return (
+    <section id="precio" className="py-16 md:py-20">
+      <div className={wrap}>
+        <p className={eyebrow}>{t("eyebrow")}</p>
+        <h2 className={h2}>{t("title", { price: formatMoney(plan.monthly, locale) })}</h2>
+        <div className="mt-10 max-w-xl space-y-3 rounded-lg border border-line-strong bg-surface-raised p-6 shadow-card sm:p-8">
+          <span className={ui.badgeBall}>{t("trial")}</span>
+          <h3 className="text-xl font-semibold text-ink">{t("planName")}</h3>
+          <p className="text-[15px] leading-[22px] text-ink-muted">{t(plan.key === "ars" ? "planForArs" : "planForUsd")}</p>
+          <p className="text-[15px] leading-[22px] text-ink">{t("setup")}</p>
+          <p className="text-[15px] leading-[22px] text-ink-muted">{t("annual", { annual: formatMoney(plan.annual, locale) })}</p>
+          <a href={contactHref()} className={cx(ui.btnBase, ui.btnPrimary, btnLg, "mt-2 w-full sm:w-auto")}>{t("button")}</a>
+        </div>
       </div>
     </section>
   );

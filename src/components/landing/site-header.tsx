@@ -29,7 +29,7 @@ export function SiteHeader() {
   );
 
   return (
-    <header className="sticky top-0 z-40 border-b border-line bg-surface/90 backdrop-blur">
+    <header className="border-b border-line bg-surface/90 backdrop-blur">
       <div className="relative mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 md:h-20 lg:px-16">
         <a
           href={`/${locale}`}

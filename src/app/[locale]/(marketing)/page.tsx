@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { Benefits, Faq, FinalCta, Hero, HowItWorks } from "@/components/landing/sections";
+import { Benefits, Faq, FinalCta, Hero, HowItWorks, Pain, Pricing } from "@/components/landing/sections";
 import { routing } from "@/i18n/routing";
 
 const siteUrl = () => new URL(process.env.APP_URL?.trim() || "http://localhost:3000");
@@ -28,7 +28,9 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
     <>
       <Hero />
       <Benefits />
+      <Pain />
       <HowItWorks />
+      <Pricing />
       <Faq />
       <FinalCta />
     </>
