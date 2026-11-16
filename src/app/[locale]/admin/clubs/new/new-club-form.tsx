@@ -2,6 +2,7 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import { useActionState } from "react";
+import { NewPasswordFields } from "@/components/password-input";
 import { cx, ui } from "@/components/ui";
 import { CLUB_LOCALES, COUNTRIES, TIMEZONES } from "@/lib/club-schema";
 import { Link } from "@/i18n/navigation";
@@ -65,10 +66,8 @@ export function NewClubForm() {
           <input id="ownerEmail" name="ownerEmail" type="email" required maxLength={254} defaultValue={v.ownerEmail} autoComplete="off" className={ui.input} aria-invalid={bad("ownerEmail")} aria-describedby="err-ownerEmail" />
           {err("ownerEmail")}
         </div>
-        <div className="sm:col-span-2">
-          <label htmlFor="ownerPassword" className={ui.label}>{t("ownerPassword")}</label>
-          <input id="ownerPassword" name="ownerPassword" type="password" required minLength={10} maxLength={200} autoComplete="new-password" className={ui.input} aria-invalid={bad("ownerPassword")} />
-          <p className={ui.hint}>{t("ownerPasswordHint")}</p>
+        <div className="grid gap-4 sm:col-span-2 sm:grid-cols-2">
+          <NewPasswordFields id="ownerPassword" name="ownerPassword" label={t("ownerPassword")} hint={t("ownerPasswordHint")} invalid={!!bad("ownerPassword")} />
         </div>
       </div>
 

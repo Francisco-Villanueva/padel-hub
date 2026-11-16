@@ -12,7 +12,11 @@
     "close": "Cerrar",
     "copy": "Copiar",
     "copied": "¡Copiado!",
-    "seeAll": "Ver todos"
+    "seeAll": "Ver todos",
+    "showPassword": "Mostrar contraseña",
+    "hidePassword": "Ocultar contraseña",
+    "passwordMismatch": "Las contraseñas no coinciden.",
+    "confirmPassword": "Repetí la contraseña"
   },
   "problem": {
     "title": "Algo salió mal",
@@ -121,8 +125,7 @@
       "category": "Categoría",
       "position": "Posición",
       "slots": "Horarios",
-      "contact": "Contacto",
-      "lastContact": "Último contacto"
+      "contact": "Contacto"
     },
     "noCategory": "Sin categoría",
     "noPosition": "Sin posición",

@@ -3,6 +3,7 @@
 import { useLocale, useTranslations } from "next-intl";
 import { useActionState, useState } from "react";
 import { Modal } from "@/components/modal";
+import { NewPasswordFields } from "@/components/password-input";
 import { cx, ui } from "@/components/ui";
 import { resetOwnerPasswordAction, setClubStatusAction, type AdminState } from "./actions";
 
@@ -72,12 +73,11 @@ export function OwnerPasswordButton({ clubId, ownerId, ownerName }: { clubId: st
           </>
         }
       >
-        <form id="owner-pw" action={action} className="space-y-2">
+        <form id="owner-pw" action={action} className="space-y-4">
           <input type="hidden" name="locale" value={locale} />
           <input type="hidden" name="clubId" value={clubId} />
           <input type="hidden" name="userId" value={ownerId} />
-          <label htmlFor="owner-new-password" className={ui.label}>{ts("newPassword")}</label>
-          <input id="owner-new-password" name="password" type="password" required minLength={10} maxLength={200} autoComplete="new-password" className={ui.input} aria-describedby="owner-pw-error" />
+          <NewPasswordFields id="owner-new-password" name="password" label={ts("newPassword")} describedBy="owner-pw-error" />
           {state.status === "error" && (
             <p id="owner-pw-error" role="alert" className={ui.error}>{state.error === "validation" ? ts("errors.password_short") : t("errors.generic")}</p>
           )}

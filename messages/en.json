@@ -12,7 +12,11 @@
     "close": "Close",
     "copy": "Copy",
     "copied": "Copied!",
-    "seeAll": "See all"
+    "seeAll": "See all",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "passwordMismatch": "The passwords don't match.",
+    "confirmPassword": "Repeat the password"
   },
   "problem": {
     "title": "Something went wrong",
@@ -121,8 +125,7 @@
       "category": "Category",
       "position": "Position",
       "slots": "Availability",
-      "contact": "Contact",
-      "lastContact": "Last contact"
+      "contact": "Contact"
     },
     "noCategory": "No category",
     "noPosition": "No position",

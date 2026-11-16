@@ -77,7 +77,7 @@ export function PlayerCards({ rows, t, locale }: { rows: PlayerRow[]; t: T; loca
 }
 
 /** Escritorio: tabla. */
-export function PlayerTable({ rows, t, locale }: { rows: PlayerRow[]; t: T; locale: string }) {
+export function PlayerTable({ rows, t }: { rows: PlayerRow[]; t: T }) {
   const th = "bg-surface-sunken px-4 py-3 text-left text-[13px] font-semibold text-ink-muted";
   return (
     <div className="hidden overflow-hidden rounded-lg border border-line bg-surface-raised xl:block">
@@ -89,7 +89,6 @@ export function PlayerTable({ rows, t, locale }: { rows: PlayerRow[]; t: T; loca
             <th scope="col" className={th}>{t("players.cols.position")}</th>
             <th scope="col" className={th}>{t("players.cols.slots")}</th>
             <th scope="col" className={th}>{t("players.cols.contact")}</th>
-            <th scope="col" className={th}>{t("players.cols.lastContact")}</th>
             <th scope="col" className="px-4 py-3"><span className="sr-only">{t("players.edit")}</span></th>
           </tr>
         </thead>
@@ -112,7 +111,6 @@ export function PlayerTable({ rows, t, locale }: { rows: PlayerRow[]; t: T; loca
                 <div className="whitespace-nowrap">{formatPhone(p.phoneE164)}</div>
                 {p.instagram && <div className="text-xs">@{p.instagram}</div>}
               </td>
-              <td className="px-4 py-3 text-ink-muted"><LastContact p={p} t={t} locale={locale} /></td>
               <td className="px-4 py-3">
                 <div className="flex justify-end gap-1.5">
                   <WhatsAppLink p={p} t={t} className={ui.btnSm} />
