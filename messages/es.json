@@ -465,7 +465,26 @@
         "cta": "Rotar",
         "confirmTitle": "¿Rotar el link?",
         "confirmBody": "Los links ya compartidos dejarán de funcionar y vas a tener que compartir el nuevo."
+      },
+      "posterCard": {
+        "title": "Cartel para imprimir",
+        "hint": "Un cartel vertical con tu logo y el QR del link público, listo para pegar en la entrada o en la barra.",
+        "cta": "Ver cartel"
       }
+    },
+    "poster": {
+      "title": "Cartel de registro",
+      "hint": "Se imprime en A5 vertical (148 × 210 mm). Se ve igual en papel que en pantalla.",
+      "back": "Volver a los links",
+      "print": "Imprimir cartel",
+      "sizeNote": "En el diálogo de impresión elegí tamaño A5 y márgenes en “Ninguno”. Probá el QR con dos celulares antes de imprimir.",
+      "inactive": "El link público está desactivado, así que el QR no llevaría a ningún lado. Activalo en Links de alta para ver el cartel.",
+      "eyebrow": "Sumate a la comunidad",
+      "headlineA": "Escaneá y",
+      "headlineB": "registrate",
+      "lead": "Cargá tus datos desde el celular y quedás anotado en el club.",
+      "qrLabel": "Código QR de registro del club",
+      "madeBy": "Desarrollado por Duxio"
     }
   },
   "admin": {

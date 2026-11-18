@@ -465,7 +465,26 @@
         "cta": "Trocar",
         "confirmTitle": "Trocar o link?",
         "confirmBody": "Os links já compartilhados deixarão de funcionar e você precisará compartilhar o novo."
+      },
+      "posterCard": {
+        "title": "Cartaz para imprimir",
+        "hint": "Um cartaz vertical com o seu logo e o QR do link público, pronto para colar na entrada ou no balcão.",
+        "cta": "Ver cartaz"
       }
+    },
+    "poster": {
+      "title": "Cartaz de cadastro",
+      "hint": "Imprime em A5 vertical (148 × 210 mm). Fica igual no papel e na tela.",
+      "back": "Voltar aos links",
+      "print": "Imprimir cartaz",
+      "sizeNote": "Na janela de impressão escolha A5 e margens “Nenhuma”. Teste o QR com dois celulares antes de imprimir.",
+      "inactive": "O link público está desativado, então o QR não levaria a lugar nenhum. Ative-o em Links de cadastro para ver o cartaz.",
+      "eyebrow": "Junte-se à comunidade",
+      "headlineA": "Escaneie e",
+      "headlineB": "cadastre-se",
+      "lead": "Preencha seus dados pelo celular e você fica registrado no clube.",
+      "qrLabel": "Código QR de cadastro do clube",
+      "madeBy": "Desenvolvido por Duxio"
     }
   },
   "admin": {

@@ -210,3 +210,29 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* Cartel de registro (settings/links/poster): al imprimir solo sale el cartel, a A5 vertical y sin márgenes. */
+@page {
+  size: 148mm 210mm;
+  margin: 0;
+}
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .print-poster,
+  .print-poster * {
+    visibility: visible;
+  }
+  .print-poster {
+    position: fixed;
+    inset: 0;
+    width: 148mm !important;
+    height: 210mm !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .no-print {
+    display: none !important;
+  }
+}
