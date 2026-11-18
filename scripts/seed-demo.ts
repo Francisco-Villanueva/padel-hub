@@ -6,6 +6,7 @@ import { hashPassword, passwordProblem } from '../src/server/auth/password';
 import { clubMembers, clubs, users, type Locale } from '../src/server/db/schema';
 import { SLOTS, type PlayerInput } from '../src/lib/player-schema';
 import { createClub } from '../src/server/services/clubs';
+import { setClubFeature } from '../src/server/services/features';
 import { createPlayer } from '../src/server/services/players';
 import { arg, runners } from './_db';
 
@@ -26,7 +27,10 @@ async function main() {
   const r = runners();
   try {
     const [existing] = await r.withPlatform((tx) => tx.select({ id: clubs.id }).from(clubs).where(eq(clubs.slug, 'demo-padel')));
-    if (existing) return console.log('El club demo-padel ya existe; no se hizo nada.');
+    if (existing) {
+      await r.withPlatform((tx) => setClubFeature(tx, { userId: null }, existing.id, 'tournaments', true));
+      return console.log('El club demo-padel ya existe; solo se aseguró que tenga activados los torneos.');
+    }
 
     const passwordHash = await hashPassword(password);
     const { club } = await r.withPlatform(async (tx) => {

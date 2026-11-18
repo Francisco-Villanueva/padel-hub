@@ -93,7 +93,8 @@
     "home": "Home",
     "cuarto": "Need a fourth",
     "settings": "Settings",
-    "clubsAdmin": "Clubs"
+    "clubsAdmin": "Clubs",
+    "tournaments": "Tournaments"
   },
   "install": {
     "button": "Install app",
@@ -554,6 +555,23 @@
       "reactivateBody": "{name} works again with all its data.",
       "errors": {
         "generic": "Something went wrong. Try again."
+      },
+      "features": {
+        "title": "Features",
+        "sub": "Enable features for this club. Only the superadmin can change them.",
+        "tournaments": {
+          "name": "Tournaments and rankings",
+          "desc": "Tournaments with groups and bracket, templates and ranking by category."
+        },
+        "on": "Enable",
+        "off": "Turn off",
+        "enabled": "Enabled",
+        "enabledAt": "Enabled on {date}",
+        "offTitle": "Turn off tournaments and rankings?",
+        "offBody": "The club stops seeing the section and the public ranking is hidden. No data is deleted: it comes back if you enable it again.",
+        "errors": {
+          "generic": "Couldn't change the feature. Try again."
+        }
       }
     },
     "new": {
@@ -695,5 +713,10 @@
     "whatsapp": {
       "label": "Questions? Message us"
     }
+  },
+  "tournaments": {
+    "title": "Tournaments",
+    "sub": "Groups, bracket and ranking for your club.",
+    "soon": "We're finishing this section."
   }
 }

@@ -11,7 +11,7 @@ import { relativeTime } from "@/lib/relative-time";
 import { requireSuperadmin } from "@/server/auth/session";
 import { withPlatform } from "@/server/db/client";
 import { clubDetail } from "@/server/services/admin-clubs";
-import { ClubStatusButton, OwnerPasswordButton } from "../../club-actions";
+import { ClubStatusButton, FeatureToggle, OwnerPasswordButton } from "../../club-actions";
 
 export const metadata: Metadata = { robots: { index: false, follow: false } };
 
@@ -95,9 +95,19 @@ async function Detail({ params }: { params: PageProps<"/[locale]/admin/clubs/[id
               <p className="text-sm text-ink-muted">{t("owner.none")}</p>
             )}
           </section>
+          <section className={cx(ui.card, "enter space-y-3")} style={stagger(7)}>
+            <div>
+              <h2 className="text-xl font-bold">{t("features.title")}</h2>
+              <p className="text-sm text-ink-muted">{t("features.sub")}</p>
+            </div>
+            {(() => {
+              const f = d.features.find((x) => x.feature === "tournaments");
+              return <FeatureToggle clubId={club.id} feature="tournaments" enabled={f?.enabled ?? false} enabledAt={f?.enabledAt ? format.dateTime(f.enabledAt, { dateStyle: "medium" }) : undefined} />;
+            })()}
+          </section>
         </div>
 
-        <section className={cx(ui.card, "enter")} style={stagger(7)}>
+        <section className={cx(ui.card, "enter")} style={stagger(8)}>
           <h2 className="text-xl font-bold">{t("audit.title")}</h2>
           {d.audit.length === 0 ? (
             <p className="mt-3 text-sm text-ink-muted">{t("audit.empty")}</p>

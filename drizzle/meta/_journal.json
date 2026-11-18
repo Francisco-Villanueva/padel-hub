@@ -43,6 +43,13 @@
       "when": 1795037144313,
       "tag": "0005_category_beginners",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1795043607575,
+      "tag": "0006_club_features",
+      "breakpoints": true
     }
   ]
 }

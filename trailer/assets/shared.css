@@ -1,0 +1,94 @@
+/* Tokens y piezas de UI de PadelHub (copiados de src/app/globals.css y src/components/ui.ts), a escala de video 1080x1920. */
+.ph-card {
+  position: absolute;
+  background: #ffffff;
+  border: 2px solid #cfd9d3;
+  border-radius: 36px;
+  box-shadow: 0 3px 6px rgba(16, 32, 27, 0.08), 0 12px 36px -6px rgba(16, 32, 27, 0.08);
+}
+.ph-avatar {
+  position: absolute;
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: #dff1e8;
+  color: #0b6b4f;
+  font-family: Figtree, sans-serif;
+  font-weight: 700;
+  font-size: 36px;
+  line-height: 96px;
+  text-align: center;
+}
+.ph-name {
+  position: absolute;
+  font-family: Figtree, sans-serif;
+  font-weight: 700;
+  font-size: 38px;
+  line-height: 46px;
+  color: #10201b;
+  white-space: nowrap;
+}
+.ph-loc {
+  position: absolute;
+  font-family: Figtree, sans-serif;
+  font-weight: 500;
+  font-size: 28px;
+  line-height: 34px;
+  color: #4a5b55;
+  white-space: nowrap;
+}
+.ph-badge {
+  position: absolute;
+  height: 44px;
+  padding: 0 16px;
+  border-radius: 12px;
+  background: #e9eee9;
+  color: #4a5b55;
+  font-family: Figtree, sans-serif;
+  font-weight: 600;
+  font-size: 28px;
+  line-height: 44px;
+  white-space: nowrap;
+}
+.ph-btn {
+  position: absolute;
+  height: 76px;
+  border-radius: 22px;
+  font-family: Figtree, sans-serif;
+  font-weight: 600;
+  font-size: 30px;
+  line-height: 76px;
+  text-align: center;
+  white-space: nowrap;
+}
+.ph-btn-primary {
+  background: #0b6b4f;
+  color: #ffffff;
+}
+.ph-btn-secondary {
+  background: #ffffff;
+  color: #10201b;
+  border: 2px solid #7d8e87;
+  line-height: 72px;
+}
+.ph-chip {
+  position: absolute;
+  height: 76px;
+  border-radius: 38px;
+  background: #ffffff;
+  border: 2px solid #7d8e87;
+  color: #10201b;
+  font-family: Figtree, sans-serif;
+  font-weight: 600;
+  font-size: 30px;
+  line-height: 72px;
+  text-align: center;
+  white-space: nowrap;
+}
+.ph-cursor {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 90px;
+  height: 90px;
+}

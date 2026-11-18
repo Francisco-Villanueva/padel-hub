@@ -93,7 +93,8 @@
     "home": "Início",
     "cuarto": "Falta um",
     "settings": "Ajustes",
-    "clubsAdmin": "Clubes"
+    "clubsAdmin": "Clubes",
+    "tournaments": "Torneios"
   },
   "install": {
     "button": "Instalar app",
@@ -554,6 +555,23 @@
       "reactivateBody": "O {name} volta a funcionar com todos os seus dados.",
       "errors": {
         "generic": "Algo deu errado. Tente de novo."
+      },
+      "features": {
+        "title": "Funções",
+        "sub": "Habilite funções para este clube. Só o superadmin pode alterá-las.",
+        "tournaments": {
+          "name": "Torneios e rankings",
+          "desc": "Torneios com grupos e chave, modelos e ranking por categoria."
+        },
+        "on": "Ativar",
+        "off": "Desativar",
+        "enabled": "Ativado",
+        "enabledAt": "Ativado em {date}",
+        "offTitle": "Desativar torneios e rankings?",
+        "offBody": "O clube deixa de ver a seção e o ranking público fica oculto. Nenhum dado é apagado: volta se você ativar de novo.",
+        "errors": {
+          "generic": "Não foi possível alterar a função. Tente de novo."
+        }
       }
     },
     "new": {
@@ -695,5 +713,10 @@
     "whatsapp": {
       "label": "Dúvidas? Fale com a gente"
     }
+  },
+  "tournaments": {
+    "title": "Torneios",
+    "sub": "Grupos, chave e ranking do seu clube.",
+    "soon": "Estamos finalizando esta seção."
   }
 }

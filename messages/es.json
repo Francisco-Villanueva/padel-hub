@@ -93,7 +93,8 @@
     "home": "Inicio",
     "cuarto": "Falta el cuarto",
     "settings": "Ajustes",
-    "clubsAdmin": "Clubes"
+    "clubsAdmin": "Clubes",
+    "tournaments": "Torneos"
   },
   "install": {
     "button": "Instalar app",
@@ -554,6 +555,23 @@
       "reactivateBody": "{name} vuelve a funcionar con todos sus datos.",
       "errors": {
         "generic": "Algo salió mal. Intentá de nuevo."
+      },
+      "features": {
+        "title": "Funciones",
+        "sub": "Habilitá funciones para este club. Solo el superadmin puede cambiarlas.",
+        "tournaments": {
+          "name": "Torneos y rankings",
+          "desc": "Torneos con zonas y llave, plantillas y ranking por categoría."
+        },
+        "on": "Activar",
+        "off": "Apagar",
+        "enabled": "Activado",
+        "enabledAt": "Activado el {date}",
+        "offTitle": "¿Apagar torneos y rankings?",
+        "offBody": "El club deja de ver la sección y el ranking público se oculta. No se borra ningún dato: reaparece si volvés a activarla.",
+        "errors": {
+          "generic": "No se pudo cambiar la función. Probá de nuevo."
+        }
       }
     },
     "new": {
@@ -695,5 +713,10 @@
     "whatsapp": {
       "label": "¿Dudas? Escribinos"
     }
+  },
+  "tournaments": {
+    "title": "Torneos",
+    "sub": "Zonas, llave y ranking de tu club.",
+    "soon": "Estamos terminando esta sección."
   }
 }

@@ -1,8 +1,11 @@
 import 'server-only';
 import { cookies } from 'next/headers';
-import { forbidden, redirect } from 'next/navigation';
+import { forbidden, notFound, redirect } from 'next/navigation';
 import { connection } from 'next/server';
 import { cache } from 'react';
+import type { Feature } from '../../lib/features';
+import { withTenant } from '../db/client';
+import { listEnabledFeatures } from '../services/features';
 import { ACCESS_COOKIE } from './config';
 import { jwtKey, verifyAccessToken, type Session } from './jwt';
 
@@ -37,5 +40,19 @@ export async function requireOwner(locale: string) {
 export async function requireSuperadmin(locale: string) {
   const s = await requireSession(locale);
   if (!s.isSuperadmin) redirect(`/${locale}`);
+  return s;
+}
+
+/** Funciones activas del club, una consulta por request (la usan el menú, las páginas y requireFeature). */
+export const getEnabledFeatures = cache(async (clubId: string): Promise<Feature[]> =>
+  withTenant(clubId, (tx) => listEnabledFeatures(tx, clubId)));
+
+/**
+ * Página/ruta de una función que el superadmin habilita por club: con el flag apagado responde 404, para dueño y empleado.
+ * Ocultar el menú no alcanza; las server actions llaman además a assertFeature() dentro del servicio.
+ */
+export async function requireFeature(locale: string, feature: Feature) {
+  const s = await requireClubSession(locale);
+  if (!(await getEnabledFeatures(s.clubId)).includes(feature)) notFound();
   return s;
 }
