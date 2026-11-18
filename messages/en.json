@@ -48,7 +48,7 @@
     "noche": "Evening"
   },
   "category": {
-    "name": "Cat. {level}"
+    "name": "{level, select, 9 {Beginners} other {Cat. {level}}}"
   },
   "auth": {
     "title": "Sign in",

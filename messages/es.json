@@ -48,7 +48,7 @@
     "noche": "Noche"
   },
   "category": {
-    "name": "{level, select, 1 {1ra} 2 {2da} 3 {3ra} 4 {4ta} 5 {5ta} 6 {6ta} 7 {7ma} 8 {8va} other {Cat. {level}}}"
+    "name": "{level, select, 1 {1ra} 2 {2da} 3 {3ra} 4 {4ta} 5 {5ta} 6 {6ta} 7 {7ma} 8 {8va} 9 {Principiantes} other {Cat. {level}}}"
   },
   "auth": {
     "title": "Ingresar",

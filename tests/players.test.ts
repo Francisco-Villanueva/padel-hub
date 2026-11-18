@@ -46,12 +46,12 @@ describe('validación', () => {
     expect(r.position).toBeUndefined();
     expect(playerInputSchema.parse({ firstName: 'a', lastName: 'b', gender: 'male', slots: [], phone: '1', instagram: '@ana_g' }).instagram).toBe('ana_g');
   });
-  it('la categoría es un nivel de 1 a 8 y llega como texto desde el formulario', () => {
+  it('la categoría es un nivel de 1 a 9 (9 = Principiantes) y llega como texto desde el formulario', () => {
     const base = { firstName: 'a', lastName: 'b', gender: 'male', slots: [], phone: '1' };
     expect(playerInputSchema.parse({ ...base, category: '7' }).category).toBe(7);
     expect(playerInputSchema.parse({ ...base, category: 3 }).category).toBe(3);
     expect(playerInputSchema.parse({ ...base, category: '' }).category).toBeUndefined();
-    for (const bad of ['0', '9', '-1', '7.5', 'siete']) expect(playerInputSchema.safeParse({ ...base, category: bad }).success).toBe(false);
+    for (const bad of ['0', '10', '-1', '7.5', 'siete']) expect(playerInputSchema.safeParse({ ...base, category: bad }).success).toBe(false);
     expect(playerFiltersSchema.parse({ category: '6' }).category).toBe(6);
     expect(playerFiltersSchema.safeParse({ category: '12' }).success).toBe(false);
   });
@@ -93,8 +93,8 @@ describe('servicio de jugadores', () => {
     expect((await inA((tx) => listPlayers(tx, { category: 2, gender: 'female' }))).rows.map((r) => r.id)).toEqual([b]);
   });
 
-  it('la base rechaza una categoría fuera de 1 a 8', async () => {
-    for (const bad of [0, 9]) {
+  it('la base rechaza una categoría fuera de 1 a 9', async () => {
+    for (const bad of [0, 10]) {
       await expect(t.withTenant(s.a.id, (tx) => tx.insert(players).values({ clubId: s.a.id, firstName: 'x', lastName: 'y', gender: 'male', phoneE164: `+54911000010${bad}`, source: 'manual', category: bad }))).rejects.toThrow();
     }
   });

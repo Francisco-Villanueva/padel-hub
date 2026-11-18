@@ -48,7 +48,7 @@
     "noche": "Noite"
   },
   "category": {
-    "name": "{level}ª"
+    "name": "{level, select, 9 {Iniciantes} other {{level}ª}}"
   },
   "auth": {
     "title": "Entrar",
