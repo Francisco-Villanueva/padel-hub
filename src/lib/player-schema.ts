@@ -4,14 +4,14 @@ import { z } from 'zod';
 export const GENDERS = ['male', 'female'] as const;
 export const POSITIONS = ['drive', 'reves', 'drive_zurdo'] as const;
 export const SLOTS = ['manana', 'tarde_temprano', 'tarde', 'noche'] as const;
-/** Categorías: del 1 (la más alta) al 8. Es solo el nivel; hombre o mujer lo da el género del jugador. */
-export const CATEGORIES = [1, 2, 3, 4, 5, 6, 7, 8] as const;
+/** Categorías: del 1 (la más alta) al 8, y 9 = Principiantes (nivel de entrada). Es solo el nivel; hombre o mujer lo da el género del jugador. */
+export const CATEGORIES = [1, 2, 3, 4, 5, 6, 7, 8, 9] as const;
 
 const emptyToUndef = (v: unknown) => (typeof v === 'string' && v.trim() === '' ? undefined : v);
 // Llega como texto desde formularios y URL; vacío = sin categoría.
 const category = z.preprocess(
   (v) => (v === undefined || v === null || (typeof v === 'string' && v.trim() === '') ? undefined : Number(v)),
-  z.number().int().min(1).max(8).optional(),
+  z.number().int().min(1).max(9).optional(),
 );
 const optionalText = (max: number) => z.preprocess(emptyToUndef, z.string().trim().max(max).optional());
 

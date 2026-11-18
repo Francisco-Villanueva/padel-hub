@@ -2,7 +2,7 @@
 
 # PadelHub (app)
 
-SaaS multi-club para clubes de pádel: base ordenada de jugadores (categoría 1–8, posición, horarios, contacto), búsqueda y contacto por WhatsApp. Desarrollado por **Duxio**. Contexto de producto y diseño completo: `../docs/system-design.md` (leerlo antes de decidir arquitectura) y `../PadelHub_prompt_inicial.md`.
+SaaS multi-club para clubes de pádel: base ordenada de jugadores (categoría 1–8 + Principiantes, posición, horarios, contacto), búsqueda y contacto por WhatsApp. Desarrollado por **Duxio**. Contexto de producto y diseño completo: `../docs/system-design.md` (leerlo antes de decidir arquitectura) y `../PadelHub_prompt_inicial.md`.
 
 ## Alcance
 - **MVP en curso:** módulo de jugadores (hecho), alta pública por link/tablet, "Falta el cuarto", panel superadmin, usuarios del club (invitación/reset), CSV, marca del club. Eventos y ligas después.
@@ -72,7 +72,7 @@ Regla de capas: la UI no consulta la base. Páginas y server actions llaman a `s
 
 ## Dominio
 - Roles de club: `owner` y `staff`; `users.is_superadmin` aparte. Un usuario puede pertenecer a varios clubes.
-- Categoría = solo el **nivel, del 1 al 8** (`players.category`, `smallint`, nulo = sin categoría). **No hay tabla de categorías ni rama**: hombre o mujer es el `gender` del jugador, y se busca por categoría y género. Constante `CATEGORIES` en `src/lib/player-schema.ts`; etiquetas con `categoryLabel(t, level)` y selectores con `categoryOptions(t)`.
+- Categoría = solo el **nivel, del 1 al 8, más 9 = Principiantes** (`players.category`, `smallint`, nulo = sin categoría). **No hay tabla de categorías ni rama**: hombre o mujer es el `gender` del jugador, y se busca por categoría y género. Constante `CATEGORIES` en `src/lib/player-schema.ts`; etiquetas con `categoryLabel(t, level)` y selectores con `categoryOptions(t)`.
 - Jugadores independientes entre clubes; teléfono único por club; baja lógica (`deleted_at`). Datos esenciales: nombre, apellido, género, categoría, posición, horarios, teléfono; opcionales: foto, Instagram.
 - Consentimiento (Ley 25.326) registrado en `player_consents` con versión e idioma; textos en `../docs/consent-text.md` (borrador, falta revisión legal).
 

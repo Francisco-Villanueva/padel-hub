@@ -104,11 +104,11 @@ describe('plataforma', () => {
 });
 
 describe('integridad de datos', () => {
-  it('la categoría es un nivel de 1 a 8 y la base rechaza otros valores', async () => {
+  it('la categoría es un nivel de 1 a 9 y la base rechaza otros valores', async () => {
     const [p] = await t.withTenant(s.a.id, (tx) => tx.insert(players).values(newPlayer(s.a.id, '+5492955555555', { category: 7, slots: ['noche', 'tarde'] })).returning());
     expect(p.category).toBe(7);
     expect(p.slots).toEqual(['noche', 'tarde']);
-    await expect(t.withTenant(s.a.id, (tx) => tx.insert(players).values(newPlayer(s.a.id, '+5492966666601', { category: 9 })))).rejects.toThrow();
+    await expect(t.withTenant(s.a.id, (tx) => tx.insert(players).values(newPlayer(s.a.id, '+5492966666601', { category: 10 })))).rejects.toThrow();
   });
 
   it('el teléfono es único dentro del club pero se puede repetir entre clubes', async () => {

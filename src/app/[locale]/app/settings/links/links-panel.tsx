@@ -4,6 +4,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { useActionState, useState } from "react";
 import { CopyButton } from "@/components/copy-button";
 import { Modal } from "@/components/modal";
+import { Link } from "@/i18n/navigation";
 import { cx, ui } from "@/components/ui";
 import { rotateLinkAction, setLinkActiveAction, type SettingsState } from "../actions";
 
@@ -102,6 +103,13 @@ export function LinksPanel({ link, tablet }: { link: LinkInfo; tablet: LinkInfo 
           <a href={tablet.url} target="_blank" rel="noopener noreferrer" className={cx(ui.btn, ui.btnPrimary, "w-full sm:w-auto")}>{t("tablet.open")}</a>
         </LinkCard>
       </div>
+      <section className={cx(ui.card, "enter flex flex-wrap items-center justify-between gap-3")}>
+        <div className="min-w-0 flex-1 basis-64">
+          <h2 className="text-xl font-bold">{t("posterCard.title")}</h2>
+          <p className="text-sm text-ink-muted">{t("posterCard.hint")}</p>
+        </div>
+        <Link href="/app/settings/links/poster" className={cx(ui.btn, ui.btnSecondary, "w-full sm:w-auto")}>{t("posterCard.cta")}</Link>
+      </section>
       <div role="note" className={cx(ui.notice, ui.noticeWarning, "flex flex-wrap items-center justify-between gap-3 border border-warning")}>
         <div className="flex items-start gap-3">
           <svg aria-hidden viewBox="0 0 24 24" className="mt-0.5 size-5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" /></svg>

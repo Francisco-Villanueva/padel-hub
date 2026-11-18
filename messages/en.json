@@ -48,7 +48,7 @@
     "noche": "Evening"
   },
   "category": {
-    "name": "Cat. {level}"
+    "name": "{level, select, 9 {Beginners} other {Cat. {level}}}"
   },
   "auth": {
     "title": "Sign in",
@@ -465,7 +465,26 @@
         "cta": "Rotate",
         "confirmTitle": "Rotate the link?",
         "confirmBody": "Links already shared will stop working and you will need to share the new one."
+      },
+      "posterCard": {
+        "title": "Printable poster",
+        "hint": "A portrait poster with your logo and the public link QR, ready to put up at the entrance or the bar.",
+        "cta": "View poster"
       }
+    },
+    "poster": {
+      "title": "Sign-up poster",
+      "hint": "Prints on A5 portrait (148 × 210 mm). It looks the same on paper as on screen.",
+      "back": "Back to links",
+      "print": "Print poster",
+      "sizeNote": "In the print dialog choose A5 and set margins to “None”. Scan the QR with two phones before printing.",
+      "inactive": "The public link is turned off, so the QR would lead nowhere. Turn it on in Sign-up links to see the poster.",
+      "eyebrow": "Join the community",
+      "headlineA": "Scan and",
+      "headlineB": "sign up",
+      "lead": "Enter your details from your phone and you're on the club's list.",
+      "qrLabel": "Club sign-up QR code",
+      "madeBy": "Developed by Duxio"
     }
   },
   "admin": {

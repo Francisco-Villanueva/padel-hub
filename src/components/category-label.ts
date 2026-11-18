@@ -7,7 +7,7 @@ export function categoryLabel(t: T, level: number): string {
   return t('category.name', { level: String(level) });
 }
 
-/** Opciones para los selectores: del 1 al 8 (el valor viaja como texto). */
+/** Opciones para los selectores: del 1 al 9, siendo 9 Principiantes (el valor viaja como texto). */
 export function categoryOptions(t: T): { id: string; label: string }[] {
   return CATEGORIES.map((n) => ({ id: String(n), label: categoryLabel(t, n) }));
 }

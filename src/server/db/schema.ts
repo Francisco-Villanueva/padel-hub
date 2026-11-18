@@ -120,7 +120,7 @@ export const players = pgTable('players', {
   firstName: text('first_name').notNull(),
   lastName: text('last_name').notNull(),
   gender: playerGender('gender').notNull(),
-  category: smallint('category'), // nivel 1 a 8 (nulo = sin categoría). El género va aparte, en `gender`.
+  category: smallint('category'), // nivel 1 a 8, 9 = Principiantes (nulo = sin categoría). El género va aparte, en `gender`.
   phoneE164: text('phone_e164').notNull(),
   position: playerPosition('position'),
   slots: timeSlot('slots').array().notNull().default(sql`'{}'`),
@@ -135,7 +135,7 @@ export const players = pgTable('players', {
 }, (t) => [
   unique('players_club_phone_uq').on(t.clubId, t.phoneE164),
   unique('players_id_club_uq').on(t.id, t.clubId),
-  check('players_category_chk', sql`${t.category} between 1 and 8`),
+  check('players_category_chk', sql`${t.category} between 1 and 9`),
   check('players_first_name_chk', sql`length(${t.firstName}) between 1 and 80`),
   check('players_last_name_chk', sql`length(${t.lastName}) between 1 and 80`),
   check('players_phone_chk', sql`${t.phoneE164} ~ '^\\+[1-9][0-9]{7,14}$'`),
