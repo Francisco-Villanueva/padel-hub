@@ -62,7 +62,7 @@ CREATE TABLE "tournament_matches" (
 	CONSTRAINT "tournament_matches_stage_chk" CHECK ("tournament_matches"."stage" in ('zona','llave')),
 	CONSTRAINT "tournament_matches_status_chk" CHECK ("tournament_matches"."status" in ('pendiente','jugado','bye')),
 	CONSTRAINT "tournament_matches_slot_chk" CHECK ("tournament_matches"."next_slot" is null or "tournament_matches"."next_slot" in ('a','b')),
-	CONSTRAINT "tournament_matches_winner_chk" CHECK ("tournament_matches"."winner_entry_id" is null or "tournament_matches"."winner_entry_id" = "tournament_matches"."entry_a_id" or "tournament_matches"."winner_entry_id" = "tournament_matches"."entry_b_id")
+	CONSTRAINT "tournament_matches_winner_chk" CHECK ("tournament_matches"."winner_entry_id" is null or coalesce("tournament_matches"."winner_entry_id" = "tournament_matches"."entry_a_id", false) or coalesce("tournament_matches"."winner_entry_id" = "tournament_matches"."entry_b_id", false))
 );
 --> statement-breakpoint
 CREATE TABLE "tournament_templates" (

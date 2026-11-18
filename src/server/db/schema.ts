@@ -374,7 +374,7 @@ export const tournamentMatches = pgTable('tournament_matches', {
   check('tournament_matches_stage_chk', sql`${t.stage} in ('zona','llave')`),
   check('tournament_matches_status_chk', sql`${t.status} in ('pendiente','jugado','bye')`),
   check('tournament_matches_slot_chk', sql`${t.nextSlot} is null or ${t.nextSlot} in ('a','b')`),
-  check('tournament_matches_winner_chk', sql`${t.winnerEntryId} is null or ${t.winnerEntryId} = ${t.entryAId} or ${t.winnerEntryId} = ${t.entryBId}`),
+  check('tournament_matches_winner_chk', sql`${t.winnerEntryId} is null or coalesce(${t.winnerEntryId} = ${t.entryAId}, false) or coalesce(${t.winnerEntryId} = ${t.entryBId}, false)`),
   index('tournament_matches_tournament_idx').on(t.tournamentId, t.stage, t.round, t.position),
 ]);
 

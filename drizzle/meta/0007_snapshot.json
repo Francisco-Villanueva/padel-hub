@@ -1,5 +1,5 @@
 {
-  "id": "ea1732b5-dd3a-44ee-a30b-c77e6fc56b36",
+  "id": "a39352e0-82fe-472c-b0ef-92ba64c32461",
   "prevId": "a1ac2b72-68ad-4921-9ec4-4252401abc4a",
   "version": "7",
   "dialect": "postgresql",
@@ -2225,7 +2225,7 @@
         },
         "tournament_matches_winner_chk": {
           "name": "tournament_matches_winner_chk",
-          "value": "\"tournament_matches\".\"winner_entry_id\" is null or \"tournament_matches\".\"winner_entry_id\" = \"tournament_matches\".\"entry_a_id\" or \"tournament_matches\".\"winner_entry_id\" = \"tournament_matches\".\"entry_b_id\""
+          "value": "\"tournament_matches\".\"winner_entry_id\" is null or coalesce(\"tournament_matches\".\"winner_entry_id\" = \"tournament_matches\".\"entry_a_id\", false) or coalesce(\"tournament_matches\".\"winner_entry_id\" = \"tournament_matches\".\"entry_b_id\", false)"
         }
       },
       "isRLSEnabled": false
