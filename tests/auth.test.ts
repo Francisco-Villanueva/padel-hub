@@ -7,7 +7,7 @@ import { jwtKey, sha256, verifyAccessToken } from '../src/server/auth/jwt';
 import { hashPassword, passwordProblem, verifyPassword } from '../src/server/auth/password';
 import { createAuthService, type Tokens } from '../src/server/auth/service';
 import { clubMembers, clubs, rateLimits, refreshTokens, users } from '../src/server/db/schema';
-import { createClub } from '../src/server/services/clubs';
+import { createClub, suspendExpiredTrials } from '../src/server/services/clubs';
 import { setupDb } from './helpers';
 
 const SECRET = 'test-secret-test-secret-test-secret-123';
@@ -287,5 +287,38 @@ describe('registerClub (alta pública)', () => {
     for (let i = 0; i < 6; i++) results.push((await svc.registerClub(base(`rl${i}`), { ip: '9.9.9.3' })).status);
     expect(results.slice(0, 5)).toEqual(Array(5).fill('ok'));
     expect(results[5]).toBe('rate_limited');
+  });
+});
+
+describe('prueba gratuita de 30 días', () => {
+  const reg = (n: string) => ({
+    name: `Trial ${n}`, slug: `trial-${n}`, country: 'AR', timezone: 'America/Argentina/Buenos_Aires', locale: 'es' as const,
+    owner: { email: `trial-${n}@test.com`, name: 'Dueño', passwordHash: pwHash },
+  });
+  const trialOf = async (slug: string) => (await t.withPlatform((tx) => tx.select().from(clubs).where(eq(clubs.slug, slug))))[0];
+
+  it('un club registrado queda con 30 días de prueba', async () => {
+    ok(await svc.registerClub(reg('a')));
+    const c = await trialOf('trial-a');
+    expect(c.trialEndsAt!.getTime() - clock).toBe(30 * 24 * 3600 * 1000);
+  });
+
+  it('vencida la prueba, el login suspende el club y no deja entrar; reactivar lo libera y borra la prueba', async () => {
+    ok(await svc.registerClub(reg('b')));
+    advance(30 * 24 * 3600 * 1000 + 1000);
+    expect((await svc.login({ email: 'trial-b@test.com', password: 'x' })).status).toBe('invalid_credentials'); // hash 'pwHash' es de PW
+    expect((await svc.login({ email: 'trial-b@test.com', password: PW })).status).toBe('no_access');
+    const c = await trialOf('trial-b');
+    expect(c.status).toBe('suspended');
+
+    const { setClubStatus } = await import('../src/server/services/admin-clubs');
+    await t.withPlatform((tx) => setClubStatus(tx, { userId: ids.sa }, c.id, 'active'));
+    expect((await trialOf('trial-b')).trialEndsAt).toBeNull();
+    ok(await svc.login({ email: 'trial-b@test.com', password: PW }));
+  });
+
+  it('un club sin prueba (alta manual) nunca se suspende solo', async () => {
+    advance(400 * 24 * 3600 * 1000);
+    expect((await t.withPlatform((tx) => suspendExpiredTrials(tx, new Date(clock)))).includes(ids.clubB)).toBe(false);
   });
 });

@@ -5,10 +5,10 @@ import { and, eq, isNull } from 'drizzle-orm';
 import { createHmac } from 'node:crypto';
 import { auditLog, clubMembers, clubs, refreshTokens, users } from '../db/schema';
 import type { Runners, Tx } from '../db/tenant';
-import { createClub } from '../services/clubs';
+import { createClub, suspendExpiredTrials } from '../services/clubs';
 import { hitRateLimit } from '../services/rate-limit';
 import {
-  LOCKOUT_MS, LOGIN_LIMIT_PER_EMAIL, LOGIN_LIMIT_PER_IP, MAX_FAILED_LOGINS, REFRESH_CONCURRENCY_GRACE_MS, REGISTER_LIMIT_PER_IP, REFRESH_TTL_SEC,
+  LOCKOUT_MS, LOGIN_LIMIT_PER_EMAIL, LOGIN_LIMIT_PER_IP, MAX_FAILED_LOGINS, REFRESH_CONCURRENCY_GRACE_MS, REGISTER_LIMIT_PER_IP, REFRESH_TTL_SEC, TRIAL_DAYS,
 } from './config';
 import { jwtKey, newOpaqueToken, sha256, signAccessToken, type Role, type Session } from './jwt';
 
@@ -57,6 +57,8 @@ export function createAuthService(deps: AuthDeps) {
   const hit = (tx: Tx, k: string, limit: { max: number; windowSec: number }) => hitRateLimit(tx, k, limit, now());
 
   async function memberships(tx: Tx, userId: string): Promise<ClubChoice[]> {
+    // Una prueba vencida se suspende acá mismo, sin esperar al cron: el club no entra ni renueva su sesión.
+    await suspendExpiredTrials(tx, now());
     const rows = await tx
       .select({ clubId: clubMembers.clubId, role: clubMembers.role, name: clubs.name, slug: clubs.slug })
       .from(clubMembers).innerJoin(clubs, eq(clubs.id, clubMembers.clubId))
@@ -139,6 +141,7 @@ export function createAuthService(deps: AuthDeps) {
 
           const { club, ownerId } = await createClub(tx, {
             slug: input.slug, name: input.name, country: input.country, timezone: input.timezone, locale: input.locale, owner: input.owner,
+            trialEndsAt: new Date(now().getTime() + TRIAL_DAYS * 24 * 3600 * 1000),
           });
           await tx.insert(auditLog).values({ clubId: club.id, userId: ownerId, action: 'club.register' });
           const session: Session = { userId: ownerId, clubId: club.id, role: 'owner', isSuperadmin: false, familyId: crypto.randomUUID() };

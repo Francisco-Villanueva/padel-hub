@@ -2,7 +2,8 @@
   "app": {
     "name": "PadelHub",
     "tagline": "Encontrá al jugador justo para completar tu turno.",
-    "poweredBy": "Desarrollado por Duxio"
+    "poweredBy": "Desarrollado por Duxio",
+    "trialBanner": "Prueba gratuita: te {days, plural, one {queda # día} other {quedan # días}}. Escribinos para activar tu plan."
   },
   "common": {
     "save": "Guardar",
@@ -536,7 +537,9 @@
         "slug": "Slug",
         "country": "País",
         "locale": "Idioma",
-        "timezone": "Zona horaria"
+        "timezone": "Zona horaria",
+        "trial": "Fin de la prueba",
+        "noTrial": "Sin prueba"
       },
       "owner": {
         "title": "Dueño",

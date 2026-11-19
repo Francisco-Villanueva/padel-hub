@@ -2,7 +2,8 @@
   "app": {
     "name": "PadelHub",
     "tagline": "Find the right player to fill your court.",
-    "poweredBy": "Developed by Duxio"
+    "poweredBy": "Developed by Duxio",
+    "trialBanner": "Free trial: {days, plural, one {# day} other {# days}} left. Contact us to activate your plan."
   },
   "common": {
     "save": "Save",
@@ -536,7 +537,9 @@
         "slug": "Slug",
         "country": "Country",
         "locale": "Language",
-        "timezone": "Time zone"
+        "timezone": "Time zone",
+        "trial": "Trial ends",
+        "noTrial": "No trial"
       },
       "owner": {
         "title": "Owner",

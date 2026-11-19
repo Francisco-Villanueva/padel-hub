@@ -2,7 +2,8 @@
   "app": {
     "name": "PadelHub",
     "tagline": "Encontre o jogador certo para completar seu horário.",
-    "poweredBy": "Desenvolvido pela Duxio"
+    "poweredBy": "Desenvolvido pela Duxio",
+    "trialBanner": "Teste grátis: {days, plural, one {resta # dia} other {restam # dias}}. Fale conosco para ativar seu plano."
   },
   "common": {
     "save": "Salvar",
@@ -536,7 +537,9 @@
         "slug": "Slug",
         "country": "País",
         "locale": "Idioma",
-        "timezone": "Fuso horário"
+        "timezone": "Fuso horário",
+        "trial": "Fim do teste",
+        "noTrial": "Sem teste"
       },
       "owner": {
         "title": "Dono",
