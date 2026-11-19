@@ -256,3 +256,36 @@ describe('utilidades', () => {
     expect(passwordProblem('una-clave-razonable')).toBeNull();
   });
 });
+
+describe('registerClub (alta pública)', () => {
+  const base = (n: string) => ({
+    name: `Club ${n}`, slug: `reg-${n}`, country: 'AR', timezone: 'America/Argentina/Buenos_Aires', locale: 'es' as const,
+    owner: { email: `reg-${n}@test.com`, name: 'Dueño', passwordHash: 'x' },
+  });
+
+  it('crea club, dueño y links, y devuelve una sesión de dueño', async () => {
+    const r = await svc.registerClub(base('ok'), { ip: '9.9.9.1' });
+    const tk = ok(r);
+    expect(tk.session.role).toBe('owner');
+    expect(tk.session.isSuperadmin).toBe(false);
+    const [club] = await t.withPlatform((tx) => tx.select().from(clubs).where(eq(clubs.slug, 'reg-ok')));
+    expect(club.id).toBe(tk.session.clubId);
+    const [m] = await t.withPlatform((tx) => tx.select().from(clubMembers).where(eq(clubMembers.clubId, club.id)));
+    expect(m.role).toBe('owner');
+  });
+
+  it('rechaza slug o email repetidos sin crear nada', async () => {
+    expect((await svc.registerClub({ ...base('dup'), owner: { ...base('dup').owner, email: 'otro@test.com' } }, { ip: '9.9.9.2' })).status).toBe('ok');
+    expect((await svc.registerClub({ ...base('dup'), owner: { ...base('dup').owner, email: 'otro2@test.com' } }, { ip: '9.9.9.2' })).status).toBe('slug_taken');
+    expect((await svc.registerClub({ ...base('dup2'), owner: { ...base('dup').owner, email: 'otro@test.com' } }, { ip: '9.9.9.2' })).status).toBe('email_taken');
+    const rows = await t.withPlatform((tx) => tx.select().from(clubs).where(eq(clubs.slug, 'reg-dup2')));
+    expect(rows).toHaveLength(0);
+  });
+
+  it('limita las altas por IP', async () => {
+    const results: string[] = [];
+    for (let i = 0; i < 6; i++) results.push((await svc.registerClub(base(`rl${i}`), { ip: '9.9.9.3' })).status);
+    expect(results.slice(0, 5)).toEqual(Array(5).fill('ok'));
+    expect(results[5]).toBe('rate_limited');
+  });
+});

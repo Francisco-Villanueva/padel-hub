@@ -3,11 +3,12 @@
 // Todo corre con withPlatform(): el login ocurre antes de saber a qué club pertenece el usuario.
 import { and, eq, isNull } from 'drizzle-orm';
 import { createHmac } from 'node:crypto';
-import { clubMembers, clubs, refreshTokens, users } from '../db/schema';
+import { auditLog, clubMembers, clubs, refreshTokens, users } from '../db/schema';
 import type { Runners, Tx } from '../db/tenant';
+import { createClub } from '../services/clubs';
 import { hitRateLimit } from '../services/rate-limit';
 import {
-  LOCKOUT_MS, LOGIN_LIMIT_PER_EMAIL, LOGIN_LIMIT_PER_IP, MAX_FAILED_LOGINS, REFRESH_CONCURRENCY_GRACE_MS, REFRESH_TTL_SEC,
+  LOCKOUT_MS, LOGIN_LIMIT_PER_EMAIL, LOGIN_LIMIT_PER_IP, MAX_FAILED_LOGINS, REFRESH_CONCURRENCY_GRACE_MS, REGISTER_LIMIT_PER_IP, REFRESH_TTL_SEC,
 } from './config';
 import { jwtKey, newOpaqueToken, sha256, signAccessToken, type Role, type Session } from './jwt';
 
@@ -34,6 +35,14 @@ export type LoginResult =
   | { status: 'ok'; tokens: Tokens }
   | { status: 'choose_club'; clubs: ClubChoice[] }
   | { status: 'invalid_credentials' | 'locked' | 'rate_limited' | 'no_access' };
+
+export interface RegisterClubInput {
+  name: string; slug: string; country: string; timezone: string; locale: 'es' | 'en' | 'pt';
+  owner: { email: string; name: string; passwordHash: string };
+}
+export type RegisterResult =
+  | { status: 'ok'; tokens: Tokens }
+  | { status: 'slug_taken' | 'email_taken' | 'rate_limited' };
 
 export type RefreshResult =
   | { status: 'ok'; tokens: Tokens }
@@ -116,6 +125,32 @@ export function createAuthService(deps: AuthDeps) {
         };
         return { status: 'ok', tokens: await issue(tx, session, meta) };
       });
+    },
+
+    /** Autoservicio: crea el club con su dueño y deja la sesión iniciada. Todo en una transacción. */
+    async registerClub(input: RegisterClubInput, meta: RequestMeta = {}): Promise<RegisterResult> {
+      try {
+        return await deps.runners.withPlatform(async (tx): Promise<RegisterResult> => {
+          if (meta.ip && !(await hit(tx, `register:ip:${hmac(meta.ip)}`, REGISTER_LIMIT_PER_IP))) return { status: 'rate_limited' };
+          const [slug] = await tx.select({ id: clubs.id }).from(clubs).where(eq(clubs.slug, input.slug)).limit(1);
+          if (slug) return { status: 'slug_taken' };
+          const [mail] = await tx.select({ id: users.id }).from(users).where(eq(users.email, input.owner.email)).limit(1);
+          if (mail) return { status: 'email_taken' };
+
+          const { club, ownerId } = await createClub(tx, {
+            slug: input.slug, name: input.name, country: input.country, timezone: input.timezone, locale: input.locale, owner: input.owner,
+          });
+          await tx.insert(auditLog).values({ clubId: club.id, userId: ownerId, action: 'club.register' });
+          const session: Session = { userId: ownerId, clubId: club.id, role: 'owner', isSuperadmin: false, familyId: crypto.randomUUID() };
+          return { status: 'ok', tokens: await issue(tx, session, meta) };
+        });
+      } catch (e) {
+        // Dos altas simultáneas con el mismo slug o email: gana la primera, la otra viola el índice único.
+        const err = e as { code?: string; constraint?: string; cause?: { code?: string; constraint?: string } };
+        const code = err.code ?? err.cause?.code, constraint = err.constraint ?? err.cause?.constraint ?? '';
+        if (code === '23505') return { status: constraint.includes('slug') ? 'slug_taken' : 'email_taken' };
+        throw e;
+      }
     },
 
     /** Rota el refresh token. Con `clubId` además cambia el club activo (el usuario debe ser miembro). */

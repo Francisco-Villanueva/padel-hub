@@ -80,7 +80,9 @@
     "chooseClubSubtitle": "Seu usuário tem acesso a mais de um clube.",
     "heroTitle": "Complete o horário com a sua comunidade.",
     "heroBody": "Encontre o jogador certo por categoria, posição e horário, e escreva para ele no WhatsApp.",
-    "expired": "Sua sessão expirou. Entre de novo para continuar."
+    "expired": "Sua sessão expirou. Entre de novo para continuar.",
+    "noAccount": "Seu clube ainda não tem conta?",
+    "createClub": "Crie seu clube"
   },
   "nav": {
     "players": "Jogadores",
@@ -694,6 +696,32 @@
     },
     "whatsapp": {
       "label": "Dúvidas? Fale com a gente"
+    }
+  },
+  "register": {
+    "heroTitle": "Monte a comunidade do seu clube.",
+    "heroBody": "Crie sua conta, compartilhe o link de cadastro e comece a organizar seus jogadores por categoria, posição e horário.",
+    "heading": "Crie seu clube",
+    "subtitle": "É grátis e em um minuto seu painel está pronto.",
+    "clubName": "Nome do clube",
+    "country": "País",
+    "slug": "Identificador do clube",
+    "slugHint": "Letras minúsculas, números e hifens. Vai nos links de cadastro dos seus jogadores.",
+    "ownerName": "Seu nome",
+    "ownerEmail": "Seu email",
+    "password": "Senha",
+    "passwordHint": "Mínimo de 10 caracteres.",
+    "submit": "Criar meu clube",
+    "submitting": "Criando…",
+    "haveAccount": "Já tem conta?",
+    "login": "Entrar",
+    "errors": {
+      "slug_taken": "Já existe um clube com esse identificador. Tente outro.",
+      "email_taken": "Esse email já tem uma conta. Entre ou use outro email.",
+      "rate_limited": "Muitas tentativas. Tente novamente em instantes.",
+      "invalid_request": "Revise os campos destacados.",
+      "forbidden": "Não foi possível concluir a solicitação.",
+      "generic": "Algo deu errado. Tente novamente."
     }
   }
 }

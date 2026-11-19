@@ -15,3 +15,4 @@ export const REFRESH_COOKIE = 'ph_rt';
 export const REFRESH_COOKIE_PATH = '/api/auth';
 
 export const MIN_PASSWORD_LENGTH = 10;
+export const REGISTER_LIMIT_PER_IP = { max: 5, windowSec: 3600 };
