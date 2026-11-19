@@ -926,7 +926,9 @@
       "points": "Points",
       "empty": "No points in this period.",
       "noGroupsTitle": "No ranking yet",
-      "noGroupsBody": "It shows up when you close a ranked tournament."
+      "noGroupsBody": "It shows up when you close a ranked tournament.",
+      "publicLead": "Standings from the club's ranked tournaments.",
+      "publicNoGroupsBody": "There are no closed ranked tournaments yet."
     },
     "errors": {
       "generic": "The action could not be completed. Try again.",

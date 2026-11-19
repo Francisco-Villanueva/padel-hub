@@ -926,7 +926,9 @@
       "points": "Puntos",
       "empty": "No hay puntos en este período.",
       "noGroupsTitle": "Todavía no hay ranking",
-      "noGroupsBody": "Aparece cuando cierres un torneo puntuable."
+      "noGroupsBody": "Aparece cuando cierres un torneo puntuable.",
+      "publicLead": "Posiciones según los torneos puntuables del club.",
+      "publicNoGroupsBody": "Todavía no hay torneos puntuables cerrados."
     },
     "errors": {
       "generic": "No se pudo completar la acción. Probá de nuevo.",

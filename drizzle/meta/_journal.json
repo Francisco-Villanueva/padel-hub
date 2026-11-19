@@ -57,6 +57,13 @@
       "when": 1795044511602,
       "tag": "0007_tournaments",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1795045745912,
+      "tag": "0008_public_ranking",
+      "breakpoints": true
     }
   ]
 }

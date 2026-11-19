@@ -9,6 +9,7 @@ import { createClub } from '../src/server/services/clubs';
 import { setClubFeature } from '../src/server/services/features';
 import { createPlayer } from '../src/server/services/players';
 import { arg, runners } from './_db';
+import { seedExampleTournament } from './_seed-tournament';
 
 const FIRST_M = ['Juan', 'Martín', 'Lucas', 'Matías', 'Nicolás', 'Santiago', 'Facundo', 'Federico', 'Tomás', 'Agustín', 'Diego', 'Gonzalo'];
 const FIRST_F = ['María', 'Sofía', 'Lucía', 'Valentina', 'Camila', 'Julieta', 'Florencia', 'Agustina', 'Paula', 'Carolina', 'Romina', 'Daniela'];
@@ -29,7 +30,8 @@ async function main() {
     const [existing] = await r.withPlatform((tx) => tx.select({ id: clubs.id }).from(clubs).where(eq(clubs.slug, 'demo-padel')));
     if (existing) {
       await r.withPlatform((tx) => setClubFeature(tx, { userId: null }, existing.id, 'tournaments', true));
-      return console.log('El club demo-padel ya existe; solo se aseguró que tenga activados los torneos.');
+      const made = await seedExampleTournament(r, existing.id);
+      return console.log(`El club demo-padel ya existe; torneos activados${made ? ' y torneo de ejemplo cargado' : ' (ya tenía torneos)'}.`);
     }
 
     const passwordHash = await hashPassword(password);
@@ -57,6 +59,7 @@ async function main() {
         n++;
       } catch { /* teléfono inválido o repetido: se descarta */ }
     }
+    await seedExampleTournament(r, club.id);
     console.log(`Club demo creado con ${n} jugadores.\nDueño: dueno@demo.padelhub.dev\nEmpleado: empleado@demo.padelhub.dev`);
   } finally { await r.close(); }
 }

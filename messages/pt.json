@@ -926,7 +926,9 @@
       "points": "Pontos",
       "empty": "Não há pontos neste período.",
       "noGroupsTitle": "Ainda não há ranking",
-      "noGroupsBody": "Aparece quando você encerrar um torneio que pontua."
+      "noGroupsBody": "Aparece quando você encerrar um torneio que pontua.",
+      "publicLead": "Posições conforme os torneios do clube que pontuam.",
+      "publicNoGroupsBody": "Ainda não há torneios que pontuam encerrados."
     },
     "errors": {
       "generic": "Não foi possível concluir a ação. Tente de novo.",
