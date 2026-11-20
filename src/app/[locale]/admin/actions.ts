@@ -3,12 +3,14 @@
 import { refresh } from "next/cache";
 import { redirect } from "next/navigation";
 import { newClubSchema } from "@/lib/club-schema";
+import { isFeature } from "@/lib/features";
 import { hashPassword, passwordProblem } from "@/server/auth/password";
 import { requireSuperadmin } from "@/server/auth/session";
 import { withPlatform } from "@/server/db/client";
 import { LOCALES } from "@/server/db/schema";
 import { createClubAsAdmin, setClubStatus } from "@/server/services/admin-clubs";
 import { resetPassword, UserError } from "@/server/services/club-users";
+import { setClubFeature } from "@/server/services/features";
 
 export type AdminState = {
   status: "idle" | "ok" | "error";
@@ -59,6 +61,23 @@ export async function setClubStatusAction(_prev: AdminState, fd: FormData): Prom
   if (!UUID.test(id)) return fail("generic");
   try {
     if (!(await withPlatform((tx) => setClubStatus(tx, { userId }, id, status)))) return fail("generic");
+  } catch (e) {
+    console.error(e);
+    return fail("generic");
+  }
+  refresh();
+  return { status: "ok" };
+}
+
+/** Activa o apaga una función (torneos…) para un club. Solo el superadmin; queda en audit_log. */
+export async function setClubFeatureAction(_prev: AdminState, fd: FormData): Promise<AdminState> {
+  const { userId } = await admin(fd);
+  const id = String(fd.get("clubId") ?? "");
+  const feature = fd.get("feature");
+  const enabled = fd.get("enabled") === "true";
+  if (!UUID.test(id) || !isFeature(feature)) return fail("generic");
+  try {
+    if (!(await withPlatform((tx) => setClubFeature(tx, { userId }, id, feature, enabled)))) return fail("generic");
   } catch (e) {
     console.error(e);
     return fail("generic");

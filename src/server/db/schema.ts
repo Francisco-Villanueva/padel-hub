@@ -2,7 +2,7 @@
 // RLS, roles y grants viven en una migración SQL aparte (drizzle/0001_rls.sql).
 import { sql } from 'drizzle-orm';
 import {
-  bigserial, boolean, check, customType, foreignKey, index, integer, jsonb, pgEnum, pgTable,
+  bigserial, boolean, check, customType, date, foreignKey, index, integer, jsonb, pgEnum, pgTable,
   primaryKey, smallint, text, timestamp, unique, uuid,
 } from 'drizzle-orm/pg-core';
 
@@ -59,6 +59,19 @@ export const clubLogos = pgTable('club_logos', {
 }, (t) => [
   check('club_logos_type_chk', sql`${t.contentType} = 'image/webp'`),
   check('club_logos_size_chk', sql`octet_length(${t.data}) between 1 and 600000`),
+]);
+
+// Funciones habilitadas por club (feature flags) ---------------------------------------------
+// Solo el superadmin escribe (platform_user); el club (app_user) únicamente lee las filas propias. Sin fila = apagado.
+export const clubFeatures = pgTable('club_features', {
+  clubId: uuid('club_id').notNull().references(() => clubs.id, { onDelete: 'cascade' }),
+  feature: text('feature').notNull(),
+  enabled: boolean('enabled').notNull().default(false),
+  enabledAt: ts('enabled_at'),
+  enabledBy: uuid('enabled_by').references(() => users.id, { onDelete: 'set null' }),
+}, (t) => [
+  primaryKey({ columns: [t.clubId, t.feature] }),
+  check('club_features_feature_chk', sql`${t.feature} in ('tournaments')`),
 ]);
 
 // Usuarios y sesiones -------------------------------------------------------------
@@ -222,3 +235,171 @@ export const auditLog = pgTable('audit_log', {
   detail: jsonb('detail'),
   createdAt: ts('created_at').notNull().defaultNow(),
 });
+
+// Torneos y rankings (docs/torneos-y-rankings.md, sección 7) ------------------------------------
+// Todas con club_id, RLS (drizzle/0008_tournaments.sql) y FK compuestas (id, club_id): nada referencia filas de otro club.
+const ROUND_KEYS_SQL = "('champion','final','semifinal','quarterfinal','round_of_16','round_of_32','round_of_64','round_of_128')";
+const MODALITIES_SQL = "('libre','mixto','masculino','femenino')";
+
+export const tournamentTemplates = pgTable('tournament_templates', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  clubId: uuid('club_id').notNull().references(() => clubs.id, { onDelete: 'cascade' }),
+  name: text('name').notNull(),
+  championPoints: integer('champion_points').notNull(),
+  participationPoints: integer('participation_points').notNull().default(0),
+  /** Porcentaje por ronda ({ final: 60, … }); null = los del motor. */
+  roundPercents: jsonb('round_percents').$type<Record<string, number> | null>(),
+  createdAt: ts('created_at').notNull().defaultNow(),
+  updatedAt: ts('updated_at').notNull().defaultNow().$onUpdate(() => new Date()),
+}, (t) => [
+  unique('tournament_templates_id_club_uq').on(t.id, t.clubId),
+  check('tournament_templates_name_chk', sql`length(${t.name}) between 1 and 80`),
+  check('tournament_templates_points_chk', sql`${t.championPoints} > 0 and ${t.participationPoints} >= 0`),
+]);
+
+export const tournaments = pgTable('tournaments', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  clubId: uuid('club_id').notNull().references(() => clubs.id, { onDelete: 'cascade' }),
+  name: text('name').notNull(),
+  modality: text('modality').notNull(),
+  categoryRuleKind: text('category_rule_kind').notNull(), // single | sum
+  categoryRuleValue: smallint('category_rule_value').notNull(),
+  isRanked: boolean('is_ranked').notNull().default(false),
+  minPairs: smallint('min_pairs').notNull(),
+  status: text('status').notNull().default('borrador'),
+  championPoints: integer('champion_points').notNull(),
+  participationPoints: integer('participation_points').notNull().default(0),
+  /** Snapshot de los puntos por ronda al crear el torneo (editar la plantilla después no lo cambia). */
+  pointsTable: jsonb('points_table').$type<Record<string, number>>().notNull(),
+  templateId: uuid('template_id'), // informativo: sin FK, la plantilla se puede borrar
+  startsOn: date('starts_on').notNull(),
+  endsOn: date('ends_on'),
+  seedWindow: text('seed_window').notNull().default('all'),
+  drawSeed: integer('draw_seed'), // semilla del sorteo de zonas (reproducible)
+  createdBy: uuid('created_by').references(() => users.id, { onDelete: 'set null' }),
+  createdAt: ts('created_at').notNull().defaultNow(),
+  updatedAt: ts('updated_at').notNull().defaultNow().$onUpdate(() => new Date()),
+  cancelledAt: ts('cancelled_at'),
+  closedAt: ts('closed_at'),
+}, (t) => [
+  unique('tournaments_id_club_uq').on(t.id, t.clubId),
+  check('tournaments_name_chk', sql`length(${t.name}) between 1 and 100`),
+  check('tournaments_modality_chk', sql.raw(`modality in ${MODALITIES_SQL}`)),
+  check('tournaments_rule_kind_chk', sql`${t.categoryRuleKind} in ('single','sum')`),
+  check('tournaments_rule_value_chk', sql`(${t.categoryRuleKind} = 'single' and ${t.categoryRuleValue} between 1 and 9) or (${t.categoryRuleKind} = 'sum' and ${t.categoryRuleValue} between 2 and 18)`),
+  check('tournaments_min_pairs_chk', sql`${t.minPairs} >= 6`),
+  check('tournaments_status_chk', sql`${t.status} in ('borrador','inscripcion','zonas','llave','cerrado','cancelado')`),
+  check('tournaments_points_chk', sql`${t.championPoints} > 0 and ${t.participationPoints} >= 0`),
+  check('tournaments_seed_window_chk', sql`${t.seedWindow} in ('month','6months','year','all')`),
+  index('tournaments_club_status_idx').on(t.clubId, t.status),
+]);
+
+export const tournamentZones = pgTable('tournament_zones', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  clubId: uuid('club_id').notNull().references(() => clubs.id, { onDelete: 'cascade' }),
+  tournamentId: uuid('tournament_id').notNull(),
+  name: text('name').notNull(),
+  size: smallint('size').notNull(),
+  position: smallint('position').notNull(),
+  /** Sorteo de desempate: { seed, order: [entryId…] }. Queda registrado. */
+  tieDraw: jsonb('tie_draw'),
+}, (t) => [
+  unique('tournament_zones_id_club_uq').on(t.id, t.clubId),
+  unique('tournament_zones_position_uq').on(t.tournamentId, t.position),
+  foreignKey({ columns: [t.tournamentId, t.clubId], foreignColumns: [tournaments.id, tournaments.clubId], name: 'tournament_zones_tournament_same_club_fk' }).onDelete('cascade'),
+  check('tournament_zones_size_chk', sql`${t.size} in (3,4)`),
+]);
+
+export const tournamentEntries = pgTable('tournament_entries', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  clubId: uuid('club_id').notNull().references(() => clubs.id, { onDelete: 'cascade' }),
+  tournamentId: uuid('tournament_id').notNull(),
+  player1Id: uuid('player1_id').notNull(),
+  player2Id: uuid('player2_id').notNull(),
+  seed: smallint('seed'),
+  zoneId: uuid('zone_id'),
+  status: text('status').notNull().default('inscripta'), // inscripta | baja
+  roundReached: text('round_reached'),
+  createdAt: ts('created_at').notNull().defaultNow(),
+}, (t) => [
+  unique('tournament_entries_id_club_uq').on(t.id, t.clubId),
+  foreignKey({ columns: [t.tournamentId, t.clubId], foreignColumns: [tournaments.id, tournaments.clubId], name: 'tournament_entries_tournament_same_club_fk' }).onDelete('cascade'),
+  foreignKey({ columns: [t.player1Id, t.clubId], foreignColumns: [players.id, players.clubId], name: 'tournament_entries_player1_same_club_fk' }),
+  foreignKey({ columns: [t.player2Id, t.clubId], foreignColumns: [players.id, players.clubId], name: 'tournament_entries_player2_same_club_fk' }),
+  foreignKey({ columns: [t.zoneId, t.clubId], foreignColumns: [tournamentZones.id, tournamentZones.clubId], name: 'tournament_entries_zone_same_club_fk' }),
+  check('tournament_entries_players_chk', sql`${t.player1Id} <> ${t.player2Id}`),
+  check('tournament_entries_status_chk', sql`${t.status} in ('inscripta','baja')`),
+  check('tournament_entries_round_chk', sql.raw(`round_reached is null or round_reached in ${ROUND_KEYS_SQL}`)),
+  index('tournament_entries_tournament_idx').on(t.tournamentId),
+]);
+
+// Un jugador no puede estar en dos parejas activas del mismo torneo: una fila por jugador de cada pareja inscripta.
+// El servicio las crea al inscribir y las borra al dar de baja; la restricción única lo garantiza aunque dos pedidos corran a la vez.
+export const tournamentEntryPlayers = pgTable('tournament_entry_players', {
+  clubId: uuid('club_id').notNull().references(() => clubs.id, { onDelete: 'cascade' }),
+  tournamentId: uuid('tournament_id').notNull(),
+  entryId: uuid('entry_id').notNull(),
+  playerId: uuid('player_id').notNull(),
+}, (t) => [
+  primaryKey({ columns: [t.entryId, t.playerId] }),
+  unique('tournament_entry_players_tournament_player_uq').on(t.tournamentId, t.playerId),
+  foreignKey({ columns: [t.tournamentId, t.clubId], foreignColumns: [tournaments.id, tournaments.clubId], name: 'tournament_entry_players_tournament_same_club_fk' }).onDelete('cascade'),
+  foreignKey({ columns: [t.entryId, t.clubId], foreignColumns: [tournamentEntries.id, tournamentEntries.clubId], name: 'tournament_entry_players_entry_same_club_fk' }).onDelete('cascade'),
+  foreignKey({ columns: [t.playerId, t.clubId], foreignColumns: [players.id, players.clubId], name: 'tournament_entry_players_player_same_club_fk' }),
+]);
+
+export const tournamentMatches = pgTable('tournament_matches', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  clubId: uuid('club_id').notNull().references(() => clubs.id, { onDelete: 'cascade' }),
+  tournamentId: uuid('tournament_id').notNull(),
+  stage: text('stage').notNull(), // zona | llave
+  zoneId: uuid('zone_id'),
+  round: smallint('round').notNull(),
+  position: smallint('position').notNull(),
+  entryAId: uuid('entry_a_id'),
+  entryBId: uuid('entry_b_id'),
+  /** Games por set: [[6,4],[3,6],[6,2]] (A, B). */
+  sets: jsonb('sets').$type<[number, number][]>(),
+  winnerEntryId: uuid('winner_entry_id'),
+  status: text('status').notNull().default('pendiente'), // pendiente | jugado | bye
+  nextMatchId: uuid('next_match_id'),
+  nextSlot: text('next_slot'), // a | b
+  playedAt: ts('played_at'),
+}, (t) => [
+  unique('tournament_matches_id_club_uq').on(t.id, t.clubId),
+  foreignKey({ columns: [t.tournamentId, t.clubId], foreignColumns: [tournaments.id, tournaments.clubId], name: 'tournament_matches_tournament_same_club_fk' }).onDelete('cascade'),
+  foreignKey({ columns: [t.zoneId, t.clubId], foreignColumns: [tournamentZones.id, tournamentZones.clubId], name: 'tournament_matches_zone_same_club_fk' }).onDelete('cascade'),
+  foreignKey({ columns: [t.entryAId, t.clubId], foreignColumns: [tournamentEntries.id, tournamentEntries.clubId], name: 'tournament_matches_entry_a_same_club_fk' }),
+  foreignKey({ columns: [t.entryBId, t.clubId], foreignColumns: [tournamentEntries.id, tournamentEntries.clubId], name: 'tournament_matches_entry_b_same_club_fk' }),
+  foreignKey({ columns: [t.winnerEntryId, t.clubId], foreignColumns: [tournamentEntries.id, tournamentEntries.clubId], name: 'tournament_matches_winner_same_club_fk' }),
+  foreignKey({ columns: [t.nextMatchId, t.clubId], foreignColumns: [t.id, t.clubId], name: 'tournament_matches_next_same_club_fk' }),
+  check('tournament_matches_stage_chk', sql`${t.stage} in ('zona','llave')`),
+  check('tournament_matches_status_chk', sql`${t.status} in ('pendiente','jugado','bye')`),
+  check('tournament_matches_slot_chk', sql`${t.nextSlot} is null or ${t.nextSlot} in ('a','b')`),
+  check('tournament_matches_winner_chk', sql`${t.winnerEntryId} is null or coalesce(${t.winnerEntryId} = ${t.entryAId}, false) or coalesce(${t.winnerEntryId} = ${t.entryBId}, false)`),
+  index('tournament_matches_tournament_idx').on(t.tournamentId, t.stage, t.round, t.position),
+]);
+
+// Libro de puntos: el ranking se calcula sumando estas filas. Única por (torneo, jugador): cerrar dos veces no duplica.
+export const rankingEvents = pgTable('ranking_events', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  clubId: uuid('club_id').notNull().references(() => clubs.id, { onDelete: 'cascade' }),
+  playerId: uuid('player_id').notNull(),
+  tournamentId: uuid('tournament_id').notNull(),
+  entryId: uuid('entry_id').notNull(),
+  roundReached: text('round_reached'), // null = no pasó la zona (solo participación)
+  points: integer('points').notNull(),
+  tournamentEndedOn: date('tournament_ended_on').notNull(),
+  categoryRuleKind: text('category_rule_kind').notNull(),
+  categoryRuleValue: smallint('category_rule_value').notNull(),
+  modality: text('modality').notNull(),
+  createdAt: ts('created_at').notNull().defaultNow(),
+}, (t) => [
+  unique('ranking_events_tournament_player_uq').on(t.tournamentId, t.playerId),
+  foreignKey({ columns: [t.playerId, t.clubId], foreignColumns: [players.id, players.clubId], name: 'ranking_events_player_same_club_fk' }),
+  foreignKey({ columns: [t.tournamentId, t.clubId], foreignColumns: [tournaments.id, tournaments.clubId], name: 'ranking_events_tournament_same_club_fk' }).onDelete('cascade'),
+  foreignKey({ columns: [t.entryId, t.clubId], foreignColumns: [tournamentEntries.id, tournamentEntries.clubId], name: 'ranking_events_entry_same_club_fk' }).onDelete('cascade'),
+  check('ranking_events_points_chk', sql`${t.points} >= 0`),
+  check('ranking_events_round_chk', sql.raw(`round_reached is null or round_reached in ${ROUND_KEYS_SQL}`)),
+  index('ranking_events_group_idx').on(t.clubId, t.categoryRuleKind, t.categoryRuleValue, t.modality, t.tournamentEndedOn),
+]);

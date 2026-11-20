@@ -1,4 +1,4 @@
-export type NavIcon = "home" | "players" | "cuarto" | "settings" | "clubs";
+export type NavIcon = "home" | "players" | "cuarto" | "settings" | "clubs" | "trophy";
 
 /** Ítem de navegación serializable (server → client). `label` es una clave del namespace `nav`. */
 export interface NavItem {
