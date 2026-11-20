@@ -1,4 +1,4 @@
-// Ranking público de un club. Va por withPlatform() y funciones SECURITY DEFINER (0008): nunca toca las tablas.
+// Ranking público de un club. Va por withPlatform() y funciones SECURITY DEFINER (0009): nunca toca las tablas.
 // Devuelve nada si el club está suspendido o no tiene activada la función de torneos.
 import { sql } from 'drizzle-orm';
 import type { CategoryRuleKind, Modality } from '../../lib/tournament/constants';

@@ -2,7 +2,8 @@
   "app": {
     "name": "PadelHub",
     "tagline": "Find the right player to fill your court.",
-    "poweredBy": "Developed by Duxio"
+    "poweredBy": "Developed by Duxio",
+    "trialBanner": "Free trial: {days, plural, one {# day} other {# days}} left. Contact us to activate your plan."
   },
   "common": {
     "save": "Save",
@@ -80,7 +81,9 @@
     "chooseClubSubtitle": "Your user has access to more than one club.",
     "heroTitle": "Fill the court with your community.",
     "heroBody": "Find the right player by category, position and availability, and message them on WhatsApp.",
-    "expired": "Your session expired. Sign in again to continue."
+    "expired": "Your session expired. Sign in again to continue.",
+    "noAccount": "Doesn't your club have an account yet?",
+    "createClub": "Create your club"
   },
   "nav": {
     "players": "Players",
@@ -535,7 +538,9 @@
         "slug": "Slug",
         "country": "Country",
         "locale": "Language",
-        "timezone": "Time zone"
+        "timezone": "Time zone",
+        "trial": "Trial ends",
+        "noTrial": "No trial"
       },
       "owner": {
         "title": "Owner",
@@ -957,6 +962,32 @@
       "sum_too_low": "The categories do not reach the minimum sum.",
       "modality_mismatch": "The pair does not meet the tournament modality.",
       "same_player": "Pick two different players."
+    }
+  },
+  "register": {
+    "heroTitle": "Build your club's community.",
+    "heroBody": "Create your account, share the sign-up link and start organizing your players by category, position and schedule.",
+    "heading": "Create your club",
+    "subtitle": "It's free and your dashboard is ready in a minute.",
+    "clubName": "Club name",
+    "country": "Country",
+    "slug": "Club identifier",
+    "slugHint": "Lowercase letters, numbers and hyphens. It goes in your players' sign-up links.",
+    "ownerName": "Your name",
+    "ownerEmail": "Your email",
+    "password": "Password",
+    "passwordHint": "At least 10 characters.",
+    "submit": "Create my club",
+    "submitting": "Creating…",
+    "haveAccount": "Already have an account?",
+    "login": "Sign in",
+    "errors": {
+      "slug_taken": "A club with that identifier already exists. Try another one.",
+      "email_taken": "That email already has an account. Sign in or use another email.",
+      "rate_limited": "Too many attempts. Try again in a while.",
+      "invalid_request": "Check the highlighted fields.",
+      "forbidden": "The request could not be completed.",
+      "generic": "Something went wrong. Please try again."
     }
   }
 }

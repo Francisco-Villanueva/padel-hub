@@ -1,6 +1,6 @@
 {
-  "id": "92ca6fcd-2667-4dc8-88b6-3c8e11d5aa2b",
-  "prevId": "a39352e0-82fe-472c-b0ef-92ba64c32461",
+  "id": "a39352e0-82fe-472c-b0ef-92ba64c32461",
+  "prevId": "a1ac2b72-68ad-4921-9ec4-4252401abc4a",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -51,28 +51,28 @@
         "audit_log_club_id_clubs_id_fk": {
           "name": "audit_log_club_id_clubs_id_fk",
           "tableFrom": "audit_log",
+          "tableTo": "clubs",
           "columnsFrom": [
             "club_id"
           ],
-          "tableTo": "clubs",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "set null"
+          "onDelete": "set null",
+          "onUpdate": "no action"
         },
         "audit_log_user_id_users_id_fk": {
           "name": "audit_log_user_id_users_id_fk",
           "tableFrom": "audit_log",
+          "tableTo": "users",
           "columnsFrom": [
             "user_id"
           ],
-          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "set null"
+          "onDelete": "set null",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -135,25 +135,25 @@
         "auth_tokens_user_id_users_id_fk": {
           "name": "auth_tokens_user_id_users_id_fk",
           "tableFrom": "auth_tokens",
+          "tableTo": "users",
           "columnsFrom": [
             "user_id"
           ],
-          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "auth_tokens_token_hash_unique": {
           "name": "auth_tokens_token_hash_unique",
+          "nullsNotDistinct": false,
           "columns": [
             "token_hash"
-          ],
-          "nullsNotDistinct": false
+          ]
         }
       },
       "policies": {},
@@ -206,28 +206,28 @@
         "club_features_club_id_clubs_id_fk": {
           "name": "club_features_club_id_clubs_id_fk",
           "tableFrom": "club_features",
+          "tableTo": "clubs",
           "columnsFrom": [
             "club_id"
           ],
-          "tableTo": "clubs",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         },
         "club_features_enabled_by_users_id_fk": {
           "name": "club_features_enabled_by_users_id_fk",
           "tableFrom": "club_features",
+          "tableTo": "users",
           "columnsFrom": [
             "enabled_by"
           ],
-          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "set null"
+          "onDelete": "set null",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
@@ -285,15 +285,15 @@
         "club_logos_club_id_clubs_id_fk": {
           "name": "club_logos_club_id_clubs_id_fk",
           "tableFrom": "club_logos",
+          "tableTo": "clubs",
           "columnsFrom": [
             "club_id"
           ],
-          "tableTo": "clubs",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -347,28 +347,28 @@
         "club_members_club_id_clubs_id_fk": {
           "name": "club_members_club_id_clubs_id_fk",
           "tableFrom": "club_members",
+          "tableTo": "clubs",
           "columnsFrom": [
             "club_id"
           ],
-          "tableTo": "clubs",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         },
         "club_members_user_id_users_id_fk": {
           "name": "club_members_user_id_users_id_fk",
           "tableFrom": "club_members",
+          "tableTo": "users",
           "columnsFrom": [
             "user_id"
           ],
-          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
@@ -480,6 +480,12 @@
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
+        },
+        "trial_ends_at": {
+          "name": "trial_ends_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {},
@@ -488,10 +494,10 @@
       "uniqueConstraints": {
         "clubs_slug_unique": {
           "name": "clubs_slug_unique",
+          "nullsNotDistinct": false,
           "columns": [
             "slug"
-          ],
-          "nullsNotDistinct": false
+          ]
         }
       },
       "policies": {},
@@ -592,52 +598,52 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         }
       },
       "foreignKeys": {
         "contact_log_club_id_clubs_id_fk": {
           "name": "contact_log_club_id_clubs_id_fk",
           "tableFrom": "contact_log",
+          "tableTo": "clubs",
           "columnsFrom": [
             "club_id"
           ],
-          "tableTo": "clubs",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         },
         "contact_log_user_id_users_id_fk": {
           "name": "contact_log_user_id_users_id_fk",
           "tableFrom": "contact_log",
+          "tableTo": "users",
           "columnsFrom": [
             "user_id"
           ],
-          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "contact_log_player_same_club_fk": {
           "name": "contact_log_player_same_club_fk",
           "tableFrom": "contact_log",
+          "tableTo": "players",
           "columnsFrom": [
             "player_id",
             "club_id"
           ],
-          "tableTo": "players",
           "columnsTo": [
             "id",
             "club_id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -693,45 +699,45 @@
         "event_invites_club_id_clubs_id_fk": {
           "name": "event_invites_club_id_clubs_id_fk",
           "tableFrom": "event_invites",
+          "tableTo": "clubs",
           "columnsFrom": [
             "club_id"
           ],
-          "tableTo": "clubs",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         },
         "event_invites_event_same_club_fk": {
           "name": "event_invites_event_same_club_fk",
           "tableFrom": "event_invites",
+          "tableTo": "events",
           "columnsFrom": [
             "event_id",
             "club_id"
           ],
-          "tableTo": "events",
           "columnsTo": [
             "id",
             "club_id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         },
         "event_invites_player_same_club_fk": {
           "name": "event_invites_player_same_club_fk",
           "tableFrom": "event_invites",
+          "tableTo": "players",
           "columnsFrom": [
             "player_id",
             "club_id"
           ],
-          "tableTo": "players",
           "columnsTo": [
             "id",
             "club_id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
@@ -820,39 +826,39 @@
         "events_club_id_clubs_id_fk": {
           "name": "events_club_id_clubs_id_fk",
           "tableFrom": "events",
+          "tableTo": "clubs",
           "columnsFrom": [
             "club_id"
           ],
-          "tableTo": "clubs",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         },
         "events_created_by_users_id_fk": {
           "name": "events_created_by_users_id_fk",
           "tableFrom": "events",
+          "tableTo": "users",
           "columnsFrom": [
             "created_by"
           ],
-          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "events_id_club_uq": {
           "name": "events_id_club_uq",
+          "nullsNotDistinct": false,
           "columns": [
             "id",
             "club_id"
-          ],
-          "nullsNotDistinct": false
+          ]
         }
       },
       "policies": {},
@@ -925,30 +931,30 @@
         "player_consents_club_id_clubs_id_fk": {
           "name": "player_consents_club_id_clubs_id_fk",
           "tableFrom": "player_consents",
+          "tableTo": "clubs",
           "columnsFrom": [
             "club_id"
           ],
-          "tableTo": "clubs",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         },
         "player_consents_player_same_club_fk": {
           "name": "player_consents_player_same_club_fk",
           "tableFrom": "player_consents",
+          "tableTo": "players",
           "columnsFrom": [
             "player_id",
             "club_id"
           ],
-          "tableTo": "players",
           "columnsTo": [
             "id",
             "club_id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -1089,10 +1095,10 @@
             }
           ],
           "isUnique": false,
-          "with": {},
-          "method": "btree",
           "where": "\"players\".\"deleted_at\" is null",
-          "concurrently": false
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
         },
         "players_slots_gin": {
           "name": "players_slots_gin",
@@ -1105,9 +1111,9 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "gin",
-          "concurrently": false
+          "with": {}
         },
         "players_search_idx": {
           "name": "players_search_idx",
@@ -1132,44 +1138,44 @@
             }
           ],
           "isUnique": false,
-          "with": {},
-          "method": "btree",
           "where": "\"players\".\"deleted_at\" is null",
-          "concurrently": false
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
         }
       },
       "foreignKeys": {
         "players_club_id_clubs_id_fk": {
           "name": "players_club_id_clubs_id_fk",
           "tableFrom": "players",
+          "tableTo": "clubs",
           "columnsFrom": [
             "club_id"
           ],
-          "tableTo": "clubs",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "players_club_phone_uq": {
           "name": "players_club_phone_uq",
+          "nullsNotDistinct": false,
           "columns": [
             "club_id",
             "phone_e164"
-          ],
-          "nullsNotDistinct": false
+          ]
         },
         "players_id_club_uq": {
           "name": "players_id_club_uq",
+          "nullsNotDistinct": false,
           "columns": [
             "id",
             "club_id"
-          ],
-          "nullsNotDistinct": false
+          ]
         }
       },
       "policies": {},
@@ -1312,80 +1318,80 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         }
       },
       "foreignKeys": {
         "ranking_events_club_id_clubs_id_fk": {
           "name": "ranking_events_club_id_clubs_id_fk",
           "tableFrom": "ranking_events",
+          "tableTo": "clubs",
           "columnsFrom": [
             "club_id"
           ],
-          "tableTo": "clubs",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         },
         "ranking_events_player_same_club_fk": {
           "name": "ranking_events_player_same_club_fk",
           "tableFrom": "ranking_events",
+          "tableTo": "players",
           "columnsFrom": [
             "player_id",
             "club_id"
           ],
-          "tableTo": "players",
           "columnsTo": [
             "id",
             "club_id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "ranking_events_tournament_same_club_fk": {
           "name": "ranking_events_tournament_same_club_fk",
           "tableFrom": "ranking_events",
+          "tableTo": "tournaments",
           "columnsFrom": [
             "tournament_id",
             "club_id"
           ],
-          "tableTo": "tournaments",
           "columnsTo": [
             "id",
             "club_id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         },
         "ranking_events_entry_same_club_fk": {
           "name": "ranking_events_entry_same_club_fk",
           "tableFrom": "ranking_events",
+          "tableTo": "tournament_entries",
           "columnsFrom": [
             "entry_id",
             "club_id"
           ],
-          "tableTo": "tournament_entries",
           "columnsTo": [
             "id",
             "club_id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "ranking_events_tournament_player_uq": {
           "name": "ranking_events_tournament_player_uq",
+          "nullsNotDistinct": false,
           "columns": [
             "tournament_id",
             "player_id"
-          ],
-          "nullsNotDistinct": false
+          ]
         }
       },
       "policies": {},
@@ -1517,9 +1523,9 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         },
         "refresh_tokens_user_idx": {
           "name": "refresh_tokens_user_idx",
@@ -1532,48 +1538,48 @@
             }
           ],
           "isUnique": false,
-          "with": {},
-          "method": "btree",
           "where": "\"refresh_tokens\".\"revoked_at\" is null",
-          "concurrently": false
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
         }
       },
       "foreignKeys": {
         "refresh_tokens_user_id_users_id_fk": {
           "name": "refresh_tokens_user_id_users_id_fk",
           "tableFrom": "refresh_tokens",
+          "tableTo": "users",
           "columnsFrom": [
             "user_id"
           ],
-          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         },
         "refresh_tokens_club_id_clubs_id_fk": {
           "name": "refresh_tokens_club_id_clubs_id_fk",
           "tableFrom": "refresh_tokens",
+          "tableTo": "clubs",
           "columnsFrom": [
             "club_id"
           ],
-          "tableTo": "clubs",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "refresh_tokens_token_hash_unique": {
           "name": "refresh_tokens_token_hash_unique",
+          "nullsNotDistinct": false,
           "columns": [
             "token_hash"
-          ],
-          "nullsNotDistinct": false
+          ]
         }
       },
       "policies": {},
@@ -1630,25 +1636,25 @@
         "signup_links_club_id_clubs_id_fk": {
           "name": "signup_links_club_id_clubs_id_fk",
           "tableFrom": "signup_links",
+          "tableTo": "clubs",
           "columnsFrom": [
             "club_id"
           ],
-          "tableTo": "clubs",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "signup_links_token_unique": {
           "name": "signup_links_token_unique",
+          "nullsNotDistinct": false,
           "columns": [
             "token"
-          ],
-          "nullsNotDistinct": false
+          ]
         }
       },
       "policies": {},
@@ -1740,95 +1746,95 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         }
       },
       "foreignKeys": {
         "tournament_entries_club_id_clubs_id_fk": {
           "name": "tournament_entries_club_id_clubs_id_fk",
           "tableFrom": "tournament_entries",
+          "tableTo": "clubs",
           "columnsFrom": [
             "club_id"
           ],
-          "tableTo": "clubs",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         },
         "tournament_entries_tournament_same_club_fk": {
           "name": "tournament_entries_tournament_same_club_fk",
           "tableFrom": "tournament_entries",
+          "tableTo": "tournaments",
           "columnsFrom": [
             "tournament_id",
             "club_id"
           ],
-          "tableTo": "tournaments",
           "columnsTo": [
             "id",
             "club_id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         },
         "tournament_entries_player1_same_club_fk": {
           "name": "tournament_entries_player1_same_club_fk",
           "tableFrom": "tournament_entries",
+          "tableTo": "players",
           "columnsFrom": [
             "player1_id",
             "club_id"
           ],
-          "tableTo": "players",
           "columnsTo": [
             "id",
             "club_id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "tournament_entries_player2_same_club_fk": {
           "name": "tournament_entries_player2_same_club_fk",
           "tableFrom": "tournament_entries",
+          "tableTo": "players",
           "columnsFrom": [
             "player2_id",
             "club_id"
           ],
-          "tableTo": "players",
           "columnsTo": [
             "id",
             "club_id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "tournament_entries_zone_same_club_fk": {
           "name": "tournament_entries_zone_same_club_fk",
           "tableFrom": "tournament_entries",
+          "tableTo": "tournament_zones",
           "columnsFrom": [
             "zone_id",
             "club_id"
           ],
-          "tableTo": "tournament_zones",
           "columnsTo": [
             "id",
             "club_id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "tournament_entries_id_club_uq": {
           "name": "tournament_entries_id_club_uq",
+          "nullsNotDistinct": false,
           "columns": [
             "id",
             "club_id"
-          ],
-          "nullsNotDistinct": false
+          ]
         }
       },
       "policies": {},
@@ -1882,60 +1888,60 @@
         "tournament_entry_players_club_id_clubs_id_fk": {
           "name": "tournament_entry_players_club_id_clubs_id_fk",
           "tableFrom": "tournament_entry_players",
+          "tableTo": "clubs",
           "columnsFrom": [
             "club_id"
           ],
-          "tableTo": "clubs",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         },
         "tournament_entry_players_tournament_same_club_fk": {
           "name": "tournament_entry_players_tournament_same_club_fk",
           "tableFrom": "tournament_entry_players",
+          "tableTo": "tournaments",
           "columnsFrom": [
             "tournament_id",
             "club_id"
           ],
-          "tableTo": "tournaments",
           "columnsTo": [
             "id",
             "club_id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         },
         "tournament_entry_players_entry_same_club_fk": {
           "name": "tournament_entry_players_entry_same_club_fk",
           "tableFrom": "tournament_entry_players",
+          "tableTo": "tournament_entries",
           "columnsFrom": [
             "entry_id",
             "club_id"
           ],
-          "tableTo": "tournament_entries",
           "columnsTo": [
             "id",
             "club_id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         },
         "tournament_entry_players_player_same_club_fk": {
           "name": "tournament_entry_players_player_same_club_fk",
           "tableFrom": "tournament_entry_players",
+          "tableTo": "players",
           "columnsFrom": [
             "player_id",
             "club_id"
           ],
-          "tableTo": "players",
           "columnsTo": [
             "id",
             "club_id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
@@ -1950,11 +1956,11 @@
       "uniqueConstraints": {
         "tournament_entry_players_tournament_player_uq": {
           "name": "tournament_entry_players_tournament_player_uq",
+          "nullsNotDistinct": false,
           "columns": [
             "tournament_id",
             "player_id"
-          ],
-          "nullsNotDistinct": false
+          ]
         }
       },
       "policies": {},
@@ -2088,125 +2094,125 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         }
       },
       "foreignKeys": {
         "tournament_matches_club_id_clubs_id_fk": {
           "name": "tournament_matches_club_id_clubs_id_fk",
           "tableFrom": "tournament_matches",
+          "tableTo": "clubs",
           "columnsFrom": [
             "club_id"
           ],
-          "tableTo": "clubs",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         },
         "tournament_matches_tournament_same_club_fk": {
           "name": "tournament_matches_tournament_same_club_fk",
           "tableFrom": "tournament_matches",
+          "tableTo": "tournaments",
           "columnsFrom": [
             "tournament_id",
             "club_id"
           ],
-          "tableTo": "tournaments",
           "columnsTo": [
             "id",
             "club_id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         },
         "tournament_matches_zone_same_club_fk": {
           "name": "tournament_matches_zone_same_club_fk",
           "tableFrom": "tournament_matches",
+          "tableTo": "tournament_zones",
           "columnsFrom": [
             "zone_id",
             "club_id"
           ],
-          "tableTo": "tournament_zones",
           "columnsTo": [
             "id",
             "club_id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         },
         "tournament_matches_entry_a_same_club_fk": {
           "name": "tournament_matches_entry_a_same_club_fk",
           "tableFrom": "tournament_matches",
+          "tableTo": "tournament_entries",
           "columnsFrom": [
             "entry_a_id",
             "club_id"
           ],
-          "tableTo": "tournament_entries",
           "columnsTo": [
             "id",
             "club_id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "tournament_matches_entry_b_same_club_fk": {
           "name": "tournament_matches_entry_b_same_club_fk",
           "tableFrom": "tournament_matches",
+          "tableTo": "tournament_entries",
           "columnsFrom": [
             "entry_b_id",
             "club_id"
           ],
-          "tableTo": "tournament_entries",
           "columnsTo": [
             "id",
             "club_id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "tournament_matches_winner_same_club_fk": {
           "name": "tournament_matches_winner_same_club_fk",
           "tableFrom": "tournament_matches",
+          "tableTo": "tournament_entries",
           "columnsFrom": [
             "winner_entry_id",
             "club_id"
           ],
-          "tableTo": "tournament_entries",
           "columnsTo": [
             "id",
             "club_id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "tournament_matches_next_same_club_fk": {
           "name": "tournament_matches_next_same_club_fk",
           "tableFrom": "tournament_matches",
+          "tableTo": "tournament_matches",
           "columnsFrom": [
             "next_match_id",
             "club_id"
           ],
-          "tableTo": "tournament_matches",
           "columnsTo": [
             "id",
             "club_id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "tournament_matches_id_club_uq": {
           "name": "tournament_matches_id_club_uq",
+          "nullsNotDistinct": false,
           "columns": [
             "id",
             "club_id"
-          ],
-          "nullsNotDistinct": false
+          ]
         }
       },
       "policies": {},
@@ -2292,26 +2298,26 @@
         "tournament_templates_club_id_clubs_id_fk": {
           "name": "tournament_templates_club_id_clubs_id_fk",
           "tableFrom": "tournament_templates",
+          "tableTo": "clubs",
           "columnsFrom": [
             "club_id"
           ],
-          "tableTo": "clubs",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "tournament_templates_id_club_uq": {
           "name": "tournament_templates_id_club_uq",
+          "nullsNotDistinct": false,
           "columns": [
             "id",
             "club_id"
-          ],
-          "nullsNotDistinct": false
+          ]
         }
       },
       "policies": {},
@@ -2380,49 +2386,49 @@
         "tournament_zones_club_id_clubs_id_fk": {
           "name": "tournament_zones_club_id_clubs_id_fk",
           "tableFrom": "tournament_zones",
+          "tableTo": "clubs",
           "columnsFrom": [
             "club_id"
           ],
-          "tableTo": "clubs",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         },
         "tournament_zones_tournament_same_club_fk": {
           "name": "tournament_zones_tournament_same_club_fk",
           "tableFrom": "tournament_zones",
+          "tableTo": "tournaments",
           "columnsFrom": [
             "tournament_id",
             "club_id"
           ],
-          "tableTo": "tournaments",
           "columnsTo": [
             "id",
             "club_id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "tournament_zones_id_club_uq": {
           "name": "tournament_zones_id_club_uq",
+          "nullsNotDistinct": false,
           "columns": [
             "id",
             "club_id"
-          ],
-          "nullsNotDistinct": false
+          ]
         },
         "tournament_zones_position_uq": {
           "name": "tournament_zones_position_uq",
+          "nullsNotDistinct": false,
           "columns": [
             "tournament_id",
             "position"
-          ],
-          "nullsNotDistinct": false
+          ]
         }
       },
       "policies": {},
@@ -2596,48 +2602,48 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         }
       },
       "foreignKeys": {
         "tournaments_club_id_clubs_id_fk": {
           "name": "tournaments_club_id_clubs_id_fk",
           "tableFrom": "tournaments",
+          "tableTo": "clubs",
           "columnsFrom": [
             "club_id"
           ],
-          "tableTo": "clubs",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         },
         "tournaments_created_by_users_id_fk": {
           "name": "tournaments_created_by_users_id_fk",
           "tableFrom": "tournaments",
+          "tableTo": "users",
           "columnsFrom": [
             "created_by"
           ],
-          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "set null"
+          "onDelete": "set null",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "tournaments_id_club_uq": {
           "name": "tournaments_id_club_uq",
+          "nullsNotDistinct": false,
           "columns": [
             "id",
             "club_id"
-          ],
-          "nullsNotDistinct": false
+          ]
         }
       },
       "policies": {},
@@ -2752,10 +2758,10 @@
       "uniqueConstraints": {
         "users_email_unique": {
           "name": "users_email_unique",
+          "nullsNotDistinct": false,
           "columns": [
             "email"
-          ],
-          "nullsNotDistinct": false
+          ]
         }
       },
       "policies": {},
@@ -2824,10 +2830,10 @@
     }
   },
   "schemas": {},
-  "views": {},
   "sequences": {},
   "roles": {},
   "policies": {},
+  "views": {},
   "_meta": {
     "columns": {},
     "schemas": {},

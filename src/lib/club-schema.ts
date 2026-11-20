@@ -40,3 +40,26 @@ export const newClubSchema = z.object({
   ownerPassword: z.string().min(10).max(200),
 });
 export type NewClubInput = z.infer<typeof newClubSchema>;
+
+/** Zona horaria por defecto de cada país (el dueño la puede cambiar después en Ajustes). */
+export const COUNTRY_TIMEZONE: Record<(typeof COUNTRIES)[number], (typeof TIMEZONES)[number]> = {
+  AR: 'America/Argentina/Buenos_Aires', CL: 'America/Santiago', UY: 'America/Montevideo', PY: 'America/Asuncion',
+  CO: 'America/Bogota', PE: 'America/Lima', MX: 'America/Mexico_City', BR: 'America/Sao_Paulo', ES: 'Europe/Madrid', US: 'America/New_York',
+};
+
+/** Slug sugerido a partir del nombre del club: minúsculas, sin tildes, guiones. */
+export function slugify(name: string): string {
+  return name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40);
+}
+
+// Alta pública de un club (autoservicio). Sin zona horaria: sale del país. El idioma sale de la URL.
+export const registerClubSchema = z.object({
+  name: z.string().trim().min(2).max(80),
+  slug: z.string().trim().toLowerCase().regex(/^[a-z0-9-]{3,40}$/),
+  country: z.enum(COUNTRIES),
+  ownerName: z.string().trim().min(2).max(80),
+  ownerEmail: z.string().trim().toLowerCase().max(254).email(),
+  ownerPassword: z.string().min(10).max(200),
+  locale: z.enum(CLUB_LOCALES).default('es'),
+});
+export type RegisterClubInput = z.infer<typeof registerClubSchema>;

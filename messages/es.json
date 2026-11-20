@@ -2,7 +2,8 @@
   "app": {
     "name": "PadelHub",
     "tagline": "Encontrá al jugador justo para completar tu turno.",
-    "poweredBy": "Desarrollado por Duxio"
+    "poweredBy": "Desarrollado por Duxio",
+    "trialBanner": "Prueba gratuita: te {days, plural, one {queda # día} other {quedan # días}}. Escribinos para activar tu plan."
   },
   "common": {
     "save": "Guardar",
@@ -80,7 +81,9 @@
     "chooseClubSubtitle": "Tu usuario tiene acceso a más de un club.",
     "heroTitle": "Completá el turno con tu comunidad.",
     "heroBody": "Encontrá al jugador justo por categoría, posición y horario, y escribile por WhatsApp.",
-    "expired": "Tu sesión venció. Volvé a entrar para seguir."
+    "expired": "Tu sesión venció. Volvé a entrar para seguir.",
+    "noAccount": "¿Tu club todavía no tiene cuenta?",
+    "createClub": "Creá tu club"
   },
   "nav": {
     "players": "Jugadores",
@@ -535,7 +538,9 @@
         "slug": "Slug",
         "country": "País",
         "locale": "Idioma",
-        "timezone": "Zona horaria"
+        "timezone": "Zona horaria",
+        "trial": "Fin de la prueba",
+        "noTrial": "Sin prueba"
       },
       "owner": {
         "title": "Dueño",
@@ -957,6 +962,32 @@
       "sum_too_low": "Las categorías no llegan a la suma mínima.",
       "modality_mismatch": "La pareja no cumple la modalidad del torneo.",
       "same_player": "Elegí dos jugadores distintos."
+    }
+  },
+  "register": {
+    "heroTitle": "Armá la comunidad de tu club.",
+    "heroBody": "Creá tu cuenta, compartí el link de alta y empezá a ordenar a tus jugadores por categoría, posición y horario.",
+    "heading": "Creá tu club",
+    "subtitle": "Es gratis y en un minuto tenés tu panel listo.",
+    "clubName": "Nombre del club",
+    "country": "País",
+    "slug": "Identificador del club",
+    "slugHint": "Minúsculas, números y guiones. Va en los links de alta de tus jugadores.",
+    "ownerName": "Tu nombre",
+    "ownerEmail": "Tu email",
+    "password": "Contraseña",
+    "passwordHint": "Mínimo 10 caracteres.",
+    "submit": "Crear mi club",
+    "submitting": "Creando…",
+    "haveAccount": "¿Ya tenés cuenta?",
+    "login": "Ingresar",
+    "errors": {
+      "slug_taken": "Ya hay un club con ese identificador. Probá con otro.",
+      "email_taken": "Ese email ya tiene una cuenta. Ingresá o usá otro email.",
+      "rate_limited": "Demasiados intentos. Probá de nuevo en un rato.",
+      "invalid_request": "Revisá los campos marcados.",
+      "forbidden": "No se pudo completar la solicitud.",
+      "generic": "Algo salió mal. Intentá de nuevo."
     }
   }
 }

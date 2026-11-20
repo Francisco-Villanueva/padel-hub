@@ -73,6 +73,7 @@ async function Detail({ params }: { params: PageProps<"/[locale]/admin/clubs/[id
             <h2 className="text-xl font-bold">{t("data.title")}</h2>
             <dl className="mt-2 divide-y divide-line">
               {row(t("data.slug"), club.slug)}
+              {row(t("data.trial"), club.trialEndsAt ? format.dateTime(club.trialEndsAt, { dateStyle: "long" }) : t("data.noTrial"))}
               {row(t("data.country"), country)}
               {row(t("data.locale"), LOCALE_NAMES[club.locale] ?? club.locale)}
               {row(t("data.timezone"), club.timezone.split("/").pop()!.replace(/_/g, " "))}

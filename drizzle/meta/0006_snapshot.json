@@ -1,5 +1,5 @@
 {
-  "id": "a1ac2b72-68ad-4921-9ec4-4252401abc4a",
+  "id": "dab18164-b9d9-4b70-be70-9452f8dc4de6",
   "prevId": "32dc1795-339d-4301-a454-a7a3c6d13570",
   "version": "7",
   "dialect": "postgresql",
@@ -161,90 +161,6 @@
         "auth_tokens_kind_chk": {
           "name": "auth_tokens_kind_chk",
           "value": "\"auth_tokens\".\"kind\" in ('invite','reset')"
-        }
-      },
-      "isRLSEnabled": false
-    },
-    "public.club_features": {
-      "name": "club_features",
-      "schema": "",
-      "columns": {
-        "club_id": {
-          "name": "club_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "feature": {
-          "name": "feature",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "enabled": {
-          "name": "enabled",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true,
-          "default": false
-        },
-        "enabled_at": {
-          "name": "enabled_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "enabled_by": {
-          "name": "enabled_by",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": false
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "club_features_club_id_clubs_id_fk": {
-          "name": "club_features_club_id_clubs_id_fk",
-          "tableFrom": "club_features",
-          "tableTo": "clubs",
-          "columnsFrom": [
-            "club_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "club_features_enabled_by_users_id_fk": {
-          "name": "club_features_enabled_by_users_id_fk",
-          "tableFrom": "club_features",
-          "tableTo": "users",
-          "columnsFrom": [
-            "enabled_by"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "set null",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {
-        "club_features_club_id_feature_pk": {
-          "name": "club_features_club_id_feature_pk",
-          "columns": [
-            "club_id",
-            "feature"
-          ]
-        }
-      },
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {
-        "club_features_feature_chk": {
-          "name": "club_features_feature_chk",
-          "value": "\"club_features\".\"feature\" in ('tournaments')"
         }
       },
       "isRLSEnabled": false
@@ -464,6 +380,12 @@
         "plan_id": {
           "name": "plan_id",
           "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "trial_ends_at": {
+          "name": "trial_ends_at",
+          "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": false
         },

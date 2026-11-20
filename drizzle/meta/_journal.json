@@ -47,22 +47,29 @@
     {
       "idx": 6,
       "version": "7",
-      "when": 1795043607575,
-      "tag": "0006_club_features",
+      "when": 1795110821872,
+      "tag": "0006_club_trial",
       "breakpoints": true
     },
     {
       "idx": 7,
       "version": "7",
-      "when": 1795044511602,
-      "tag": "0007_tournaments",
+      "when": 1795043607575,
+      "tag": "0007_club_features",
       "breakpoints": true
     },
     {
       "idx": 8,
       "version": "7",
+      "when": 1795044511602,
+      "tag": "0008_tournaments",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
       "when": 1795045745912,
-      "tag": "0008_public_ranking",
+      "tag": "0009_public_ranking",
       "breakpoints": true
     }
   ]

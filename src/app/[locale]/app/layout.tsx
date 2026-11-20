@@ -26,6 +26,7 @@ async function Shell({ locale, children }: { locale: string; children: React.Rea
   const role = t(`auth.role.${session.role}`);
   const features = await getEnabledFeatures(club.id);
   const items = features.includes("tournaments") ? [...ITEMS, TOURNAMENT_ITEM] : ITEMS;
+  const trialDays = club.trialDaysLeft;
 
   return (
     <AppShell
@@ -39,6 +40,11 @@ async function Shell({ locale, children }: { locale: string; children: React.Rea
         </>
       }
     >
+      {trialDays !== null && session.role === "owner" && (
+        <p role="status" className="mb-4 rounded-md border border-info bg-info-tint px-4 py-3 text-sm font-medium text-ink">
+          {t("app.trialBanner", { days: trialDays })}
+        </p>
+      )}
       {children}
     </AppShell>
   );

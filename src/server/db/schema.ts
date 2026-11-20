@@ -34,6 +34,8 @@ export const clubs = pgTable('clubs', {
   colorAccent: text('color_accent'),
   status: clubStatus('status').notNull().default('active'),
   planId: uuid('plan_id'), // post-MVP (billing)
+  // Fin de la prueba gratuita. Pasada esa fecha sin pago, el club se suspende (suspendExpiredTrials). Nulo = sin prueba (alta manual o ya pago).
+  trialEndsAt: ts('trial_ends_at'),
   createdAt: ts('created_at').notNull().defaultNow(),
   updatedAt: ts('updated_at').notNull().defaultNow().$onUpdate(() => new Date()),
 }, (t) => [
@@ -235,7 +237,7 @@ export const auditLog = pgTable('audit_log', {
 });
 
 // Torneos y rankings (docs/torneos-y-rankings.md, sección 7) ------------------------------------
-// Todas con club_id, RLS (drizzle/0007_tournaments.sql) y FK compuestas (id, club_id): nada referencia filas de otro club.
+// Todas con club_id, RLS (drizzle/0008_tournaments.sql) y FK compuestas (id, club_id): nada referencia filas de otro club.
 const ROUND_KEYS_SQL = "('champion','final','semifinal','quarterfinal','round_of_16','round_of_32','round_of_64','round_of_128')";
 const MODALITIES_SQL = "('libre','mixto','masculino','femenino')";
 

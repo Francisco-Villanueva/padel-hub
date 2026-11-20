@@ -15,3 +15,6 @@ export const REFRESH_COOKIE = 'ph_rt';
 export const REFRESH_COOKIE_PATH = '/api/auth';
 
 export const MIN_PASSWORD_LENGTH = 10;
+/** Días de prueba gratuita de un club que se registra solo. */
+export const TRIAL_DAYS = 30;
+export const REGISTER_LIMIT_PER_IP = { max: 5, windowSec: 3600 };
