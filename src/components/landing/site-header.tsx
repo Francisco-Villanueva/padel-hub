@@ -3,7 +3,6 @@ import { Suspense } from "react";
 import { LanguageSwitcher } from "../language-switcher";
 import { Logo } from "../logo";
 import { cx, ui } from "../ui";
-import { contactHref } from "./contact";
 import { MobileMenu } from "./mobile-menu";
 
 const NAV = [
@@ -21,7 +20,7 @@ export function SiteHeader() {
   const locale = useLocale();
   // Ingresar pasa por el refresh: con sesión vigente entra al panel, y si no, cae en el login.
   const loginHref = `/api/auth/refresh?next=${encodeURIComponent(`/${locale}/app`)}`;
-  const contact = contactHref();
+  const register = `/${locale}/register`;
   const lang = (
     <Suspense fallback={<div className="h-11 w-36" aria-hidden />}>
       <LanguageSwitcher />
@@ -62,7 +61,7 @@ export function SiteHeader() {
             {t("login")}
           </a>
           <a
-            href={contact}
+            href={register}
             className={cx(ui.btnBase, ui.btnPrimary, "min-h-10 px-4")}
           >
             {t("cta")}
@@ -83,7 +82,7 @@ export function SiteHeader() {
           </nav>
           <div className="mt-4 flex flex-col gap-3">
             <a
-              href={contact}
+              href={register}
               className={cx(ui.btnBase, ui.btnPrimary, "min-h-12 px-5")}
             >
               {t("cta")}

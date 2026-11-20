@@ -160,6 +160,9 @@ export function LoginScreen({ next, expired }: { next: string; expired?: boolean
             </div>
             <button disabled={busy} className={cx(ui.btn, ui.btnPrimary, "mt-1 w-full")}>{busy ? t("entering") : t("enter")}</button>
           </form>
+          <p className="text-sm text-ink-muted">
+            {t("noAccount")} <a href={`/${locale}/register`} className={ui.link}>{t("createClub")}</a>
+          </p>
           <div className="flex items-center justify-between gap-4">
             <LocaleChips />
             <p className="text-xs text-ink-muted">{tApp("poweredBy")}</p>

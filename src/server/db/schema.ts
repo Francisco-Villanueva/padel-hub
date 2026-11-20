@@ -34,6 +34,8 @@ export const clubs = pgTable('clubs', {
   colorAccent: text('color_accent'),
   status: clubStatus('status').notNull().default('active'),
   planId: uuid('plan_id'), // post-MVP (billing)
+  // Fin de la prueba gratuita. Pasada esa fecha sin pago, el club se suspende (suspendExpiredTrials). Nulo = sin prueba (alta manual o ya pago).
+  trialEndsAt: ts('trial_ends_at'),
   createdAt: ts('created_at').notNull().defaultNow(),
   updatedAt: ts('updated_at').notNull().defaultNow().$onUpdate(() => new Date()),
 }, (t) => [
