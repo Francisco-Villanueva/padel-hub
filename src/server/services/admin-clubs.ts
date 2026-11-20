@@ -43,7 +43,8 @@ export async function clubDetail(tx: Tx, id: string, now: Date = new Date()) {
 
 /** Suspender no borra nada: los usuarios no pueden entrar y el link de alta se cierra (ambos lo verifican contra `status`). */
 export async function setClubStatus(tx: Tx, ctx: { userId: string }, id: string, status: 'active' | 'suspended') {
-  const res = await tx.update(clubs).set({ status }).where(eq(clubs.id, id)).returning({ id: clubs.id });
+  // Reactivar = el club pagó (o se le da gracia): se borra la prueba para que no vuelva a suspenderse sola.
+  const res = await tx.update(clubs).set(status === 'active' ? { status, trialEndsAt: null } : { status }).where(eq(clubs.id, id)).returning({ id: clubs.id });
   if (res.length === 0) return false;
   if (status === 'suspended') {
     // Las sesiones abiertas de ese club también se cierran: el access dura hasta 15 min, el refresh ya no se renueva.
