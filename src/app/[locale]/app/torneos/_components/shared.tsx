@@ -4,6 +4,9 @@ import { ui } from "@/components/ui";
 type T = (key: string, values?: Record<string, string | number>) => string;
 export type Person = { firstName: string; lastName: string };
 
+/** Cómo se nombra a un jugador dentro de un torneo: por ahora solo el apellido (los nombres de pila son provisorios). */
+export const playerLabel = (p: Person) => p.lastName;
+
 /** "Pérez / Gómez": una pareja se nombra por los apellidos. */
 export const pairName = (e: { player1: Person; player2: Person } | undefined | null, fallback: string) =>
   e ? `${e.player1.lastName} / ${e.player2.lastName}` : fallback;

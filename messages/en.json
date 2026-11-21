@@ -805,7 +805,6 @@
       "ranking": "Ranking",
       "openRegistration": "Open registration",
       "start": "Start tournament",
-      "generateBracket": "Generate bracket",
       "close": "Close tournament",
       "reopen": "Reopen",
       "cancel": "Cancel tournament",
@@ -858,7 +857,7 @@
       "out": "Out",
       "round": "Round {n}",
       "tbd": "To be decided",
-      "drawNeeded": "Some ties can only be resolved by a draw. Do it in the highlighted group to be able to generate the bracket.",
+      "drawNeeded": "Some ties can only be resolved by a draw. Do it in the highlighted group to complete the bracket.",
       "drawBody": "Tie with no possible tiebreaker: a draw is needed.",
       "drawButton": "Draw the tiebreak",
       "drawDone": "The tie was resolved by a draw."
@@ -875,7 +874,8 @@
         "round_of_32": "Round of 32",
         "round_of_64": "Round of 64",
         "round_of_128": "Round of 128"
-      }
+      },
+      "slot": "{position} {zone}"
     },
     "result": {
       "title": "Result",
@@ -954,7 +954,11 @@
       "invalid_phone": "The phone number is not valid.",
       "draw_invalid": "There is no tie to draw.",
       "champion_required": "Enter the champion points or pick a template.",
-      "validation": "Check the data."
+      "validation": "Check the data.",
+      "zones_invalid": "The groups are not valid: each needs 3 or 4 pairs and together they must cover the registered pairs exactly once.",
+      "schedule_invalid": "The day or time is not valid.",
+      "slot_taken": "That pair is already in another first-round spot: swap the spots instead.",
+      "zone_started": "Not possible: that group already has matches in progress or played."
     },
     "pairReasons": {
       "no_category": "Both players need a category.",
@@ -962,6 +966,64 @@
       "sum_too_low": "The categories do not reach the minimum sum.",
       "modality_mismatch": "The pair does not meet the tournament modality.",
       "same_player": "Pick two different players."
+    },
+    "schedule": {
+      "title": "Match day and time",
+      "date": "Day",
+      "time": "Time",
+      "save": "Save",
+      "set": "Set time",
+      "change": "Change time",
+      "clearHint": "Leave both fields empty to remove the time.",
+      "none": "No time yet",
+      "live": "Playing",
+      "startLive": "Start match",
+      "stopLive": "Remove from playing"
+    },
+    "board": {
+      "title": "TV board",
+      "body": "All matches in order, with the ones being played. It refreshes by itself; put it full screen at the club.",
+      "open": "Open board",
+      "manage": "Manage matches",
+      "panelTitle": "Tournament matches",
+      "panelCrumb": "Matches",
+      "backToTournament": "Back to tournament",
+      "readOnly": "The tournament is closed: the board is read-only."
+    },
+    "tv": {
+      "zone": "Group",
+      "liveNow": "Playing now",
+      "noLive": "No matches are being played right now.",
+      "allMatches": "All matches",
+      "empty": "No matches scheduled yet.",
+      "noSchedule": "No time yet",
+      "time": "Time",
+      "phase": "Stage",
+      "match": "Match",
+      "status": "Status",
+      "next": "Up next",
+      "autoRefresh": "Refreshes automatically"
+    },
+    "adjust": {
+      "edit": "Edit",
+      "slotTitle": "Edit this bracket spot",
+      "fixed": "set by hand",
+      "setPair": "Set a pair",
+      "automatic": "Automatic (by group)",
+      "apply": "Apply",
+      "swapWith": "Swap with another spot",
+      "swap": "Swap",
+      "restore": "Back to automatic",
+      "match": "Match {n}",
+      "rebuild": "Rebuild bracket",
+      "rebuildTitle": "Rebuild the bracket?",
+      "rebuildBody": "It is built again from the groups: changes made by hand and bracket times are lost. Only possible if no bracket match has started.",
+      "moveZone": "Change group",
+      "moveZoneTitle": "Change group",
+      "swapWithPair": "Swap with pair",
+      "changePlayer": "Change",
+      "changePlayerTitle": "Change player",
+      "newPlayer": "New player"
     }
   },
   "register": {

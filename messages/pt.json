@@ -805,7 +805,6 @@
       "ranking": "Ranking",
       "openRegistration": "Abrir inscrições",
       "start": "Iniciar torneio",
-      "generateBracket": "Gerar chave",
       "close": "Encerrar torneio",
       "reopen": "Reabrir",
       "cancel": "Cancelar torneio",
@@ -858,7 +857,7 @@
       "out": "Fora",
       "round": "Rodada {n}",
       "tbd": "A definir",
-      "drawNeeded": "Há empates que só se resolvem por sorteio. Faça no grupo destacado para poder gerar a chave.",
+      "drawNeeded": "Há empates que só se resolvem por sorteio. Faça no grupo destacado para completar a chave.",
       "drawBody": "Empate sem desempate possível: é preciso sortear.",
       "drawButton": "Sortear desempate",
       "drawDone": "O desempate foi resolvido por sorteio."
@@ -875,7 +874,8 @@
         "round_of_32": "16 avos de final",
         "round_of_64": "32 avos de final",
         "round_of_128": "64 avos de final"
-      }
+      },
+      "slot": "{position}º {zone}"
     },
     "result": {
       "title": "Resultado",
@@ -954,7 +954,11 @@
       "invalid_phone": "O telefone não é válido.",
       "draw_invalid": "Não há empate para sortear.",
       "champion_required": "Informe os pontos do campeão ou escolha um modelo.",
-      "validation": "Revise os dados."
+      "validation": "Revise os dados.",
+      "zones_invalid": "Os grupos não são válidos: cada um precisa de 3 ou 4 duplas e juntos devem cobrir as duplas inscritas uma única vez.",
+      "schedule_invalid": "O dia ou a hora não são válidos.",
+      "slot_taken": "Essa dupla já está em outro lugar da primeira rodada: troque os lugares.",
+      "zone_started": "Não é possível: esse grupo já tem partidas em andamento ou jogadas."
     },
     "pairReasons": {
       "no_category": "Os dois jogadores precisam ter categoria.",
@@ -962,6 +966,64 @@
       "sum_too_low": "As categorias não chegam à soma mínima.",
       "modality_mismatch": "A dupla não cumpre a modalidade do torneio.",
       "same_player": "Escolha dois jogadores diferentes."
+    },
+    "schedule": {
+      "title": "Dia e hora da partida",
+      "date": "Dia",
+      "time": "Hora",
+      "save": "Salvar",
+      "set": "Definir horário",
+      "change": "Alterar horário",
+      "clearHint": "Deixe os dois campos vazios para remover o horário.",
+      "none": "Sem horário",
+      "live": "Em jogo",
+      "startLive": "Iniciar partida",
+      "stopLive": "Tirar de jogo"
+    },
+    "board": {
+      "title": "Painel para a TV",
+      "body": "Todas as partidas em ordem, com as que estão em jogo. Atualiza sozinho; coloque em tela cheia no clube.",
+      "open": "Abrir painel",
+      "manage": "Gerenciar partidas",
+      "panelTitle": "Partidas do torneio",
+      "panelCrumb": "Partidas",
+      "backToTournament": "Voltar ao torneio",
+      "readOnly": "O torneio está encerrado: o painel é somente leitura."
+    },
+    "tv": {
+      "zone": "Grupo",
+      "liveNow": "Jogando agora",
+      "noLive": "Nenhuma partida em jogo agora.",
+      "allMatches": "Todas as partidas",
+      "empty": "Ainda não há partidas cadastradas.",
+      "noSchedule": "Sem horário",
+      "time": "Hora",
+      "phase": "Fase",
+      "match": "Partida",
+      "status": "Estado",
+      "next": "Próxima",
+      "autoRefresh": "Atualiza sozinho"
+    },
+    "adjust": {
+      "edit": "Editar",
+      "slotTitle": "Editar este lugar da chave",
+      "fixed": "definido à mão",
+      "setPair": "Definir uma dupla",
+      "automatic": "Automático (conforme o grupo)",
+      "apply": "Aplicar",
+      "swapWith": "Trocar com outro lugar",
+      "swap": "Trocar",
+      "restore": "Voltar ao automático",
+      "match": "Confronto {n}",
+      "rebuild": "Regenerar chave",
+      "rebuildTitle": "Regenerar a chave?",
+      "rebuildBody": "Ela é montada de novo a partir dos grupos: perdem-se as alterações feitas à mão e os horários da chave. Só é possível se nenhum confronto da chave começou.",
+      "moveZone": "Trocar de grupo",
+      "moveZoneTitle": "Trocar de grupo",
+      "swapWithPair": "Trocar com a dupla",
+      "changePlayer": "Trocar",
+      "changePlayerTitle": "Trocar jogador",
+      "newPlayer": "Novo jogador"
     }
   },
   "register": {

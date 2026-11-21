@@ -71,6 +71,41 @@
       "when": 1795045745912,
       "tag": "0009_public_ranking",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1795141064075,
+      "tag": "0010_match_schedule",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1795141084941,
+      "tag": "0011_public_board",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1795214700295,
+      "tag": "0012_bracket_template",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1795214715401,
+      "tag": "0013_public_board_sources",
+      "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1795215413676,
+      "tag": "0014_public_board_bye_sources",
+      "breakpoints": true
     }
   ]
 }

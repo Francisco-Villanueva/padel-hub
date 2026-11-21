@@ -9,7 +9,8 @@ import { tournamentMatches, tournaments, tournamentZones } from '../db/schema';
 import type { Tx } from '../db/tenant';
 import { assertFeature } from './features';
 import { TournamentError } from './tournament-errors';
-import { zoneStates } from './tournaments';
+import { refreshBracket } from './tournament-bracket';
+import { zoneStates } from './tournament-zones';
 
 type Ctx = { clubId: string };
 type Match = typeof tournamentMatches.$inferSelect;
@@ -21,7 +22,8 @@ async function loadMatch(tx: Tx, id: string) {
   return { m, status: t.status };
 }
 
-const requiredStatus = (m: Match) => (m.stage === 'zona' ? 'zonas' : 'llave');
+/** Resultados, horarios y "en juego" se manejan mientras el torneo está en juego: `zonas` o `llave` (zonas y llave corren a la vez). */
+const isLive = (status: string) => status === 'zonas' || status === 'llave';
 
 /** Partidos de la llave ordenados por ronda y posición. */
 export async function listBracketMatches(tx: Tx, ctx: Ctx, tournamentId: string) {
@@ -37,7 +39,7 @@ export async function listBracketMatches(tx: Tx, ctx: Ctx, tournamentId: string)
 export async function recordResult(tx: Tx, ctx: Ctx, matchId: string, rawSets: unknown, opts: { now?: Date } = {}) {
   await assertFeature(tx, ctx.clubId, 'tournaments');
   const { m, status } = await loadMatch(tx, matchId);
-  if (status !== requiredStatus(m)) throw new TournamentError('invalid_state', { status });
+  if (!isLive(status)) throw new TournamentError('invalid_state', { status });
   if (!m.entryAId || !m.entryBId || m.status === 'bye') throw new TournamentError('result_invalid', { reason: 'no_players' });
   const parsed = setsSchema.safeParse(rawSets);
   const side = parsed.success ? winnerOfSets(parsed.data) : null;
@@ -46,18 +48,24 @@ export async function recordResult(tx: Tx, ctx: Ctx, matchId: string, rawSets: u
 
   await propagate(tx, m, winner);
   await tx.update(tournamentMatches).set({ sets: parsed.data, winnerEntryId: winner, status: 'jugado', playedAt: opts.now ?? new Date() }).where(eq(tournamentMatches.id, m.id));
-  if (m.stage === 'zona' && m.zoneId) await tx.update(tournamentZones).set({ tieDraw: null }).where(eq(tournamentZones.id, m.zoneId)); // un sorteo viejo ya no vale
+  if (m.stage === 'zona' && m.zoneId) {
+    await tx.update(tournamentZones).set({ tieDraw: null }).where(eq(tournamentZones.id, m.zoneId)); // un sorteo viejo ya no vale
+    await refreshBracket(tx, m.tournamentId); // la zona puede haber terminado: sus clasificados pasan a la llave
+  }
 }
 
 /** Quita el resultado de un partido (solo si lo que depende de él no se jugó). */
 export async function clearResult(tx: Tx, ctx: Ctx, matchId: string) {
   await assertFeature(tx, ctx.clubId, 'tournaments');
   const { m, status } = await loadMatch(tx, matchId);
-  if (status !== requiredStatus(m)) throw new TournamentError('invalid_state', { status });
+  if (!isLive(status)) throw new TournamentError('invalid_state', { status });
   if (m.status !== 'jugado') throw new TournamentError('invalid_state', { status: m.status });
   await propagate(tx, m, null);
   await tx.update(tournamentMatches).set({ sets: null, winnerEntryId: null, status: 'pendiente', playedAt: null }).where(eq(tournamentMatches.id, m.id));
-  if (m.stage === 'zona' && m.zoneId) await tx.update(tournamentZones).set({ tieDraw: null }).where(eq(tournamentZones.id, m.zoneId));
+  if (m.stage === 'zona' && m.zoneId) {
+    await tx.update(tournamentZones).set({ tieDraw: null }).where(eq(tournamentZones.id, m.zoneId));
+    await refreshBracket(tx, m.tournamentId);
+  }
 }
 
 /** Lleva el ganador (o su ausencia) a lo que depende del partido: el cruce siguiente de la llave o la 2ª ronda de una zona de 4. */
@@ -98,12 +106,35 @@ export async function resolveTie(tx: Tx, ctx: Ctx, zoneId: string, opts: { seed?
   const [zone] = await tx.select().from(tournamentZones).where(eq(tournamentZones.id, zoneId));
   if (!zone) throw new TournamentError('not_found');
   const [t] = await tx.select({ status: tournaments.status }).from(tournaments).where(eq(tournaments.id, zone.tournamentId));
-  if (t.status !== 'zonas') throw new TournamentError('invalid_state', { status: t.status });
+  if (!isLive(t.status)) throw new TournamentError('invalid_state', { status: t.status });
   const state = (await zoneStates(tx, ctx, zone.tournamentId)).find((s) => s.zone.id === zoneId)!;
   if (state.standings.needsDraw.length === 0) throw new TournamentError('draw_invalid');
   const seed = opts.seed ?? randomInt(2 ** 31);
   const rng = mulberry32(seed);
   const order = state.standings.needsDraw.flatMap((g) => drawTieOrder(g, rng));
   await tx.update(tournamentZones).set({ tieDraw: { seed, order } }).where(eq(tournamentZones.id, zoneId));
+  await refreshBracket(tx, zone.tournamentId); // con el empate resuelto, sus puestos pasan a la llave
   return { seed, order };
+}
+
+/**
+ * Programa (o quita, con null) el día y la hora de un partido. Se puede cargar apenas se generan las zonas, también para partidos
+ * cuyos rivales todavía no se conocen (2ª ronda de una zona de 4, llave).
+ */
+export async function setMatchSchedule(tx: Tx, ctx: Ctx, matchId: string, at: Date | null) {
+  await assertFeature(tx, ctx.clubId, 'tournaments');
+  const { m, status } = await loadMatch(tx, matchId);
+  if (!isLive(status)) throw new TournamentError('invalid_state', { status });
+  if (m.status === 'bye') throw new TournamentError('invalid_state', { status: m.status });
+  if (at && Number.isNaN(at.getTime())) throw new TournamentError('schedule_invalid');
+  await tx.update(tournamentMatches).set({ scheduledAt: at }).where(eq(tournamentMatches.id, matchId));
+}
+
+/** El club marca qué partidos se están jugando ahora (o los saca). Solo con las dos parejas definidas y sin resultado. */
+export async function setMatchLive(tx: Tx, ctx: Ctx, matchId: string, live: boolean) {
+  await assertFeature(tx, ctx.clubId, 'tournaments');
+  const { m, status } = await loadMatch(tx, matchId);
+  if (!isLive(status)) throw new TournamentError('invalid_state', { status });
+  if (!m.entryAId || !m.entryBId || (m.status !== 'pendiente' && m.status !== 'en_juego')) throw new TournamentError('invalid_state', { status: m.status });
+  await tx.update(tournamentMatches).set({ status: live ? 'en_juego' : 'pendiente' }).where(eq(tournamentMatches.id, matchId));
 }

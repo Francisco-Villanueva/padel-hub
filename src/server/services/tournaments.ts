@@ -1,29 +1,32 @@
 // Ciclo de vida del torneo: crear, inscripción, zonas, llave, cierre con puntos y cancelación.
 // Reciben el `tx` de withTenant() y no conocen HTTP. Cada función comprueba el flag `tournaments` (defensa en profundidad).
-import { randomInt, randomUUID } from 'node:crypto';
+import { randomInt } from 'node:crypto';
 import { and, asc, desc, eq, inArray } from 'drizzle-orm';
 import type { TournamentInput } from '../../lib/tournament-schema';
-import { buildBracket, seedQualifiers } from '../../lib/tournament/bracket';
 import { MIN_PAIRS_FLOOR, type CategoryRuleKind, type Modality, type RoundKey, type TournamentStatus } from '../../lib/tournament/constants';
 import { drawZones, zoneMatchPlan } from '../../lib/tournament/draw';
 import { playerPoints, roundKeyForParticipants, roundPoints, type RoundPoints } from '../../lib/tournament/points';
 import type { RankingWindow } from '../../lib/tournament/ranking-window';
 import { mulberry32 } from '../../lib/tournament/rng';
-import { zoneStandings, type ZoneMatchResult } from '../../lib/tournament/standings';
 import { planZones, zoneName } from '../../lib/tournament/zones';
 import { rankingEvents, tournamentEntries, tournamentMatches, tournaments, tournamentTemplates, tournamentZones } from '../db/schema';
 import type { Tx } from '../db/tenant';
 import { assertFeature } from './features';
 import { playerPointsInGroup } from './ranking';
+import { createBracketTemplate } from './tournament-bracket';
 import { TournamentError } from './tournament-errors';
+import { activeEntries } from './tournament-zones';
+
+export { zoneStates } from './tournament-zones';
 
 type Ctx = { clubId: string; userId?: string | null };
 
 const TRANSITIONS: Record<TournamentStatus, TournamentStatus[]> = {
   borrador: ['inscripcion', 'cancelado'],
   inscripcion: ['zonas', 'cancelado'],
-  zonas: ['llave', 'cancelado'],
-  llave: ['cerrado', 'cancelado'],
+  // `zonas` = en juego (zonas y llave a la vez); pasa a `llave` solo cuando todas las zonas terminaron, y vuelve si se corrige alguna.
+  zonas: ['llave', 'cerrado', 'cancelado'],
+  llave: ['zonas', 'cerrado', 'cancelado'],
   cerrado: ['llave'], // reabrir
   cancelado: [],
 };
@@ -98,12 +101,6 @@ export async function openRegistration(tx: Tx, ctx: Ctx, id: string) {
   await tx.update(tournaments).set({ status: 'inscripcion' }).where(eq(tournaments.id, id));
 }
 
-async function activeEntries(tx: Tx, tournamentId: string) {
-  return tx.select().from(tournamentEntries)
-    .where(and(eq(tournamentEntries.tournamentId, tournamentId), eq(tournamentEntries.status, 'inscripta')))
-    .orderBy(asc(tournamentEntries.createdAt), asc(tournamentEntries.id));
-}
-
 /** Arma zonas (3 y 4) con sorteo reproducible y crea los partidos de zona. Exige el mínimo de parejas. */
 export async function startTournament(tx: Tx, ctx: Ctx, id: string, opts: { seed?: number; now?: Date } = {}) {
   const t = await mustGet(tx, ctx, id);
@@ -124,6 +121,12 @@ export async function startTournament(tx: Tx, ctx: Ctx, id: string, opts: { seed
   const seed = opts.seed ?? randomInt(2 ** 31);
   const zones = drawZones(entries.map((e) => ({ id: e.id, seed: seedOf.get(e.id) ?? null })), plan, { rng: mulberry32(seed) });
 
+  await persistZones(tx, ctx, id, zones, seedOf, seed);
+  return { zones: zones.length, seed };
+}
+
+/** Crea las zonas, ubica a las parejas y genera los partidos de zona; deja el torneo en estado `zonas`. */
+async function persistZones(tx: Tx, ctx: Ctx, id: string, zones: { index: number; size: 3 | 4; entryIds: string[] }[], seedOf: Map<string, number>, drawSeed: number | null) {
   const zoneRows = await tx.insert(tournamentZones).values(zones.map((z) => ({ clubId: ctx.clubId, tournamentId: id, name: zoneName(z.index), size: z.size, position: z.index + 1 }))).returning({ id: tournamentZones.id, position: tournamentZones.position });
   const zoneId = new Map(zoneRows.map((z) => [z.position - 1, z.id]));
   const matches: (typeof tournamentMatches.$inferInsert)[] = [];
@@ -136,52 +139,29 @@ export async function startTournament(tx: Tx, ctx: Ctx, id: string, opts: { seed
     }
   }
   await tx.insert(tournamentMatches).values(matches);
-  await tx.update(tournaments).set({ status: 'zonas', drawSeed: seed }).where(eq(tournaments.id, id));
-  return { zones: zones.length, seed };
+  await tx.update(tournaments).set({ status: 'zonas', drawSeed }).where(eq(tournaments.id, id));
+  // La llave se define ya (con "1º Zona A", "2º Zona B"…) y se completa sola a medida que terminan las zonas.
+  await createBracketTemplate(tx, ctx, id);
 }
 
-/** Estado de cada zona con sus posiciones (también lo usa la UI). */
-export async function zoneStates(tx: Tx, ctx: Ctx, tournamentId: string) {
-  await assertFeature(tx, ctx.clubId, 'tournaments');
-  const zones = await tx.select().from(tournamentZones).where(eq(tournamentZones.tournamentId, tournamentId)).orderBy(asc(tournamentZones.position));
-  const matches = await tx.select().from(tournamentMatches).where(and(eq(tournamentMatches.tournamentId, tournamentId), eq(tournamentMatches.stage, 'zona')))
-    .orderBy(asc(tournamentMatches.round), asc(tournamentMatches.position));
-  const entries = await activeEntries(tx, tournamentId);
-  return zones.map((z) => {
-    const ids = entries.filter((e) => e.zoneId === z.id).map((e) => e.id);
-    const ms = matches.filter((m) => m.zoneId === z.id);
-    const results: ZoneMatchResult[] = ms.map((m) => ({ round: m.round, position: m.position, a: m.entryAId, b: m.entryBId, winner: m.winnerEntryId, sets: m.sets }));
-    const order = (z.tieDraw as { order?: string[] } | null)?.order;
-    return { zone: z, entryIds: ids, matches: ms, standings: zoneStandings(z.size as 3 | 4, ids, results, { draw: order }) };
-  });
-}
-
-/** Arma la llave con los clasificados. Exige zonas completas y sin empates pendientes de sorteo. */
-export async function generateBracket(tx: Tx, ctx: Ctx, id: string) {
+/**
+ * Inicia el torneo con zonas ya definidas (por ejemplo las que publicó la organización) en vez de sortearlas.
+ * `zones` = ids de pareja por zona, en el orden de la zona (pareja 1, 2, 3…). Cada zona es de 3 o 4 y entre todas
+ * deben cubrir exactamente a las parejas inscriptas, una sola vez. Exige el mínimo de parejas.
+ */
+export async function startTournamentWithZones(tx: Tx, ctx: Ctx, id: string, zonesInput: string[][]) {
   const t = await mustGet(tx, ctx, id);
-  assertTransition(t.status as TournamentStatus, 'llave');
-  const states = await zoneStates(tx, ctx, id);
-  if (states.some((s) => !s.standings.complete)) throw new TournamentError('zones_incomplete');
-  const pending = states.flatMap((s) => s.standings.needsDraw);
-  if (pending.length) throw new TournamentError('tie_unresolved', { groups: pending });
-
+  assertTransition(t.status as TournamentStatus, 'zonas');
   const entries = await activeEntries(tx, id);
-  const seedByEntry = new Map(entries.map((e) => [e.id, e.seed]));
-  const qualifiers = states.flatMap((s) => s.standings.rows.filter((r) => r.qualified).map((r) => ({
-    entryId: r.entryId, zoneId: s.zone.id, zonePosition: r.position!, gameDiff: r.gameDiff, rankingSeed: seedByEntry.get(r.entryId) ?? null,
-  })));
-  const ordered = seedQualifiers(qualifiers, mulberry32((t.drawSeed ?? 0) + 1));
-  const bracket = buildBracket(ordered);
-
-  const key = (r: number, p: number) => `${r}:${p}`;
-  const ids = new Map(bracket.matches.map((m) => [key(m.round, m.position), randomUUID()]));
-  await tx.insert(tournamentMatches).values(bracket.matches.map((m) => ({
-    id: ids.get(key(m.round, m.position))!, clubId: ctx.clubId, tournamentId: id, stage: 'llave', round: m.round, position: m.position,
-    entryAId: m.a, entryBId: m.b, status: m.bye ? 'bye' : 'pendiente', winnerEntryId: m.bye ? m.winner : null,
-    nextMatchId: m.next ? ids.get(key(m.next.round, m.next.position))! : null, nextSlot: m.next?.slot ?? null,
-  })));
-  await tx.update(tournaments).set({ status: 'llave' }).where(eq(tournaments.id, id));
-  return { size: bracket.size };
+  const need = Math.max(t.minPairs, MIN_PAIRS_FLOOR);
+  if (entries.length < need) throw new TournamentError('below_min', { missing: need - entries.length, minPairs: need });
+  const given = zonesInput.flat();
+  const active = new Set(entries.map((e) => e.id));
+  const valid = zonesInput.every((z) => z.length === 3 || z.length === 4)
+    && given.length === active.size && new Set(given).size === given.length && given.every((e) => active.has(e));
+  if (!valid) throw new TournamentError('zones_invalid');
+  await persistZones(tx, ctx, id, zonesInput.map((entryIds, index) => ({ index, size: entryIds.length as 3 | 4, entryIds })), new Map(), null);
+  return { zones: zonesInput.length };
 }
 
 /** Cancelar (dueño o empleado): queda en el historial, solo lectura y sin puntos. */

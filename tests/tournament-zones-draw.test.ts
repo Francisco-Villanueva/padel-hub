@@ -4,11 +4,11 @@ import { drawZones, mulberry32, planZones, resolveFourZoneRound2, zoneMatchPlan,
 describe('planZones', () => {
   it('casos conocidos', () => {
     expect(planZones(6).sizes).toEqual([3, 3]);
-    expect(planZones(7).sizes).toEqual([3, 4]);
+    expect(planZones(7).sizes).toEqual([4, 3]);
     expect(planZones(8).sizes).toEqual([4, 4]);
     expect(planZones(9).sizes).toEqual([3, 3, 3]);
-    expect(planZones(10).sizes).toEqual([3, 3, 4]);
-    expect(planZones(11).sizes).toEqual([3, 4, 4]);
+    expect(planZones(10).sizes).toEqual([4, 3, 3]);
+    expect(planZones(11).sizes).toEqual([4, 4, 3]);
     expect(planZones(12)).toMatchObject({ threes: 4, fours: 0 });
     expect(planZones(13)).toMatchObject({ threes: 3, fours: 1 });
   });
@@ -29,7 +29,7 @@ describe('drawZones', () => {
   const entries = (n: number, seeds = 0) => Array.from({ length: n }, (_, i) => ({ id: `e${i + 1}`, seed: i < seeds ? i + 1 : null }));
   it('reparte a todos exactamente una vez y respeta los tamaños', () => {
     const z = drawZones(entries(10), planZones(10), { rng: mulberry32(1) });
-    expect(z.map((x) => x.entryIds.length)).toEqual([3, 3, 4]);
+    expect(z.map((x) => x.entryIds.length)).toEqual([4, 3, 3]);
     expect(z.flatMap((x) => x.entryIds).sort()).toEqual(entries(10).map((e) => e.id).sort());
   });
   it('las cabezas de serie van en serpentina', () => {
