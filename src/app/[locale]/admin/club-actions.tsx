@@ -5,7 +5,7 @@ import { useActionState, useState } from "react";
 import { Modal } from "@/components/modal";
 import { NewPasswordFields } from "@/components/password-input";
 import { cx, ui } from "@/components/ui";
-import { resetOwnerPasswordAction, setClubStatusAction, type AdminState } from "./actions";
+import { resetOwnerPasswordAction, setClubFeatureAction, setClubStatusAction, type AdminState } from "./actions";
 
 const idle = { status: "idle" } as AdminState;
 
@@ -84,5 +84,51 @@ export function OwnerPasswordButton({ clubId, ownerId, ownerName }: { clubId: st
         </form>
       </Modal>
     </>
+  );
+}
+
+/** Interruptor de una función del club (torneos…). Apagar pide confirmación; no borra datos. */
+export function FeatureToggle({ clubId, feature, enabled, enabledAt }: { clubId: string; feature: "tournaments"; enabled: boolean; enabledAt?: string }) {
+  const t = useTranslations("admin.detail.features");
+  const tc = useTranslations("common");
+  const locale = useLocale();
+  const [open, setOpen] = useState(false);
+  const [state, action, pending] = useActionState(async (prev: AdminState, fd: FormData) => {
+    const res = await setClubFeatureAction(prev, fd);
+    if (res.status === "ok") setOpen(false);
+    return res;
+  }, idle);
+  const form = (next: boolean) => (
+    <form action={action} className="contents">
+      <input type="hidden" name="locale" value={locale} />
+      <input type="hidden" name="clubId" value={clubId} />
+      <input type="hidden" name="feature" value={feature} />
+      <input type="hidden" name="enabled" value={String(next)} />
+      <button type="submit" disabled={pending} className={cx(ui.btn, next ? ui.btnPrimary : ui.btnDangerSolid)}>{next ? t("on") : t("off")}</button>
+    </form>
+  );
+  return (
+    <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="min-w-0">
+        <p className="font-semibold">{t(`${feature}.name`)}</p>
+        <p className="text-sm text-ink-muted">{t(`${feature}.desc`)}</p>
+        {enabled && enabledAt && <p className="mt-1 text-xs text-ink-muted">{t("enabledAt", { date: enabledAt })}</p>}
+        {state.status === "error" && <p role="alert" className={ui.error}>{t("errors.generic")}</p>}
+      </div>
+      {enabled ? (
+        <>
+          <button type="button" onClick={() => setOpen(true)} className={cx(ui.btn, ui.btnSecondary)} aria-pressed="true">{t("enabled")}</button>
+          <Modal
+            open={open}
+            onClose={() => setOpen(false)}
+            title={t("offTitle")}
+            description={t("offBody")}
+            actions={<><button type="button" onClick={() => setOpen(false)} className={cx(ui.btn, ui.btnSecondary)}>{tc("cancel")}</button>{form(false)}</>}
+          />
+        </>
+      ) : (
+        form(true)
+      )}
+    </div>
   );
 }

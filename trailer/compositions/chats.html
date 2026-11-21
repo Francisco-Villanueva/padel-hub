@@ -1,0 +1,185 @@
+<template>
+  <link rel="stylesheet" href="assets/shared.css" />
+  <style>
+    @font-face {
+      font-family: "Figtree";
+      font-weight: 300 900;
+      src: url("assets/fonts/figtree-latin.woff2") format("woff2");
+    }
+    @font-face {
+      font-family: "Barlow Condensed";
+      font-weight: 600;
+      src: url("assets/fonts/barlow-condensed-600.woff2") format("woff2");
+    }
+    @font-face {
+      font-family: "Barlow Condensed";
+      font-weight: 700;
+      src: url("assets/fonts/barlow-condensed-700.woff2") format("woff2");
+    }
+    #root {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      font-family: Figtree, sans-serif;
+    }
+    #h-wrap {
+      position: absolute;
+      inset: 0;
+      background: #f5f7f4;
+    }
+    #h-pin {
+      position: absolute;
+      left: 64px;
+      top: 190px;
+      width: 952px;
+      height: 140px;
+      background: #ffffff;
+      border: 2px solid #cfd9d3;
+      border-radius: 28px;
+      box-shadow: 0 3px 6px rgba(16, 32, 27, 0.08), 0 12px 36px -6px rgba(16, 32, 27, 0.08);
+    }
+    #h-pin-when {
+      position: absolute;
+      left: 36px;
+      top: 22px;
+      font-weight: 700;
+      font-size: 40px;
+      line-height: 46px;
+      color: #10201b;
+    }
+    #h-pin .ph-badge {
+      left: 36px;
+      top: 78px;
+      height: 40px;
+      line-height: 40px;
+      background: #d7f23a;
+      color: #10201b;
+    }
+    .h-clock {
+      position: absolute;
+      right: 36px;
+      top: 26px;
+      width: 220px;
+      text-align: right;
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 700;
+      font-size: 84px;
+      line-height: 88px;
+      color: #10201b;
+    }
+    .h-bub {
+      position: absolute;
+      padding: 24px 34px;
+      border-radius: 34px;
+      font-weight: 500;
+      font-size: 40px;
+      line-height: 50px;
+      white-space: nowrap;
+      box-shadow: 0 2px 4px rgba(16, 32, 27, 0.08), 0 8px 22px -6px rgba(16, 32, 27, 0.1);
+    }
+    .h-in {
+      background: #ffffff;
+      color: #10201b;
+      border: 2px solid #cfd9d3;
+    }
+    .h-out {
+      background: #dff1e8;
+      color: #10201b;
+      border: 2px solid #b9dccb;
+    }
+    .h-line {
+      position: absolute;
+      left: 0;
+      width: 1080px;
+      text-align: center;
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 700;
+      font-size: 92px;
+      line-height: 92px;
+      letter-spacing: -0.01em;
+      color: #10201b;
+      white-space: nowrap;
+    }
+  </style>
+  <div id="root" data-composition-id="chats" data-width="1080" data-height="1920">
+    <div id="h-wrap" data-layout-allow-overflow>
+      <div id="h-pin">
+        <div id="h-pin-when">Hoy, 20:00</div>
+        <div class="ph-badge">Falta 1</div>
+        <div class="h-clock" id="h-ck1">19:10</div>
+        <div class="h-clock" id="h-ck2">19:24</div>
+        <div class="h-clock" id="h-ck3">19:37</div>
+        <div class="h-clock" id="h-ck4">19:45</div>
+        <div class="h-clock" id="h-ck5">19:52</div>
+      </div>
+      <div id="h-bubbles" data-layout-allow-overflow>
+        <div class="h-bub h-out" id="h-b1" style="left: 430px; top: 392px">¿Alguien para hoy 20 hs?</div>
+        <div class="h-bub h-in" id="h-b2" style="left: 96px; top: 486px">Yo no puedo</div>
+        <div class="h-bub h-in" id="h-b3" style="left: 300px; top: 574px">¿Qué categoría?</div>
+        <div class="h-bub h-in" id="h-b4" style="left: 120px; top: 668px">Pregunto y aviso</div>
+        <div class="h-bub h-out" id="h-b5" style="left: 560px; top: 752px">¿Alguien?</div>
+        <div class="h-bub h-in" id="h-b6" style="left: 220px; top: 842px">Mañana sí</div>
+        <div class="h-bub h-in" id="h-b7" style="left: 480px; top: 926px">Yo tampoco llego</div>
+      </div>
+      <div id="h-title" data-layout-allow-overflow>
+        <div class="h-line" style="top: 1046px">
+          <span class="h-w">Un</span> <span class="h-w">turno</span> <span class="h-w">vacío</span> <span class="h-w">por</span> <span class="h-w">día</span>
+        </div>
+        <div class="h-line" style="top: 1138px">
+          <span class="h-w">es</span> <span class="h-w" id="h-plata">plata</span> <span class="h-w">que</span> <span class="h-w">se</span> <span class="h-w">queda</span>
+        </div>
+        <div class="h-line" style="top: 1230px">
+          <span class="h-w">en</span> <span class="h-w">la</span> <span class="h-w">cancha</span>
+        </div>
+      </div>
+    </div>
+    <audio id="h-a-pop1" class="clip" src="assets/sfx/pop-a.mp3" data-start="0.33" data-duration="0.2" data-track-index="10" data-volume="0.55"></audio>
+    <audio id="h-a-pop2" class="clip" src="assets/sfx/pop-b.mp3" data-start="0.83" data-duration="0.18" data-track-index="11" data-volume="0.5"></audio>
+    <audio id="h-a-pop3" class="clip" src="assets/sfx/pop-a.mp3" data-start="1.13" data-duration="0.2" data-track-index="10" data-volume="0.5"></audio>
+    <audio id="h-a-pop4" class="clip" src="assets/sfx/pop-b.mp3" data-start="1.53" data-duration="0.18" data-track-index="11" data-volume="0.45"></audio>
+    <audio id="h-a-pop5" class="clip" src="assets/sfx/pop-a.mp3" data-start="1.73" data-duration="0.2" data-track-index="10" data-volume="0.45"></audio>
+    <audio id="h-a-pop6" class="clip" src="assets/sfx/pop-b.mp3" data-start="2.08" data-duration="0.18" data-track-index="11" data-volume="0.4"></audio>
+    <audio id="h-a-pop7" class="clip" src="assets/sfx/pop-a.mp3" data-start="2.23" data-duration="0.2" data-track-index="10" data-volume="0.4"></audio>
+    <audio id="h-a-whoosh" class="clip" src="assets/sfx/whoosh-b.mp3" data-start="4.75" data-duration="0.45" data-media-start="0" data-track-index="12" data-volume="0.5"></audio>
+  </div>
+  <script>
+    (function () {
+      const tl = gsap.timeline({ paused: true });
+      // Entra por el iris que abre la escena anterior: el contenido ya está, la tarjeta baja desde arriba.
+      tl.fromTo("#h-wrap", { clipPath: "circle(0px at 720px 1121px)" }, { clipPath: "circle(2200px at 720px 1121px)", duration: 0.45, ease: "power2.inOut" }, 0);
+      tl.fromTo("#h-pin", { y: -300 }, { y: 0, duration: 0.6, ease: "expo.out" }, 0.15);
+      // El reloj avanza por cortes duros: el tiempo se pierde mientras nadie contesta.
+      tl.set("#h-ck1", { opacity: 1 }, 0);
+      const ticks = [1.2, 2.2, 3.0, 3.8];
+      ticks.forEach((t, i) => {
+        tl.set(`#h-ck${i + 1}`, { opacity: 0 }, t);
+        tl.set(`#h-ck${i + 2}`, { opacity: 1 }, t);
+        tl.fromTo(`#h-ck${i + 2}`, { scale: 1.12, transformOrigin: "100% 50%" }, { scale: 1, duration: 0.25, ease: "power3.out" }, t);
+      });
+      // Los mensajes se apilan torcidos: cada uno con su giro, sin alinear.
+      const pops = [0.4, 0.8, 1.2, 1.5, 1.8, 2.05, 2.3];
+      const rots = [-4, 3, -2, 5, -5, 2, -3];
+      pops.forEach((t, i) => {
+        tl.fromTo(
+          `#h-b${i + 1}`,
+          { scale: 0.6, opacity: 0, rotation: rots[i] * 2.2 },
+          { scale: 1, opacity: 1, rotation: rots[i], duration: 0.3, ease: "back.out(1.7)" },
+          t,
+        );
+      });
+      // El título entra palabra por palabra, sin moverse de lugar.
+      tl.fromTo(
+        ".h-w",
+        { opacity: 0, filter: "blur(6px)" },
+        { opacity: 1, filter: "blur(0px)", duration: 0.13, ease: "power2.out", stagger: 0.07 },
+        0.5,
+      );
+      tl.to("#h-plata", { color: "#0b6b4f", duration: 0.2, ease: "power2.out" }, 2.7);
+      // Salida: la pelota barre los mensajes hacia la derecha.
+      tl.to(".h-bub", { x: 1300, rotation: "+=40", duration: 0.32, ease: "power3.in", stagger: 0.02 }, 4.85);
+      tl.to("#h-title", { opacity: 0, filter: "blur(10px)", duration: 0.2, ease: "power2.in" }, 4.85);
+      tl.to("#h-pin", { y: -340, duration: 0.3, ease: "power3.in" }, 4.9);
+      window.__timelines["chats"] = tl;
+    })();
+  </script>
+</template>

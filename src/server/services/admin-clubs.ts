@@ -4,6 +4,7 @@ import type { NewClubInput } from '../../lib/club-schema';
 import { auditLog, clubMembers, clubs, players, refreshTokens, users } from '../db/schema';
 import type { Tx } from '../db/tenant';
 import { createClub } from './clubs';
+import { listFeatureStates } from './features';
 
 const escapeLike = (s: string) => s.replace(/[\\%_]/g, (c) => `\\${c}`);
 
@@ -38,7 +39,9 @@ export async function clubDetail(tx: Tx, id: string, now: Date = new Date()) {
   const audit = await tx.select({ id: auditLog.id, action: auditLog.action, at: auditLog.createdAt, userName: users.name })
     .from(auditLog).leftJoin(users, eq(users.id, auditLog.userId)).where(eq(auditLog.clubId, id)).orderBy(desc(auditLog.createdAt)).limit(10);
 
-  return { club, players: counts.players, recent: counts.recent, members, lastLogin, owner: owner ?? null, audit };
+  const features = await listFeatureStates(tx, id);
+
+  return { club, players: counts.players, recent: counts.recent, members, lastLogin, owner: owner ?? null, audit, features };
 }
 
 /** Suspender no borra nada: los usuarios no pueden entrar y el link de alta se cierra (ambos lo verifican contra `status`). */
