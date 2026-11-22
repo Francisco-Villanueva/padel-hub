@@ -10,7 +10,7 @@ import { TournamentError } from '../src/server/services/tournament-errors';
 import { clearResult, recordResult, resolveTie } from '../src/server/services/tournament-matches';
 import { createTemplate, deleteTemplate, listTemplates, updateTemplate } from '../src/server/services/tournament-templates';
 import {
-  cancelTournament, closeTournament, createTournament, generateBracket, getTournament, openRegistration, reopenTournament, startTournament,
+  cancelTournament, closeTournament, createTournament, getTournament, openRegistration, reopenTournament, startTournament,
   updateTournament, zoneStates,
 } from '../src/server/services/tournaments';
 import { seedTwoClubs, setupDb } from './helpers';
@@ -173,11 +173,11 @@ describe('iniciar torneo', () => {
     const { id, entries } = await openTournament(7);
     await A((tx) => startTournament(tx, ca, id, { seed: 99 }));
     const zones = await A((tx) => tx.select().from(tournamentZones).where(eq(tournamentZones.tournamentId, id)).orderBy(tournamentZones.position));
-    expect(zones.map((z) => z.size)).toEqual([3, 4]);
+    expect(zones.map((z) => z.size)).toEqual([4, 3]);
     const es = await A((tx) => tx.select().from(tournamentEntries).where(eq(tournamentEntries.tournamentId, id)));
     expect(es.every((e) => e.zoneId)).toBe(true);
     expect(es.map((e) => e.id).sort()).toEqual([...entries].sort());
-    const ms = await A((tx) => tx.select().from(tournamentMatches).where(eq(tournamentMatches.tournamentId, id)));
+    const ms = await A((tx) => tx.select().from(tournamentMatches).where(and(eq(tournamentMatches.tournamentId, id), eq(tournamentMatches.stage, 'zona'))));
     expect(ms).toHaveLength(3 + 4);
     // Ya iniciado: no se inscribe más ni se vuelve a iniciar.
     await expect(A((tx) => startTournament(tx, ca, id))).rejects.toMatchObject({ code: 'invalid_state' });
@@ -202,7 +202,7 @@ describe('resultados', () => {
   it('valida los sets y el ganador; permite corregir y borrar', async () => {
     const { id } = await openTournament(6);
     await A((tx) => startTournament(tx, ca, id, { seed: 1 }));
-    const [m] = await A((tx) => tx.select().from(tournamentMatches).where(eq(tournamentMatches.tournamentId, id)).orderBy(tournamentMatches.round, tournamentMatches.position));
+    const [m] = await A((tx) => tx.select().from(tournamentMatches).where(and(eq(tournamentMatches.tournamentId, id), eq(tournamentMatches.stage, 'zona'))).orderBy(tournamentMatches.round, tournamentMatches.position));
     for (const bad of [[], [[6, 6]], [[6, 4], [4, 6]], 'x', [[6, 4], [6, 4], [6, 4], [6, 4]]]) {
       await expect(A((tx) => recordResult(tx, ca, m.id, bad))).rejects.toMatchObject({ code: 'result_invalid' });
     }
@@ -218,7 +218,7 @@ describe('resultados', () => {
   it('un resultado de otro club no se puede cargar', async () => {
     const { id } = await openTournament(6);
     await A((tx) => startTournament(tx, ca, id, { seed: 1 }));
-    const [m] = await A((tx) => tx.select().from(tournamentMatches).where(eq(tournamentMatches.tournamentId, id)));
+    const [m] = await A((tx) => tx.select().from(tournamentMatches).where(and(eq(tournamentMatches.tournamentId, id), eq(tournamentMatches.stage, 'zona'))));
     await t.withPlatform((tx) => setClubFeature(tx, { userId: s.ownerB }, s.b.id, 'tournaments', true));
     await expect(B((tx) => recordResult(tx, cb, m.id, [[6, 4], [6, 4]]))).rejects.toMatchObject({ code: 'not_found' });
     await t.withPlatform((tx) => setClubFeature(tx, { userId: s.ownerB }, s.b.id, 'tournaments', false));
@@ -244,22 +244,27 @@ describe('torneo de punta a punta', () => {
   it('10 parejas: zonas → resultados → llave → final → cierre → ranking', async () => {
     const { id, entries } = await openTournament(10);
     await A((tx) => startTournament(tx, ca, id, { seed: 11 }));
-    // La llave no se arma con zonas incompletas.
-    await expect(A((tx) => generateBracket(tx, ca, id))).rejects.toMatchObject({ code: 'zones_incomplete' });
+    // La llave existe desde el inicio, con los lugares todavía vacíos ("1º Zona A"…).
+    const empty = await A((tx) => tx.select().from(tournamentMatches).where(and(eq(tournamentMatches.tournamentId, id), eq(tournamentMatches.stage, 'llave'), eq(tournamentMatches.round, 1))));
+    expect(empty.filter((m) => m.status !== 'bye').every((m) => !m.entryAId && !m.entryBId && m.sourceA && m.sourceB)).toBe(true);
+    expect((await A((tx) => getTournament(tx, ca, id)))!.status).toBe('zonas');
     await playAll('zona', id);
     let states = await A((tx) => zoneStates(tx, ca, id));
     expect(states.every((z) => z.standings.complete)).toBe(true);
     // En la zona de 4 el 2º y el 3º llegan igualados (diferencia 0, no se enfrentaron): corresponde el sorteo.
-    await expect(A((tx) => generateBracket(tx, ca, id))).rejects.toMatchObject({ code: 'tie_unresolved' });
+    // Mientras haya un sorteo pendiente el torneo sigue en zonas y esos puestos quedan sin definir.
+    expect((await A((tx) => getTournament(tx, ca, id)))!.status).toBe('zonas');
     for (const z of states.filter((x) => x.standings.needsDraw.length)) await A((tx) => resolveTie(tx, ca, z.zone.id, { seed: 5 }));
     states = await A((tx) => zoneStates(tx, ca, id));
     expect(states.every((z) => z.standings.needsDraw.length === 0)).toBe(true);
-    // 3 + 3 + 4 zonas → 2 + 2 + 3 = 7 clasificados → llave de 8 con 1 bye.
-    const { size } = await A((tx) => generateBracket(tx, ca, id));
-    expect(size).toBe(8);
+    // Con todas las zonas terminadas pasa solo a llave. 4 + 3 + 3 → 3 + 2 + 2 = 7 clasificados → llave de 8 con 1 libre.
+    expect((await A((tx) => getTournament(tx, ca, id)))!.status).toBe('llave');
     const bracket = await A((tx) => tx.select().from(tournamentMatches).where(and(eq(tournamentMatches.tournamentId, id), eq(tournamentMatches.stage, 'llave'))));
     expect(bracket).toHaveLength(7);
     expect(bracket.filter((m) => m.status === 'bye')).toHaveLength(1);
+    // Todos los cruces de primera ronda ya tienen sus parejas, y el libre ya avanzó.
+    expect(bracket.filter((m) => m.round === 1 && m.status !== 'bye').every((m) => m.entryAId && m.entryBId)).toBe(true);
+    expect(bracket.filter((m) => m.round === 2).filter((m) => m.entryAId || m.entryBId).length).toBeGreaterThanOrEqual(1);
     await expect(A((tx) => closeTournament(tx, ca, id))).rejects.toMatchObject({ code: 'final_pending' });
     await playAll('llave', id);
 
@@ -319,7 +324,6 @@ describe('torneo de punta a punta', () => {
     const { id } = await openTournament(6, { isRanked: false });
     await A((tx) => startTournament(tx, ca, id, { seed: 2 }));
     await playAll('zona', id);
-    await A((tx) => generateBracket(tx, ca, id));
     await playAll('llave', id);
     await A((tx) => closeTournament(tx, ca, id));
     expect(await A((tx) => tx.select().from(rankingEvents).where(eq(rankingEvents.tournamentId, id)))).toHaveLength(0);
@@ -369,15 +373,18 @@ describe('desempate por sorteo', () => {
     await A((tx) => recordResult(tx, ca, cyc[1].id, [[4, 6]])); // b gana
     await A((tx) => recordResult(tx, ca, cyc[2].id, [[6, 4]])); // a gana
     for (const m of z2.matches) await A((tx) => recordResult(tx, ca, m.id, [[6, 3], [6, 3]]));
-    await expect(A((tx) => generateBracket(tx, ca, id))).rejects.toMatchObject({ code: 'tie_unresolved' });
+    // Con el empate sin sortear, esa zona no completa su lugar en la llave y el torneo sigue en zonas.
+    expect((await A((tx) => getTournament(tx, ca, id)))!.status).toBe('zonas');
     const draw = await A((tx) => resolveTie(tx, ca, z1.zone.id, { seed: 77 }));
     expect(draw.order).toHaveLength(3);
     const stored = (await A((tx) => tx.select().from(tournamentZones).where(eq(tournamentZones.id, z1.zone.id))))[0].tieDraw;
     expect(stored).toEqual({ seed: 77, order: draw.order });
     expect((await A((tx) => zoneStates(tx, ca, id)))[0].standings.rows.map((r) => r.entryId)).toEqual(draw.order);
     await expect(A((tx) => resolveTie(tx, ca, z1.zone.id))).rejects.toMatchObject({ code: 'draw_invalid' }); // ya no hay empate pendiente
-    await A((tx) => generateBracket(tx, ca, id));
-    // Corregir un resultado invalida el sorteo (aunque ya hay llave, la zona ya no admite cargas: estado `llave`).
-    await expect(A((tx) => recordResult(tx, ca, cyc[0].id, [[6, 0]]))).rejects.toMatchObject({ code: 'invalid_state' });
+    // Con el sorteo hecho todas las zonas están completas: pasa solo a llave.
+    expect((await A((tx) => getTournament(tx, ca, id)))!.status).toBe('llave');
+    // Se puede corregir un resultado de zona mientras la llave no haya empezado; eso invalida el sorteo.
+    await A((tx) => recordResult(tx, ca, cyc[0].id, [[6, 0]]));
+    expect((await A((tx) => tx.select().from(tournamentZones).where(eq(tournamentZones.id, z1.zone.id))))[0].tieDraw).toBeNull();
   });
 });

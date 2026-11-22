@@ -7,7 +7,7 @@ import type { Tx } from '../src/server/db/tenant';
 import { createPlayer } from '../src/server/services/players';
 import { registerPair } from '../src/server/services/tournament-entries';
 import { recordResult, resolveTie } from '../src/server/services/tournament-matches';
-import { closeTournament, createTournament, generateBracket, openRegistration, startTournament, zoneStates } from '../src/server/services/tournaments';
+import { closeTournament, createTournament, openRegistration, startTournament, zoneStates } from '../src/server/services/tournaments';
 import type { runners } from './_db';
 
 const FIRST = ['Mauro', 'Ezequiel', 'Bruno', 'Ramiro', 'Joaquín', 'Lautaro', 'Franco', 'Ignacio', 'Pablo', 'Sergio', 'Hernán', 'Maximiliano', 'Cristian', 'Emiliano', 'Leandro', 'Rodrigo'];
@@ -48,7 +48,6 @@ export async function seedExampleTournament(r: R, clubId: string, country = 'AR'
   };
   await playAll('zona');
   for (const z of await t((tx) => zoneStates(tx, ctx, id))) if (z.standings.needsDraw.length) await t((tx) => resolveTie(tx, ctx, z.zone.id, { seed: 3 }));
-  await t((tx) => generateBracket(tx, ctx, id));
   await playAll('llave');
   await t((tx) => closeTournament(tx, ctx, id));
   return true;

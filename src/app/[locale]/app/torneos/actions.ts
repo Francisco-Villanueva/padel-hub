@@ -7,15 +7,18 @@ import { ROUND_KEYS } from "@/lib/tournament/constants";
 import { requireFeature } from "@/server/auth/session";
 import { getClubContext } from "@/server/club-context";
 import { withTenant } from "@/server/db/client";
+import { localToUtc } from "@/lib/tz";
 import { LOCALES } from "@/server/db/schema";
 import type { Tx } from "@/server/db/tenant";
 import { FeatureDisabledError } from "@/server/services/features";
+import { replacePlayer, restoreSlot, setSlotEntry, swapSlots, swapZoneEntries, type Side } from "@/server/services/tournament-adjust";
+import { rebuildBracket } from "@/server/services/tournament-bracket";
 import { quickCreatePlayer, registerPair, removePair } from "@/server/services/tournament-entries";
 import { TournamentError } from "@/server/services/tournament-errors";
-import { clearResult, recordResult, resolveTie } from "@/server/services/tournament-matches";
+import { clearResult, recordResult, resolveTie, setMatchLive, setMatchSchedule } from "@/server/services/tournament-matches";
 import { createTemplate, deleteTemplate, updateTemplate } from "@/server/services/tournament-templates";
 import {
-  cancelTournament, closeTournament, createTournament, generateBracket, openRegistration, reopenTournament, startTournament, updateTournament,
+  cancelTournament, closeTournament, createTournament, openRegistration, reopenTournament, startTournament, updateTournament,
 } from "@/server/services/tournaments";
 
 export type TState = {
@@ -36,14 +39,14 @@ function localeOf(fd: FormData) {
   return (LOCALES as readonly string[]).includes(loc) ? loc : "es";
 }
 
-type Env = { locale: string; clubId: string; userId: string; country: string; clubLocale: "es" | "en" | "pt" };
+type Env = { locale: string; clubId: string; userId: string; country: string; clubLocale: "es" | "en" | "pt"; timezone: string };
 
 /** Sesión del club + flag de torneos (404 si está apagado). El clubId sale siempre de la sesión. */
 async function env(fd: FormData): Promise<Env> {
   const locale = localeOf(fd);
   const { session, club } = await getClubContext(locale);
   await requireFeature(locale, "tournaments");
-  return { locale, clubId: session.clubId, userId: session.userId, country: club.country, clubLocale: club.locale };
+  return { locale, clubId: session.clubId, userId: session.userId, country: club.country, clubLocale: club.locale, timezone: club.timezone };
 }
 
 const idOf = (fd: FormData, key = "id") => {
@@ -121,7 +124,7 @@ const simple = (fn: (tx: Tx, ctx: { clubId: string; userId: string }, id: string
 
 export const openRegistrationAction = simple(openRegistration);
 export const startTournamentAction = simple((tx, c, id) => startTournament(tx, c, id));
-export const generateBracketAction = simple(generateBracket);
+export const rebuildBracketAction = simple(async (tx, c, id) => { await rebuildBracket(tx, c, id); });
 export const closeTournamentAction = simple((tx, c, id) => closeTournament(tx, c, id));
 export const reopenTournamentAction = simple(reopenTournament);
 export const cancelTournamentAction = simple(cancelTournament);
@@ -188,4 +191,64 @@ export async function deleteTemplateAction(_prev: TState, fd: FormData): Promise
   const id = idOf(fd);
   if (!id) return fail("not_found");
   return mutate(fd, async (tx, c) => { await deleteTemplate(tx, { clubId: c.clubId }, id); });
+}
+
+// Horarios y partidos en juego ---------------------------------------------------------------------
+/** Día + hora locales del club. Con los dos campos vacíos se quita el horario. */
+export async function setScheduleAction(_prev: TState, fd: FormData): Promise<TState> {
+  const id = idOf(fd);
+  if (!id) return fail("not_found");
+  const date = String(fd.get("date") ?? "").trim(), time = String(fd.get("time") ?? "").trim();
+  if (!date && !time) return mutate(fd, async (tx, c) => { await setMatchSchedule(tx, { clubId: c.clubId }, id, null); });
+  return mutate(fd, async (tx, c) => {
+    const at = localToUtc(date, time, c.timezone);
+    if (!at) throw new TournamentError("schedule_invalid");
+    await setMatchSchedule(tx, { clubId: c.clubId }, id, at);
+  });
+}
+
+/** El club marca qué partidos se están jugando ahora (live=1) o los saca (live=0). */
+export async function setLiveAction(_prev: TState, fd: FormData): Promise<TState> {
+  const id = idOf(fd);
+  if (!id) return fail("not_found");
+  const live = fd.get("live") === "1";
+  return mutate(fd, async (tx, c) => { await setMatchLive(tx, { clubId: c.clubId }, id, live); });
+}
+
+// Ajustes a mano ------------------------------------------------------------------------------------
+const sideOf = (v: FormDataEntryValue | null): Side | null => (v === "a" || v === "b" ? v : null);
+
+/** Pone una pareja a mano en un lugar de la primera ronda (entry vacío = volver a automático). */
+export async function setSlotEntryAction(_prev: TState, fd: FormData): Promise<TState> {
+  const matchId = idOf(fd), side = sideOf(fd.get("side")), entry = String(fd.get("entry") ?? "");
+  if (!matchId || !side || (entry && !UUID.test(entry))) return fail("not_found");
+  return mutate(fd, async (tx, c) => { await setSlotEntry(tx, { clubId: c.clubId }, { matchId, side }, entry || null); });
+}
+
+export async function restoreSlotAction(_prev: TState, fd: FormData): Promise<TState> {
+  const matchId = idOf(fd), side = sideOf(fd.get("side"));
+  if (!matchId || !side) return fail("not_found");
+  return mutate(fd, async (tx, c) => { await restoreSlot(tx, { clubId: c.clubId }, { matchId, side }); });
+}
+
+/** Intercambia dos lugares de la primera ronda. `other` = "<id de partido>:<a|b>". */
+export async function swapSlotsAction(_prev: TState, fd: FormData): Promise<TState> {
+  const matchId = idOf(fd), side = sideOf(fd.get("side"));
+  const [otherId, otherSide] = String(fd.get("other") ?? "").split(":");
+  if (!matchId || !side || !UUID.test(otherId ?? "") || (otherSide !== "a" && otherSide !== "b")) return fail("not_found");
+  return mutate(fd, async (tx, c) => { await swapSlots(tx, { clubId: c.clubId }, { matchId, side }, { matchId: otherId, side: otherSide }); });
+}
+
+/** Cambia de zona a dos parejas entre sí. */
+export async function swapZoneEntriesAction(_prev: TState, fd: FormData): Promise<TState> {
+  const a = idOf(fd), b = idOf(fd, "other");
+  if (!a || !b) return fail("not_found");
+  return mutate(fd, async (tx, c) => { await swapZoneEntries(tx, { clubId: c.clubId }, a, b); });
+}
+
+/** Cambia a un jugador de una pareja por otro del club. */
+export async function replacePlayerAction(_prev: TState, fd: FormData): Promise<TState> {
+  const entry = idOf(fd), oldP = idOf(fd, "old"), newP = idOf(fd, "new");
+  if (!entry || !oldP || !newP) return fail("pair_missing");
+  return mutate(fd, async (tx, c) => { await replacePlayer(tx, { clubId: c.clubId }, entry, oldP, newP); });
 }

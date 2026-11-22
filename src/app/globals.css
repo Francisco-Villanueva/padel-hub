@@ -188,6 +188,20 @@
   animation: rise 520ms var(--ease) both;
   animation-delay: calc(var(--i, 0) * 45ms);
 }
+/* Panel lateral: entra por la derecha (responde a la acción de abrirlo). */
+@keyframes sheet-in {
+  from {
+    transform: translateX(2rem);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+.sheet[open] {
+  animation: sheet-in 260ms var(--ease) both;
+}
 @utility enter-fade {
   animation: fade 400ms var(--ease) both;
 }

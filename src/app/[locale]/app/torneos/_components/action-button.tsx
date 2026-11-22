@@ -2,6 +2,7 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import { useActionState, useState } from "react";
+import { Icon, type IconName } from "@/components/icons";
 import { Modal } from "@/components/modal";
 import { cx, ui } from "@/components/ui";
 import type { TState } from "../actions";
@@ -22,70 +23,84 @@ export type Variant = "primary" | "secondary" | "danger" | "dangerSolid" | "ghos
 const VARIANT: Record<Variant, string> = {
   primary: ui.btnPrimary, secondary: ui.btnSecondary, danger: ui.btnDanger, dangerSolid: ui.btnDangerSolid, ghost: ui.btnGhost,
 };
+type Action = (prev: TState, fd: FormData) => Promise<TState>;
+type Confirm = { title: string; body: string; label: string };
 
-/**
- * Botón que dispara una server action con campos ocultos (id…). Con `confirm` abre antes un diálogo de confirmación.
- * Deshabilitado con `disabled`; muestra el error de la acción debajo.
- */
-export function ActionButton({
-  action, fields, children, variant = "secondary", confirm, small, disabled, className,
-}: {
-  action: (prev: TState, fd: FormData) => Promise<TState>;
-  fields: Record<string, string>;
-  children: React.ReactNode;
-  variant?: Variant;
-  confirm?: { title: string; body: string; label: string };
-  small?: boolean;
-  disabled?: boolean;
-  className?: string;
-}) {
+/** Diálogo de confirmación de una server action (campos ocultos + botón de confirmar). Se cierra solo si la acción sale bien. */
+export function ConfirmActionDialog({
+  open, onClose, action, fields, confirm, tone = "danger", icon,
+}: { open: boolean; onClose: () => void; action: Action; fields: Record<string, string>; confirm: Confirm; tone?: "danger" | "primary"; icon?: IconName }) {
   const locale = useLocale();
   const tc = useTranslations("common");
   const errorText = useErrorText();
-  const [open, setOpen] = useState(false);
   const [state, formAction, pending] = useActionState(async (prev: TState, fd: FormData) => {
     const res = await action(prev, fd);
-    if (res.status === "ok") setOpen(false);
+    if (res.status === "ok") onClose();
     return res;
   }, idle);
-  const hidden = (
-    <>
-      <input type="hidden" name="locale" value={locale} />
-      {Object.entries(fields).map(([k, v]) => <input key={k} type="hidden" name={k} value={v} />)}
-    </>
-  );
-  const cls = cx(small ? ui.btnSm : ui.btn, VARIANT[variant], className);
   const message = errorText(state);
   return (
-    <>
-      {confirm ? (
+    <Modal
+      open={open}
+      onClose={onClose}
+      title={confirm.title}
+      description={confirm.body}
+      actions={
         <>
-          <button type="button" disabled={disabled} onClick={() => setOpen(true)} className={cls}>{children}</button>
-          <Modal
-            open={open}
-            onClose={() => setOpen(false)}
-            title={confirm.title}
-            description={confirm.body}
-            actions={
-              <>
-                <button type="button" onClick={() => setOpen(false)} className={cx(ui.btn, ui.btnSecondary)}>{tc("cancel")}</button>
-                <form action={formAction} className="contents">
-                  {hidden}
-                  <button type="submit" disabled={pending} className={cx(ui.btn, VARIANT[variant === "danger" ? "dangerSolid" : variant])}>{confirm.label}</button>
-                </form>
-              </>
-            }
-          >
-            {message && <p role="alert" className={ui.error}>{message}</p>}
-          </Modal>
+          <button type="button" onClick={onClose} className={cx(ui.btn, ui.btnSecondary)}><Icon name="x" />{tc("cancel")}</button>
+          <form action={formAction} className="contents">
+            <input type="hidden" name="locale" value={locale} />
+            {Object.entries(fields).map(([k, v]) => <input key={k} type="hidden" name={k} value={v} />)}
+            <button type="submit" disabled={pending} className={cx(ui.btn, tone === "danger" ? ui.btnDangerSolid : ui.btnPrimary)}>{icon && <Icon name={icon} />}{confirm.label}</button>
+          </form>
         </>
-      ) : (
-        <form action={formAction} className={cx("contents")}>
-          {hidden}
-          <button type="submit" disabled={disabled || pending} className={cls}>{children}</button>
-        </form>
-      )}
-      {!confirm && message && <p role="alert" className={cx(ui.error, "w-full")}>{message}</p>}
+      }
+    >
+      {message && <p role="alert" className={ui.error}>{message}</p>}
+    </Modal>
+  );
+}
+
+/**
+ * Botón que dispara una server action con campos ocultos (id…). Con `confirm` abre antes un diálogo de confirmación.
+ * Deshabilitado con `disabled`; muestra el error de la acción debajo. `icon` va a la izquierda del texto.
+ */
+export function ActionButton({
+  action, fields, children, variant = "secondary", confirm, small, disabled, className, icon,
+}: {
+  action: Action;
+  fields: Record<string, string>;
+  children: React.ReactNode;
+  variant?: Variant;
+  confirm?: Confirm;
+  small?: boolean;
+  disabled?: boolean;
+  className?: string;
+  icon?: IconName;
+}) {
+  const locale = useLocale();
+  const errorText = useErrorText();
+  const [open, setOpen] = useState(false);
+  const [state, formAction, pending] = useActionState(action, idle);
+  const cls = cx(small ? ui.btnSm : ui.btn, VARIANT[variant], className);
+  const content = <>{icon && <Icon name={icon} />}{children}</>;
+  const message = errorText(state);
+  if (confirm) {
+    return (
+      <>
+        <button type="button" disabled={disabled} onClick={() => setOpen(true)} className={cls}>{content}</button>
+        <ConfirmActionDialog open={open} onClose={() => setOpen(false)} action={action} fields={fields} confirm={confirm} tone={variant === "primary" ? "primary" : "danger"} icon={icon} />
+      </>
+    );
+  }
+  return (
+    <>
+      <form action={formAction} className="contents">
+        <input type="hidden" name="locale" value={locale} />
+        {Object.entries(fields).map(([k, v]) => <input key={k} type="hidden" name={k} value={v} />)}
+        <button type="submit" disabled={disabled || pending} className={cls}>{content}</button>
+      </form>
+      {message && <p role="alert" className={cx(ui.error, "w-full")}>{message}</p>}
     </>
   );
 }
