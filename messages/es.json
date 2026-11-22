@@ -96,7 +96,8 @@
     "home": "Inicio",
     "cuarto": "Falta el cuarto",
     "settings": "Ajustes",
-    "clubsAdmin": "Clubes"
+    "clubsAdmin": "Clubes",
+    "tournaments": "Torneos"
   },
   "install": {
     "button": "Instalar app",
@@ -559,6 +560,23 @@
       "reactivateBody": "{name} vuelve a funcionar con todos sus datos.",
       "errors": {
         "generic": "Algo salió mal. Intentá de nuevo."
+      },
+      "features": {
+        "title": "Funciones",
+        "sub": "Habilitá funciones para este club. Solo el superadmin puede cambiarlas.",
+        "tournaments": {
+          "name": "Torneos y rankings",
+          "desc": "Torneos con zonas y llave, plantillas y ranking por categoría."
+        },
+        "on": "Activar",
+        "off": "Apagar",
+        "enabled": "Activado",
+        "enabledAt": "Activado el {date}",
+        "offTitle": "¿Apagar torneos y rankings?",
+        "offBody": "El club deja de ver la sección y el ranking público se oculta. No se borra ningún dato: reaparece si volvés a activarla.",
+        "errors": {
+          "generic": "No se pudo cambiar la función. Probá de nuevo."
+        }
       }
     },
     "new": {
@@ -699,6 +717,251 @@
     },
     "whatsapp": {
       "label": "¿Dudas? Escribinos"
+    }
+  },
+  "tournaments": {
+    "title": "Torneos",
+    "sub": "Zonas, llave y ranking de tu club.",
+    "new": "Nuevo torneo",
+    "ranked": "Puntuable",
+    "notRanked": "No puntúa",
+    "empty": {
+      "title": "Todavía no hay torneos",
+      "body": "Creá el primero: elegí categoría, modalidad y mínimo de parejas. Los torneos puntuables alimentan el ranking."
+    },
+    "sections": {
+      "live": "En juego",
+      "registration": "Inscripción abierta",
+      "draft": "Borradores",
+      "closed": "Cerrados",
+      "cancelled": "Cancelados"
+    },
+    "status": {
+      "borrador": "Borrador",
+      "inscripcion": "Inscripción",
+      "zonas": "Zonas",
+      "llave": "Llave",
+      "cerrado": "Cerrado",
+      "cancelado": "Cancelado"
+    },
+    "modality": {
+      "libre": "Libre",
+      "mixto": "Mixto",
+      "masculino": "Masculino",
+      "femenino": "Femenino"
+    },
+    "rule": {
+      "sum": "Suma {n}"
+    },
+    "rounds": {
+      "champion": "Campeón",
+      "final": "Finalista",
+      "semifinal": "Semifinal",
+      "quarterfinal": "Cuartos",
+      "round_of_16": "Octavos",
+      "round_of_32": "16vos",
+      "round_of_64": "32vos",
+      "round_of_128": "64vos",
+      "zone": "Zona"
+    },
+    "form": {
+      "title": "Nuevo torneo",
+      "lead": "Definí la regla de categoría, el mínimo de parejas y cuántos puntos reparte.",
+      "name": "Nombre",
+      "namePlaceholder": "Ej.: 6ta libre de noviembre",
+      "modality": "Modalidad",
+      "ruleKind": "Regla de categoría",
+      "ruleSingle": "Una categoría",
+      "ruleSum": "Suma de categorías",
+      "category": "Categoría",
+      "sumValue": "Suma mínima",
+      "sumHint": "La pareja entra si sus categorías suman este número o más (6ta + 7ma = 13).",
+      "minPairs": "Mínimo de parejas",
+      "minPairsHint": "No puede ser menor a {min}. Si no se llega, el torneo no arranca y se puede cancelar.",
+      "startsOn": "Fecha de inicio",
+      "seedWindow": "Ranking para sembrar",
+      "seedWindowHint": "Qué período del ranking define las cabezas de serie.",
+      "ranked": "Torneo puntuable",
+      "rankedHint": "Si está activo, al cerrarlo suma puntos al ranking del club.",
+      "pointsTitle": "Puntos",
+      "template": "Plantilla",
+      "noTemplate": "Sin plantilla",
+      "champion": "Puntos del campeón",
+      "participation": "Puntos por participar",
+      "participationHint": "Piso mínimo: nadie recibe menos que esto.",
+      "roundsTitle": "Puntos por ronda",
+      "roundsHint": "Se calculan solos a partir del campeón. Escribí un número para ajustar una ronda.",
+      "cancel": "Cancelar",
+      "create": "Crear torneo",
+      "saving": "Guardando…",
+      "validation": "Revisá los datos: hay campos incompletos o inválidos."
+    },
+    "detail": {
+      "data": "Datos",
+      "date": "Fecha",
+      "minPairs": "Mínimo de parejas",
+      "points": "Puntos",
+      "pointsValue": "Campeón {champion} · participación {participation}",
+      "ranking": "Ranking",
+      "openRegistration": "Abrir inscripción",
+      "start": "Iniciar torneo",
+      "generateBracket": "Generar llave",
+      "close": "Cerrar torneo",
+      "reopen": "Reabrir",
+      "cancel": "Cancelar torneo",
+      "cancelTitle": "¿Cancelar el torneo?",
+      "cancelBody": "\"{name}\" queda en el historial, solo lectura y sin puntos. No se puede deshacer.",
+      "cancelConfirm": "Sí, cancelar",
+      "cancelledNotice": "Torneo cancelado: queda en el historial, sin puntos para el ranking.",
+      "draftHint": "Abrí la inscripción para empezar a anotar parejas."
+    },
+    "entries": {
+      "title": "Parejas",
+      "none": "Todavía no hay parejas inscriptas.",
+      "count": "{count} de {min} parejas",
+      "missing": "Faltan {count} parejas para llegar al mínimo de {min}.",
+      "addTitle": "Anotar una pareja",
+      "search": "Buscar jugador",
+      "searchPlaceholder": "Apellido o nombre",
+      "player1": "Jugador 1",
+      "player2": "Jugador 2",
+      "select": "Elegí un jugador",
+      "quickAdd": "¿No está? Anotarlo ahora",
+      "noPlayers": "No hay jugadores del club aptos para este torneo. Podés anotar uno nuevo.",
+      "add": "Anotar pareja",
+      "seed": "Cabeza de serie {n}",
+      "removeTitle": "¿Dar de baja la pareja?",
+      "removeBody": "{name} deja de estar inscripta. Sus jugadores quedan libres para otra pareja.",
+      "remove": "Dar de baja",
+      "quick": {
+        "title": "Nuevo jugador",
+        "body": "Se guarda en la base de jugadores del club.",
+        "firstName": "Nombre",
+        "lastName": "Apellido",
+        "gender": "Género",
+        "category": "Categoría",
+        "select": "Elegí",
+        "phone": "Teléfono (WhatsApp)",
+        "phoneHint": "Con código de área. Si ya existe, se usa ese jugador.",
+        "create": "Anotar jugador",
+        "existing": "Ya había un jugador con ese teléfono: {name}. Se usó ese."
+      }
+    },
+    "zones": {
+      "title": "Zonas",
+      "pos": "#",
+      "pair": "Pareja",
+      "played": "PJ",
+      "wins": "G",
+      "diff": "Dif",
+      "qualified": "Pasa",
+      "out": "Fuera",
+      "round": "Ronda {n}",
+      "tbd": "A definir",
+      "drawNeeded": "Hay empates que solo se resuelven por sorteo. Hacelo en la zona marcada para poder generar la llave.",
+      "drawBody": "Empate sin desempate posible: corresponde un sorteo.",
+      "drawButton": "Sortear desempate",
+      "drawDone": "El desempate se resolvió por sorteo."
+    },
+    "bracket": {
+      "title": "Llave",
+      "bye": "Libre",
+      "round": {
+        "champion": "Campeón",
+        "final": "Final",
+        "semifinal": "Semifinal",
+        "quarterfinal": "Cuartos de final",
+        "round_of_16": "Octavos de final",
+        "round_of_32": "16vos de final",
+        "round_of_64": "32vos de final",
+        "round_of_128": "64vos de final"
+      }
+    },
+    "result": {
+      "title": "Resultado",
+      "set": "Set {n}",
+      "addSet": "Agregar set",
+      "save": "Guardar",
+      "load": "Cargar resultado",
+      "edit": "Editar",
+      "clear": "Borrar resultado"
+    },
+    "closed": {
+      "title": "Puntos otorgados",
+      "notRanked": "Este torneo no es puntuable: no suma al ranking.",
+      "pts": "{n} pts"
+    },
+    "templates": {
+      "title": "Plantillas",
+      "sub": "Puntos reutilizables para tus torneos, por ejemplo \"Torneo de 1000 ptos\".",
+      "new": "Nueva plantilla",
+      "newTitle": "Nueva plantilla",
+      "editTitle": "Editar plantilla",
+      "formBody": "Al crear un torneo con esta plantilla se copian sus puntos; después podés ajustarlos en el torneo.",
+      "name": "Nombre",
+      "namePlaceholder": "Torneo de 1000 ptos",
+      "champion": "Puntos del campeón",
+      "participation": "Puntos por participar",
+      "percentsNote": "Los puntos de cada ronda se calculan con los porcentajes estándar. Cambiar la plantilla no modifica los torneos ya creados.",
+      "save": "Guardar",
+      "edit": "Editar",
+      "delete": "Borrar",
+      "deleteTitle": "¿Borrar la plantilla?",
+      "deleteBody": "\"{name}\" se borra. Los torneos ya creados no cambian.",
+      "emptyTitle": "Todavía no hay plantillas",
+      "emptyBody": "Creá una para cargar los puntos de un torneo en un toque.",
+      "summary": "Campeón {champion} · participación {participation}",
+      "validation": "Revisá el nombre y los puntos."
+    },
+    "ranking": {
+      "title": "Ranking",
+      "sub": "Se calcula con los torneos puntuables cerrados, por categoría y modalidad.",
+      "group": "Categoría y modalidad",
+      "windowLabel": "Período",
+      "window": {
+        "month": "Último mes",
+        "6months": "6 meses",
+        "year": "Último año",
+        "all": "Histórico"
+      },
+      "position": "#",
+      "player": "Jugador",
+      "category": "Categoría",
+      "tournaments": "Torneos",
+      "points": "Puntos",
+      "empty": "No hay puntos en este período.",
+      "noGroupsTitle": "Todavía no hay ranking",
+      "noGroupsBody": "Aparece cuando cierres un torneo puntuable.",
+      "publicLead": "Posiciones según los torneos puntuables del club.",
+      "publicNoGroupsBody": "Todavía no hay torneos puntuables cerrados."
+    },
+    "errors": {
+      "generic": "No se pudo completar la acción. Probá de nuevo.",
+      "not_found": "No se encontró lo que buscabas.",
+      "template_not_found": "La plantilla ya no existe.",
+      "player_not_found": "No se encontró uno de los jugadores.",
+      "invalid_state": "El torneo no está en un estado que permita esta acción.",
+      "below_min": "Faltan {missing} parejas para llegar al mínimo de {minPairs}.",
+      "has_entries": "Hay parejas inscriptas: no se puede cambiar la categoría ni la modalidad.",
+      "pair_invalid": "La pareja no cumple la regla del torneo.",
+      "pair_missing": "Elegí los dos jugadores.",
+      "player_taken": "Uno de los jugadores ya está en otra pareja de este torneo.",
+      "zones_incomplete": "Faltan resultados en las zonas.",
+      "tie_unresolved": "Hay empates pendientes de sorteo.",
+      "final_pending": "Falta jugar la final.",
+      "result_invalid": "Resultado inválido: cargá de 1 a 3 sets, sin empates dentro de un set.",
+      "next_played": "No se puede cambiar: el partido siguiente ya se jugó. Borrá primero ese resultado.",
+      "invalid_phone": "El teléfono no es válido.",
+      "draw_invalid": "No hay ningún empate para sortear.",
+      "champion_required": "Indicá los puntos del campeón o elegí una plantilla.",
+      "validation": "Revisá los datos."
+    },
+    "pairReasons": {
+      "no_category": "Los dos jugadores necesitan categoría.",
+      "category_mismatch": "Las categorías de los jugadores no coinciden con la del torneo.",
+      "sum_too_low": "Las categorías no llegan a la suma mínima.",
+      "modality_mismatch": "La pareja no cumple la modalidad del torneo.",
+      "same_player": "Elegí dos jugadores distintos."
     }
   },
   "register": {

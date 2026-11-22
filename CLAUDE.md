@@ -5,7 +5,7 @@
 SaaS multi-club para clubes de pádel: base ordenada de jugadores (categoría 1–8 + Principiantes, posición, horarios, contacto), búsqueda y contacto por WhatsApp. Desarrollado por **Duxio**. Contexto de producto y diseño completo: `../docs/system-design.md` (leerlo antes de decidir arquitectura) y `../PadelHub_prompt_inicial.md`.
 
 ## Alcance
-- **MVP en curso:** módulo de jugadores (hecho), alta pública por link/tablet, "Falta el cuarto", panel superadmin, usuarios del club (invitación/reset), CSV, marca del club. Eventos y ligas después.
+- **MVP en curso:** módulo de jugadores (hecho), alta pública por link/tablet, "Falta el cuarto", panel superadmin, usuarios del club (invitación/reset), CSV, marca del club, **torneos y rankings** (zonas + llave, plantillas, ranking por club y página pública; diseño en `docs/torneos-y-rankings.md`, plan en `docs/torneos-plan-de-implementacion.md`). Ligas y eventos después.
 - **Post-MVP, no construir todavía:** suscripciones y pagos (Mercado Pago / Stripe), facturación ARCA, avisos por la API de WhatsApp. Los clubes se dan de alta a mano (`scripts/create-club.ts`). `clubs.status` y `clubs.plan_id` ya dejan el lugar.
 - `../padel_demo` es el prototipo viejo (Notion + Netlify). Es solo referencia: **no se toca**, y Notion no se usa.
 
@@ -26,7 +26,7 @@ Scripts de operación (`scripts/`): se corren con `tsx` directo, **no** con `npm
 ```bash
 npx tsx --conditions=react-server scripts/create-club.ts --slug ... --name "..." --owner-email ... --owner-name "..." --password "..."
 npx tsx --conditions=react-server scripts/create-superadmin.ts --email ... --name "..." --password "..."
-npx tsx --conditions=react-server scripts/seed-demo.ts --password "..."   # club demo, solo en dev
+npx tsx --conditions=react-server scripts/seed-demo.ts --password "..."   # club demo, solo en dev (activa torneos y carga un torneo de ejemplo)
 npm run ops:smoke / ops:smoke-auth   # pruebas de humo contra la base real; crean y borran sus datos
 ```
 
@@ -49,9 +49,10 @@ src/
   server/
     db/schema.ts           esquema Drizzle · tenant.ts (withTenant/withPlatform) · client.ts (Neon, server-only)
     auth/                  service.ts (lógica), jwt.ts, password.ts, session.ts (requireXxx), http.ts (cookies, CSRF)
-    services/              reglas de negocio; reciben el `tx` y no conocen HTTP
+    services/              reglas de negocio; reciben el `tx` y no conocen HTTP (torneos: tournaments, tournament-entries, tournament-matches, tournament-templates, tournament-view, ranking, public-ranking, features)
     club-context.ts        sesión + club activo, una consulta por request
-  lib/                     código compartido cliente/servidor (phone.ts, player-schema.ts)
+  lib/                     código compartido cliente/servidor (phone.ts, player-schema.ts, features.ts, tournament-schema.ts)
+  lib/tournament/          motor de torneos: funciones puras sin base (zonas, sorteo con semilla, posiciones y desempate, llave con byes, puntos, elegibilidad, ventana del ranking); supuestos en `constants.ts`
   components/              UI compartida (ui.ts = clases, app-nav, language-switcher…) · landing/ (secciones de la landing)
   i18n/ · messages/{es,en,pt}.json
 drizzle/                   migraciones (0000 = tablas, 0001 = roles/RLS/grants, a mano)
@@ -64,6 +65,8 @@ Regla de capas: la UI no consulta la base. Páginas y server actions llaman a `s
 - Un solo schema; toda tabla de negocio lleva `club_id`. **Row Level Security** es la segunda barrera: la app conecta como `app_user` (sin BYPASSRLS) y `withTenant(clubId, fn)` abre una transacción con `app.club_id`. Auth, superadmin y jobs usan `withPlatform()` (rol `platform_user`).
 - `clubId` sale **siempre de la sesión** (`requireClubSession()`), nunca de un parámetro o formulario.
 - Tabla nueva con `club_id` ⇒ en su migración: `ENABLE ROW LEVEL SECURITY`, policy `tenant_isolation`, policy `platform_all`, `GRANT`s a `app_user`/`platform_user`, FK compuesta `(id, club_id)` si referencia otra tabla del club, **y un test** en `tests/tenant-isolation.test.ts`. Nunca `FORCE ROW LEVEL SECURITY` (bloquearía las migraciones).
+- **Feature flags por club:** tabla `club_features` (`app_user` solo lee; escribe únicamente el superadmin desde la tarjeta "Funciones" de `/admin/clubs/[id]`, con `audit_log`). Hoy hay una sola función, `tournaments` (torneos, plantillas y rankings), apagada por defecto. Se exige en **cada** página con `requireFeature(locale, "tournaments")` (404 si está apagada), en cada server action y, por defensa en profundidad, en cada servicio con `assertFeature(tx, clubId, "tournaments")`. Ocultar el menú no alcanza.
+- **Torneos:** tablas `tournaments`, `tournament_zones/entries/entry_players/matches/templates` y `ranking_events` (libro de puntos; el ranking se calcula sumándolo, único por torneo+jugador). El torneo guarda su propia copia de la tabla de puntos. Máquina de estados en `services/tournaments.ts` (`assertTransition`). Dueño y empleado operan todo. La página pública `/c/<slug>/ranking` solo usa las funciones SECURITY DEFINER `public_ranking*` (0009): devuelven nombre de pila, inicial del apellido, categoría y puntos, nunca contacto, y nada si el club está suspendido o sin el flag.
 - `app_user` no lee `password_hash`, `refresh_tokens`, `auth_tokens`, `rate_limits` y no puede cambiar `slug`/`status`/`plan_id` del club.
 - Auth: access JWT 15 min (`ph_at`) + refresh opaco rotativo 30 días (`ph_rt`, solo se guarda el hash). Reusar un refresh viejo revoca la familia; hay ventana de 10 s para pestañas simultáneas. El refresh re-verifica usuario, membresía, rol y estado del club en la base. Mutaciones por API exigen `Origin` propio.
 - Autorización real en cada página/acción (`requireClubSession`, `requireOwner`, `requireSuperadmin`); el proxy es solo una comodidad. Permisos que validamos en el servidor, no en la UI: **solo el dueño borra jugadores, exporta CSV y gestiona usuarios**.

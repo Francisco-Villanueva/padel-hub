@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import { AppShell } from "@/components/app-shell";
 import { ClubMark } from "@/components/club-mark";
 import type { NavItem } from "@/components/nav-items";
+import { getEnabledFeatures } from "@/server/auth/session";
 import { getClubContext } from "@/server/club-context";
 
 // El panel es privado: nada de esto debe indexarse.
@@ -15,17 +16,21 @@ const ITEMS: NavItem[] = [
   { href: "/app/players", label: "players", icon: "players" },
   { href: "/app/falta-el-cuarto", label: "cuarto", icon: "cuarto" },
 ];
+// Solo si el superadmin habilitó la función para el club (cada ruta lo exige también en el servidor).
+const TOURNAMENT_ITEM: NavItem = { href: "/app/torneos", label: "tournaments", icon: "trophy" };
 const OWNER_ITEMS: NavItem[] = [{ href: "/app/settings", label: "settings", icon: "settings" }];
 
 async function Shell({ locale, children }: { locale: string; children: React.ReactNode }) {
   const t = await getTranslations();
   const { session, club } = await getClubContext(locale);
   const role = t(`auth.role.${session.role}`);
+  const features = await getEnabledFeatures(club.id);
+  const items = features.includes("tournaments") ? [...ITEMS, TOURNAMENT_ITEM] : ITEMS;
   const trialDays = club.trialDaysLeft;
 
   return (
     <AppShell
-      items={session.role === "owner" ? [...ITEMS, ...OWNER_ITEMS] : ITEMS}
+      items={session.role === "owner" ? [...items, ...OWNER_ITEMS] : items}
       userName={role}
       userRole={club.name}
       heading={
