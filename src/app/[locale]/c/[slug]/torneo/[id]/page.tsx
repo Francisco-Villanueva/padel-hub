@@ -8,9 +8,7 @@ import { ClubMark } from "@/components/club-mark";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { TournamentBoard } from "@/components/tournament-board";
 import { clubBrandCss } from "@/lib/color";
-import { withPlatform } from "@/server/db/client";
-import { publicTournamentBoard, publicTournamentInfo } from "@/server/services/public-board";
-import { publicRankingClub } from "@/server/services/public-ranking";
+import { loadPublicBoard } from "@/server/services/public-cache";
 
 // Tablero del torneo para el televisor del club y para los jugadores. Link por id (no se indexa).
 export const metadata: Metadata = { robots: { index: false, follow: false } };
@@ -31,10 +29,10 @@ async function Board({ page }: { page: PageProps<"/[locale]/c/[slug]/torneo/[id]
   const { locale, slug, id } = await page.params;
   setRequestLocale(locale);
   const t = await getTranslations();
-  const club = await withPlatform((tx) => publicRankingClub(tx, slug));
-  const info = club ? await withPlatform((tx) => publicTournamentInfo(tx, slug, id)) : null;
-  if (!club || !info) notFound();
-  const matches = await withPlatform((tx) => publicTournamentBoard(tx, slug, id));
+  // Datos cacheados unos segundos en el servidor: cada televisor se actualiza solo y no debe ir a la base cada vez.
+  const data = await loadPublicBoard(slug, id);
+  if (!data) notFound();
+  const { club, info, matches } = data;
   const brandCss = clubBrandCss(club.colorPrimary, club.colorAccent);
   const rule = info.ruleKind === "sum" ? t("tournaments.rule.sum", { n: info.ruleValue }) : categoryLabel(t, info.ruleValue);
 

@@ -40,14 +40,17 @@ async function Detalle({ params, searchParams }: { params: PageProps<"/[locale]/
   setRequestLocale(locale);
   const session = await requireFeature(locale, "tournaments");
   if (!UUID.test(id)) notFound();
-  const t = await getTranslations();
-  const format = await getFormatter();
   const ctx = { clubId: session.clubId };
-  const view = await withTenant(session.clubId, (tx) => tournamentView(tx, ctx, id));
+  // Consultas independientes: se piden a la vez (el club ya está memoizado por el layout).
+  const [t, format, view, { club }] = await Promise.all([
+    getTranslations(),
+    getFormatter(),
+    withTenant(session.clubId, (tx) => tournamentView(tx, ctx, id)),
+    getClubContext(locale),
+  ]);
   if (!view) notFound();
   const { tournament: tr, entries } = view;
   const status = tr.status;
-  const { club } = await getClubContext(locale);
   const h = await headers();
   const host = h.get("x-forwarded-host") ?? h.get("host") ?? "";
   const origin = `${h.get("x-forwarded-proto") ?? (host.startsWith("localhost") ? "http" : "https")}://${host}`;

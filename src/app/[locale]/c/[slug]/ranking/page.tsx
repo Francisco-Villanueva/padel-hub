@@ -8,16 +8,14 @@ import { LanguageSwitcher } from "@/components/language-switcher";
 import { cx, stagger, ui } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
 import { clubBrandCss } from "@/lib/color";
-import { CATEGORY_RULE_KINDS, MODALITIES } from "@/lib/tournament/constants";
-import { DEFAULT_RANKING_WINDOW, RANKING_WINDOWS, type RankingWindow } from "@/lib/tournament/ranking-window";
-import { withPlatform } from "@/server/db/client";
-import { publicRanking, publicRankingBuckets, publicRankingClub, type PublicBucket } from "@/server/services/public-ranking";
+import { RANKING_WINDOWS, type RankingWindow } from "@/lib/tournament/ranking-window";
+import { bucketKey as keyOf, loadPublicRanking, wantedGroup, wantedWindow } from "@/server/services/public-cache";
+import type { PublicBucket } from "@/server/services/public-ranking";
 
 // Público, pero sin indexar: muestra nombres de jugadores (nombre de pila e inicial del apellido, nunca contacto).
 export const metadata: Metadata = { robots: { index: false, follow: false } };
 
 const first = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);
-const keyOf = (g: PublicBucket) => `${g.ruleKind}-${g.ruleValue}-${g.modality}`;
 
 async function PublicRanking({ page }: { page: PageProps<"/[locale]/c/[slug]/ranking"> }) {
   // Las props se leen acá adentro (dentro de <Suspense>): leerlas en la página bloquearía el prerender (slug es dinámico).
@@ -25,17 +23,11 @@ async function PublicRanking({ page }: { page: PageProps<"/[locale]/c/[slug]/ran
   setRequestLocale(locale);
   const sp = await page.searchParams;
   const t = await getTranslations();
-  // 404 si el club no existe, está suspendido o no tiene torneos activados (lo decide la función SQL).
-  const club = await withPlatform((tx) => publicRankingClub(tx, slug));
-  if (!club) notFound();
-  const buckets = await withPlatform((tx) => publicRankingBuckets(tx, slug));
-
-  const [kind, value, modality] = (first(sp.g) ?? "").split("-");
-  const wanted = CATEGORY_RULE_KINDS.some((k) => k === kind) && MODALITIES.some((m) => m === modality) ? `${kind}-${Number(value)}-${modality}` : "";
-  const group = buckets.find((b) => keyOf(b) === wanted) ?? buckets[0] ?? null;
-  const w = first(sp.w) as RankingWindow | undefined;
-  const window: RankingWindow = w && RANKING_WINDOWS.includes(w) ? w : DEFAULT_RANKING_WINDOW;
-  const rows = group ? await withPlatform((tx) => publicRanking(tx, slug, group, window)) : [];
+  // 404 si el club no existe, está suspendido o no tiene torneos activados (datos cacheados unos segundos en el servidor).
+  const window = wantedWindow(first(sp.w));
+  const data = await loadPublicRanking(slug, wantedGroup(first(sp.g)), window);
+  if (!data) notFound();
+  const { club, buckets, group, rows } = data;
   const href = (g: PublicBucket, win: RankingWindow) => `/c/${slug}/ranking?g=${keyOf(g)}&w=${win}`;
   const label = (g: PublicBucket) => `${g.ruleKind === "sum" ? t("tournaments.rule.sum", { n: g.ruleValue }) : categoryLabel(t, g.ruleValue)} · ${t(`tournaments.modality.${g.modality}`)}`;
   const brandCss = clubBrandCss(club.colorPrimary, club.colorAccent);

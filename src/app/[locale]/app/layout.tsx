@@ -4,7 +4,7 @@ import { Suspense } from "react";
 import { AppShell } from "@/components/app-shell";
 import { ClubMark } from "@/components/club-mark";
 import type { NavItem } from "@/components/nav-items";
-import { getEnabledFeatures } from "@/server/auth/session";
+import { getEnabledFeatures, requireClubSession } from "@/server/auth/session";
 import { getClubContext } from "@/server/club-context";
 
 // El panel es privado: nada de esto debe indexarse.
@@ -21,10 +21,10 @@ const TOURNAMENT_ITEM: NavItem = { href: "/app/torneos", label: "tournaments", i
 const OWNER_ITEMS: NavItem[] = [{ href: "/app/settings", label: "settings", icon: "settings" }];
 
 async function Shell({ locale, children }: { locale: string; children: React.ReactNode }) {
-  const t = await getTranslations();
-  const { session, club } = await getClubContext(locale);
+  // La sesión sale de una cookie (memoizada por request): con su clubId, club y funciones se piden a la vez, sin cascada.
+  const session = await requireClubSession(locale);
+  const [t, { club }, features] = await Promise.all([getTranslations(), getClubContext(locale), getEnabledFeatures(session.clubId)]);
   const role = t(`auth.role.${session.role}`);
-  const features = await getEnabledFeatures(club.id);
   const items = features.includes("tournaments") ? [...ITEMS, TOURNAMENT_ITEM] : ITEMS;
   const trialDays = club.trialDaysLeft;
 
