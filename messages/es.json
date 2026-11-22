@@ -812,7 +812,9 @@
       "cancelBody": "\"{name}\" queda en el historial, solo lectura y sin puntos. No se puede deshacer.",
       "cancelConfirm": "Sí, cancelar",
       "cancelledNotice": "Torneo cancelado: queda en el historial, sin puntos para el ranking.",
-      "draftHint": "Abrí la inscripción para empezar a anotar parejas."
+      "draftHint": "Abrí la inscripción para empezar a anotar parejas.",
+      "reopenTitle": "¿Reabrir el torneo?",
+      "reopenBody": "Vuelve a estar en juego y sus puntos salen del ranking hasta que lo cierres de nuevo."
     },
     "entries": {
       "title": "Parejas",
@@ -844,7 +846,10 @@
         "phoneHint": "Con código de área. Si ya existe, se usa ese jugador.",
         "create": "Anotar jugador",
         "existing": "Ya había un jugador con ese teléfono: {name}. Se usó ese."
-      }
+      },
+      "searchPairs": "Buscar pareja",
+      "noMatches": "No hay parejas con ese apellido.",
+      "changePlayer": "Cambiar jugador {n}: {name}"
     },
     "zones": {
       "title": "Zonas",
@@ -860,7 +865,9 @@
       "drawNeeded": "Hay empates que solo se resuelven por sorteo. Hacelo en la zona marcada para completar la llave.",
       "drawBody": "Empate sin desempate posible: corresponde un sorteo.",
       "drawButton": "Sortear desempate",
-      "drawDone": "El desempate se resolvió por sorteo."
+      "drawDone": "El desempate se resolvió por sorteo.",
+      "progress": "{done} de {total} partidos",
+      "complete": "Completa"
     },
     "bracket": {
       "title": "Llave",
@@ -884,12 +891,15 @@
       "save": "Guardar",
       "load": "Cargar resultado",
       "edit": "Editar",
-      "clear": "Borrar resultado"
+      "clear": "Borrar resultado",
+      "editFull": "Editar resultado"
     },
     "closed": {
       "title": "Puntos otorgados",
       "notRanked": "Este torneo no es puntuable: no suma al ranking.",
-      "pts": "{n} pts"
+      "pts": "{n} pts",
+      "champion": "Campeón",
+      "show": "Ver"
     },
     "templates": {
       "title": "Plantillas",
@@ -1023,7 +1033,34 @@
       "swapWithPair": "Intercambiar con la pareja",
       "changePlayer": "Cambiar",
       "changePlayerTitle": "Cambiar jugador",
-      "newPlayer": "Nuevo jugador"
+      "newPlayer": "Nuevo jugador",
+      "editSlot": "Editar lugar: {label}"
+    },
+    "winner": "Ganador",
+    "header": {
+      "pairsCount": "{count} parejas",
+      "minPairs": "(mín. {min})",
+      "missing": "faltan {count}",
+      "viewPairs": "Ver parejas"
+    },
+    "views": {
+      "label": "Vista del torneo",
+      "zones": "Zonas",
+      "bracket": "Cruces"
+    },
+    "menu": {
+      "matchActions": "Acciones del partido",
+      "pairActions": "Acciones de {name}",
+      "tournamentActions": "Más acciones del torneo"
+    },
+    "tvDialog": {
+      "trigger": "Tablero",
+      "title": "Tablero del torneo",
+      "body": "Una pantalla con todos los partidos en orden y los que se están jugando. Se actualiza sola: abrila en el televisor del club.",
+      "link": "Link del tablero",
+      "hint": "Cualquiera con el link puede verlo, sin iniciar sesión.",
+      "open": "Abrir tablero",
+      "manage": "Gestionar partidos"
     }
   },
   "register": {

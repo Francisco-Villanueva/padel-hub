@@ -3,7 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Suspense } from "react";
 import { AutoRefresh } from "@/components/auto-refresh";
-import { CopyButton } from "@/components/copy-button";
+import { Icon } from "@/components/icons";
 import { PageHead } from "@/components/page-head";
 import { ListSkeleton } from "@/components/skeleton";
 import { TournamentBoard } from "@/components/tournament-board";
@@ -14,17 +14,16 @@ import { requireFeature } from "@/server/auth/session";
 import { getClubContext } from "@/server/club-context";
 import { withTenant } from "@/server/db/client";
 import { panelBoardMatches, tournamentView } from "@/server/services/tournament-view";
-import { setLiveAction } from "../../actions";
-import { ActionButton } from "../../_components/action-button";
-import { ScheduleButton } from "../../_components/match-tools";
-import { ResultButton } from "../../_components/result-button";
+import { MatchMenu } from "../../_components/match-menu";
 import { ruleLabel } from "../../_components/shared";
+import { TvDialog } from "../../_components/tv-dialog";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 /**
- * El mismo tablero que ve el público (televisor), pero con las acciones del club en cada partido:
- * comenzar el partido, cargar el resultado y cambiar el horario. Solo mientras el torneo está en zonas o en llave.
+ * El mismo tablero que ve el público (televisor), pero con las acciones del club en cada partido: comenzarlo, cargar el
+ * resultado y cambiar el horario (la acción que toca ahora a la vista y el resto en el menú). Solo mientras el torneo
+ * está en zonas o en llave.
  */
 async function Tablero({ params }: { params: PageProps<"/[locale]/app/torneos/[id]/tablero">["params"] }) {
   const { locale, id } = await params;
@@ -55,9 +54,8 @@ async function Tablero({ params }: { params: PageProps<"/[locale]/app/torneos/[i
         description={`${tr.name} · ${ruleLabel(t, tr.categoryRuleKind, tr.categoryRuleValue)} · ${t(`tournaments.modality.${tr.modality}`)}`}
         actions={
           <>
-            <Link href={`/app/torneos/${id}`} className={cx(ui.btn, ui.btnSecondary, "flex-1 sm:flex-none")}>{t("tournaments.board.backToTournament")}</Link>
-            <a href={publicUrl} target="_blank" rel="noreferrer" className={cx(ui.btn, ui.btnSecondary, "flex-1 sm:flex-none")}>{t("tournaments.board.open")}</a>
-            <CopyButton value={publicUrl} className="flex-1 sm:flex-none" />
+            <Link href={`/app/torneos/${id}`} className={cx(ui.btn, ui.btnSecondary, "flex-1 sm:flex-none")}><Icon name="trophy" />{t("tournaments.board.backToTournament")}</Link>
+            <TvDialog url={publicUrl} manageHref={`/app/torneos/${id}/tablero`} />
           </>
         }
       />
@@ -65,23 +63,12 @@ async function Tablero({ params }: { params: PageProps<"/[locale]/app/torneos/[i
       <TournamentBoard
         matches={matches}
         timezone={club.timezone}
-        actions={editable ? (m) => {
-          const label = `${m.nameA ?? t("tournaments.zones.tbd")} vs ${m.nameB ?? t("tournaments.zones.tbd")}`;
-          return (
-            <div className="flex flex-wrap items-center gap-2">
-              {m.ready && m.status === "pendiente" && (
-                <ActionButton action={setLiveAction} fields={{ id: m.id, live: "1" }} variant="primary" small>{t("tournaments.schedule.startLive")}</ActionButton>
-              )}
-              {m.ready && m.status === "en_juego" && (
-                <ActionButton action={setLiveAction} fields={{ id: m.id, live: "0" }} variant="ghost" small>{t("tournaments.schedule.stopLive")}</ActionButton>
-              )}
-              {m.ready && (
-                <ResultButton matchId={m.id} nameA={m.nameA ?? ""} nameB={m.nameB ?? ""} sets={m.sets} played={m.status === "jugado"} />
-              )}
-              <ScheduleButton matchId={m.id} label={label} scheduled={m.scheduledAt ? utcToLocalInputs(m.scheduledAt, club.timezone) : null} />
-            </div>
-          );
-        } : undefined}
+        actions={editable ? (m) => (
+          <MatchMenu
+            matchId={m.id} nameA={m.nameA ?? t("tournaments.zones.tbd")} nameB={m.nameB ?? t("tournaments.zones.tbd")} sets={m.sets}
+            status={m.status} ready={m.ready} scheduled={m.scheduledAt ? utcToLocalInputs(m.scheduledAt, club.timezone) : null} compact
+          />
+        ) : undefined}
       />
     </div>
   );

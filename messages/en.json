@@ -812,7 +812,9 @@
       "cancelBody": "\"{name}\" stays in the history, read-only and without points. This cannot be undone.",
       "cancelConfirm": "Yes, cancel",
       "cancelledNotice": "Cancelled tournament: it stays in the history, with no ranking points.",
-      "draftHint": "Open registration to start adding pairs."
+      "draftHint": "Open registration to start adding pairs.",
+      "reopenTitle": "Reopen the tournament?",
+      "reopenBody": "It goes back to being in progress and its points leave the ranking until you close it again."
     },
     "entries": {
       "title": "Pairs",
@@ -844,7 +846,10 @@
         "phoneHint": "With area code. If it already exists, that player is used.",
         "create": "Add player",
         "existing": "A player with that phone already existed: {name}. We used that one."
-      }
+      },
+      "searchPairs": "Find a pair",
+      "noMatches": "No pairs with that name.",
+      "changePlayer": "Change player {n}: {name}"
     },
     "zones": {
       "title": "Groups",
@@ -860,7 +865,9 @@
       "drawNeeded": "Some ties can only be resolved by a draw. Do it in the highlighted group to complete the bracket.",
       "drawBody": "Tie with no possible tiebreaker: a draw is needed.",
       "drawButton": "Draw the tiebreak",
-      "drawDone": "The tie was resolved by a draw."
+      "drawDone": "The tie was resolved by a draw.",
+      "progress": "{done} of {total} matches",
+      "complete": "Complete"
     },
     "bracket": {
       "title": "Bracket",
@@ -884,12 +891,15 @@
       "save": "Save",
       "load": "Enter result",
       "edit": "Edit",
-      "clear": "Clear result"
+      "clear": "Clear result",
+      "editFull": "Edit result"
     },
     "closed": {
       "title": "Points awarded",
       "notRanked": "This tournament is unranked: it does not count for the ranking.",
-      "pts": "{n} pts"
+      "pts": "{n} pts",
+      "champion": "Champion",
+      "show": "Show"
     },
     "templates": {
       "title": "Templates",
@@ -1023,7 +1033,34 @@
       "swapWithPair": "Swap with pair",
       "changePlayer": "Change",
       "changePlayerTitle": "Change player",
-      "newPlayer": "New player"
+      "newPlayer": "New player",
+      "editSlot": "Edit slot: {label}"
+    },
+    "winner": "Winner",
+    "header": {
+      "pairsCount": "{count} pairs",
+      "minPairs": "(min. {min})",
+      "missing": "{count} missing",
+      "viewPairs": "View pairs"
+    },
+    "views": {
+      "label": "Tournament view",
+      "zones": "Groups",
+      "bracket": "Bracket"
+    },
+    "menu": {
+      "matchActions": "Match actions",
+      "pairActions": "Actions for {name}",
+      "tournamentActions": "More tournament actions"
+    },
+    "tvDialog": {
+      "trigger": "Board",
+      "title": "Tournament board",
+      "body": "A screen with every match in order and the ones being played. It refreshes by itself: open it on the club TV.",
+      "link": "Board link",
+      "hint": "Anyone with the link can see it, no sign-in needed.",
+      "open": "Open board",
+      "manage": "Manage matches"
     }
   },
   "register": {

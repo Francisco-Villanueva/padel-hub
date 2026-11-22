@@ -812,7 +812,9 @@
       "cancelBody": "\"{name}\" fica no histórico, somente leitura e sem pontos. Não dá para desfazer.",
       "cancelConfirm": "Sim, cancelar",
       "cancelledNotice": "Torneio cancelado: fica no histórico, sem pontos para o ranking.",
-      "draftHint": "Abra as inscrições para começar a anotar duplas."
+      "draftHint": "Abra as inscrições para começar a anotar duplas.",
+      "reopenTitle": "Reabrir o torneio?",
+      "reopenBody": "Volta a ficar em andamento e seus pontos saem do ranking até você encerrá-lo de novo."
     },
     "entries": {
       "title": "Duplas",
@@ -844,7 +846,10 @@
         "phoneHint": "Com DDD. Se já existir, usamos esse jogador.",
         "create": "Cadastrar jogador",
         "existing": "Já existia um jogador com esse telefone: {name}. Usamos esse."
-      }
+      },
+      "searchPairs": "Buscar dupla",
+      "noMatches": "Nenhuma dupla com esse sobrenome.",
+      "changePlayer": "Trocar jogador {n}: {name}"
     },
     "zones": {
       "title": "Grupos",
@@ -860,7 +865,9 @@
       "drawNeeded": "Há empates que só se resolvem por sorteio. Faça no grupo destacado para completar a chave.",
       "drawBody": "Empate sem desempate possível: é preciso sortear.",
       "drawButton": "Sortear desempate",
-      "drawDone": "O desempate foi resolvido por sorteio."
+      "drawDone": "O desempate foi resolvido por sorteio.",
+      "progress": "{done} de {total} partidas",
+      "complete": "Completo"
     },
     "bracket": {
       "title": "Chave",
@@ -884,12 +891,15 @@
       "save": "Salvar",
       "load": "Lançar resultado",
       "edit": "Editar",
-      "clear": "Apagar resultado"
+      "clear": "Apagar resultado",
+      "editFull": "Editar resultado"
     },
     "closed": {
       "title": "Pontos distribuídos",
       "notRanked": "Este torneio não pontua: não soma no ranking.",
-      "pts": "{n} pts"
+      "pts": "{n} pts",
+      "champion": "Campeão",
+      "show": "Ver"
     },
     "templates": {
       "title": "Modelos",
@@ -1023,7 +1033,34 @@
       "swapWithPair": "Trocar com a dupla",
       "changePlayer": "Trocar",
       "changePlayerTitle": "Trocar jogador",
-      "newPlayer": "Novo jogador"
+      "newPlayer": "Novo jogador",
+      "editSlot": "Editar posição: {label}"
+    },
+    "winner": "Vencedor",
+    "header": {
+      "pairsCount": "{count} duplas",
+      "minPairs": "(mín. {min})",
+      "missing": "faltam {count}",
+      "viewPairs": "Ver duplas"
+    },
+    "views": {
+      "label": "Visão do torneio",
+      "zones": "Grupos",
+      "bracket": "Chaves"
+    },
+    "menu": {
+      "matchActions": "Ações da partida",
+      "pairActions": "Ações de {name}",
+      "tournamentActions": "Mais ações do torneio"
+    },
+    "tvDialog": {
+      "trigger": "Painel",
+      "title": "Painel do torneio",
+      "body": "Uma tela com todas as partidas em ordem e as que estão em jogo. Atualiza sozinha: abra na TV do clube.",
+      "link": "Link do painel",
+      "hint": "Qualquer pessoa com o link pode ver, sem entrar na conta.",
+      "open": "Abrir painel",
+      "manage": "Gerenciar partidas"
     }
   },
   "register": {
