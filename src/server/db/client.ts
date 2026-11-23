@@ -10,7 +10,10 @@ import { createRunners, type Db, type Runners } from './tenant';
 function connect(envVar: 'DATABASE_URL' | 'DATABASE_URL_PLATFORM'): Db {
   const url = process.env[envVar];
   if (!url) throw new Error(`Falta la variable de entorno ${envVar}`);
-  return drizzle(new Pool({ connectionString: url }), { schema }) as unknown as Db;
+  const pool = new Pool({ connectionString: url });
+  // Una conexión inactiva que Neon corta emite 'error' en el pool: sin handler tumbaría el proceso entero.
+  pool.on('error', (err: Error) => console.error(`[db] error en una conexión inactiva (${envVar}):`, err.message));
+  return drizzle(pool, { schema }) as unknown as Db;
 }
 
 let cached: Runners | undefined;

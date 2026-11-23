@@ -361,7 +361,15 @@ export const tournamentMatches = pgTable('tournament_matches', {
   /** Games por set: [[6,4],[3,6],[6,2]] (A, B). */
   sets: jsonb('sets').$type<[number, number][]>(),
   winnerEntryId: uuid('winner_entry_id'),
-  status: text('status').notNull().default('pendiente'), // pendiente | jugado | bye
+  status: text('status').notNull().default('pendiente'), // pendiente | en_juego (lo marca el club) | jugado | bye
+  /** Día y hora programados (el club los carga una vez generadas las zonas). */
+  scheduledAt: ts('scheduled_at'),
+  /** Primera ronda de la llave: de qué puesto de zona sale cada lado, "<n.º de zona>:<puesto>" ("2:1" = 1º de la Zona B). Se completa solo cuando la zona termina. */
+  sourceA: text('source_a'),
+  sourceB: text('source_b'),
+  /** El club puso esa pareja a mano: la actualización automática de la llave no la toca. */
+  lockA: boolean('lock_a').notNull().default(false),
+  lockB: boolean('lock_b').notNull().default(false),
   nextMatchId: uuid('next_match_id'),
   nextSlot: text('next_slot'), // a | b
   playedAt: ts('played_at'),
@@ -374,7 +382,7 @@ export const tournamentMatches = pgTable('tournament_matches', {
   foreignKey({ columns: [t.winnerEntryId, t.clubId], foreignColumns: [tournamentEntries.id, tournamentEntries.clubId], name: 'tournament_matches_winner_same_club_fk' }),
   foreignKey({ columns: [t.nextMatchId, t.clubId], foreignColumns: [t.id, t.clubId], name: 'tournament_matches_next_same_club_fk' }),
   check('tournament_matches_stage_chk', sql`${t.stage} in ('zona','llave')`),
-  check('tournament_matches_status_chk', sql`${t.status} in ('pendiente','jugado','bye')`),
+  check('tournament_matches_status_chk', sql`${t.status} in ('pendiente','en_juego','jugado','bye')`),
   check('tournament_matches_slot_chk', sql`${t.nextSlot} is null or ${t.nextSlot} in ('a','b')`),
   check('tournament_matches_winner_chk', sql`${t.winnerEntryId} is null or coalesce(${t.winnerEntryId} = ${t.entryAId}, false) or coalesce(${t.winnerEntryId} = ${t.entryBId}, false)`),
   index('tournament_matches_tournament_idx').on(t.tournamentId, t.stage, t.round, t.position),
