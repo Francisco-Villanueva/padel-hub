@@ -231,18 +231,37 @@
   margin: 0;
 }
 @media print {
-  body * {
-    visibility: hidden;
+  /* Se quita del flujo todo lo que no es el cartel (menú, encabezado, avisos) para que no genere una 2.ª hoja. */
+  body :not(:has(.print-poster)):not(.print-poster):not(.print-poster *) {
+    display: none !important;
   }
-  .print-poster,
-  .print-poster * {
-    visibility: visible;
+  /* Los contenedores del cartel quedan en flujo normal: sin alturas fijas, scroll, transform ni animación
+     (un transform haría que el cartel no se posicione contra la hoja). */
+  html,
+  body,
+  :has(> .print-poster),
+  :has(.print-poster) {
+    display: block !important;
+    position: static !important;
+    transform: none !important;
+    animation: none !important;
+    width: auto !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-width: none !important;
+    overflow: visible !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    background: none !important;
   }
   .print-poster {
-    position: fixed;
-    inset: 0;
+    position: static !important;
     width: 148mm !important;
-    height: 210mm !important;
+    height: 209mm !important; /* 1 mm menos que la hoja: evita que el redondeo genere una hoja en blanco */
+    margin: 0 !important;
+    break-inside: avoid;
+    break-after: avoid;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
