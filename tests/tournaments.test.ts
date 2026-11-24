@@ -7,7 +7,7 @@ import { FeatureDisabledError, setClubFeature } from '../src/server/services/fea
 import { getRanking, listRankingBuckets } from '../src/server/services/ranking';
 import { listEntries, quickCreatePlayer, registerPair, removePair } from '../src/server/services/tournament-entries';
 import { TournamentError } from '../src/server/services/tournament-errors';
-import { clearResult, recordResult, resolveTie } from '../src/server/services/tournament-matches';
+import { clearResult, recordResult, resolveTie, setMatchLive } from '../src/server/services/tournament-matches';
 import { createTemplate, deleteTemplate, listTemplates, updateTemplate } from '../src/server/services/tournament-templates';
 import {
   cancelTournament, closeTournament, createTournament, getTournament, openRegistration, reopenTournament, startTournament,
@@ -237,6 +237,30 @@ describe('resultados', () => {
     expect(l).toMatchObject({ entryAId: r1[0].entryBId, entryBId: r1[1].entryBId });
     await A((tx) => recordResult(tx, ca, w.id, [[6, 1], [6, 1]]));
     await expect(A((tx) => recordResult(tx, ca, r1[0].id, [[1, 6], [1, 6]]))).rejects.toMatchObject({ code: 'next_played' });
+  });
+  it('zona de 4: corregir los games de la 1ª ronda con el mismo ganador se permite aunque la 2ª esté en juego o jugada; cambiar al ganador, no', async () => {
+    const { id } = await openTournament(8);
+    await A((tx) => startTournament(tx, ca, id, { seed: 3 }));
+    const zone = (await A((tx) => zoneStates(tx, ca, id)))[0];
+    const r1 = zone.matches.filter((m) => m.round === 1);
+    const r2 = () => A((tx) => tx.select().from(tournamentMatches).where(and(eq(tournamentMatches.zoneId, zone.zone.id), eq(tournamentMatches.round, 2))).orderBy(tournamentMatches.position));
+    await A((tx) => recordResult(tx, ca, r1[0].id, [[6, 1], [6, 1]]));
+    await A((tx) => recordResult(tx, ca, r1[1].id, [[6, 1], [6, 1]]));
+    const before = JSON.stringify((await r2()).map((m) => [m.entryAId, m.entryBId]));
+    const [w] = await r2();
+    // 2ª ronda en juego: se corrige el marcador (mismo ganador) y los cruces no cambian.
+    await A((tx) => setMatchLive(tx, ca, w.id, true));
+    await A((tx) => recordResult(tx, ca, r1[0].id, [[7, 5], [6, 4]]));
+    expect(JSON.stringify((await r2()).map((m) => [m.entryAId, m.entryBId]))).toBe(before);
+    expect((await r2())[0].status).toBe('en_juego');
+    // Cambiar al ganador movería parejas del cruce en juego: se rechaza y nada cambia.
+    await expect(A((tx) => recordResult(tx, ca, r1[0].id, [[1, 6], [1, 6]]))).rejects.toMatchObject({ code: 'next_played' });
+    await expect(A((tx) => clearResult(tx, ca, r1[0].id))).rejects.toMatchObject({ code: 'next_played' });
+    expect(JSON.stringify((await r2()).map((m) => [m.entryAId, m.entryBId]))).toBe(before);
+    // Ya jugada la 2ª ronda, el mismo ganador también se puede corregir.
+    await A((tx) => recordResult(tx, ca, w.id, [[6, 1], [6, 1]]));
+    await A((tx) => recordResult(tx, ca, r1[1].id, [[6, 0], [6, 0]]));
+    expect(JSON.stringify((await r2()).map((m) => [m.entryAId, m.entryBId]))).toBe(before);
   });
 });
 

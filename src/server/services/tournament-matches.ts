@@ -9,7 +9,7 @@ import { tournamentMatches, tournaments, tournamentZones } from '../db/schema';
 import type { Tx } from '../db/tenant';
 import { assertFeature } from './features';
 import { TournamentError } from './tournament-errors';
-import { refreshBracket } from './tournament-bracket';
+import { isStarted, refreshBracket } from './tournament-bracket';
 import { zoneStates } from './tournament-zones';
 
 type Ctx = { clubId: string };
@@ -34,7 +34,7 @@ export async function listBracketMatches(tx: Tx, ctx: Ctx, tournamentId: string)
 
 /**
  * Carga (o corrige) el resultado: sets válidos, ganador por sets, avance en la llave. Corregir el ganador de un partido
- * cuyo cruce siguiente ya se jugó no se permite (hay que borrar antes ese resultado).
+ * cuyo cruce siguiente ya empezó (se está jugando o se jugó) no se permite (hay que deshacer antes ese cruce).
  */
 export async function recordResult(tx: Tx, ctx: Ctx, matchId: string, rawSets: unknown, opts: { now?: Date } = {}) {
   await assertFeature(tx, ctx.clubId, 'tournaments');
@@ -75,7 +75,8 @@ async function propagate(tx: Tx, m: Match, winner: string | null) {
     const [next] = await tx.select().from(tournamentMatches).where(eq(tournamentMatches.id, m.nextMatchId));
     const current = m.nextSlot === 'a' ? next.entryAId : next.entryBId;
     if (current === winner) return;
-    if (next.winnerEntryId) throw new TournamentError('next_played');
+    // Un cruce que ya se jugó o se está jugando (en juego) no cambia de parejas: primero hay que deshacerlo.
+    if (isStarted(next)) throw new TournamentError('next_played');
     await tx.update(tournamentMatches).set(m.nextSlot === 'a' ? { entryAId: winner } : { entryBId: winner }).where(eq(tournamentMatches.id, next.id));
     return;
   }
@@ -84,16 +85,18 @@ async function propagate(tx: Tx, m: Match, winner: string | null) {
   if (zone.size !== 4) return;
   const zms = await tx.select().from(tournamentMatches).where(and(eq(tournamentMatches.zoneId, m.zoneId), eq(tournamentMatches.stage, 'zona')));
   const r2 = zms.filter((x) => x.round === 2).sort((a, b) => a.position - b.position);
-  if (r2.some((x) => x.winnerEntryId)) throw new TournamentError('next_played');
   // Resultado de la 1ª ronda con este partido ya actualizado.
   const r1 = zms.filter((x) => x.round === 1).sort((a, b) => a.position - b.position).map((x) => {
     const w = x.id === m.id ? winner : x.winnerEntryId;
     return w ? { winner: w, loser: w === x.entryAId ? x.entryBId! : x.entryAId! } : null;
   });
   const specs = r1[0] && r1[1] ? resolveFourZoneRound2([r1[0], r1[1]]) : [null, null];
-  for (const row of r2) {
-    const spec = specs[row.position - 1];
-    await tx.update(tournamentMatches).set({ entryAId: spec?.a ?? null, entryBId: spec?.b ?? null }).where(eq(tournamentMatches.id, row.id));
+  // Solo importan los cruces cuyas parejas cambian: corregir los games manteniendo al ganador no los toca, aunque ya estén en juego o jugados.
+  const changed = r2.map((row) => ({ row, a: specs[row.position - 1]?.a ?? null, b: specs[row.position - 1]?.b ?? null }))
+    .filter((n) => n.row.entryAId !== n.a || n.row.entryBId !== n.b);
+  if (changed.some((n) => isStarted(n.row))) throw new TournamentError('next_played'); // jugado o en juego: primero hay que deshacerlo
+  for (const n of changed) {
+    await tx.update(tournamentMatches).set({ entryAId: n.a, entryBId: n.b }).where(eq(tournamentMatches.id, n.row.id));
   }
 }
 
