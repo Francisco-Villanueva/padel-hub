@@ -8,7 +8,7 @@ import { replacePlayer, restoreSlot, setSlotEntry, swapSlots, swapZoneEntries } 
 import { publicTournamentBoard } from '../src/server/services/public-board';
 import { rebuildBracket } from '../src/server/services/tournament-bracket';
 import { registerPair } from '../src/server/services/tournament-entries';
-import { clearResult, recordResult } from '../src/server/services/tournament-matches';
+import { clearResult, recordResult, setMatchLive } from '../src/server/services/tournament-matches';
 import { closeTournament, createTournament, getTournament, openRegistration, startTournamentWithZones, zoneStates } from '../src/server/services/tournaments';
 import { seedTwoClubs, setupDb } from './helpers';
 
@@ -139,6 +139,24 @@ describe('llenado progresivo', () => {
     const feed = zs.flatMap((x) => x.matches)[0];
     await expect(A((tx) => clearResult(tx, ca, feed.id))).rejects.toMatchObject({ code: 'next_played' });
     expect(JSON.stringify(await r1(id))).toBe(before);
+  });
+
+  it('corregir un resultado no cambia las parejas de un cruce siguiente que ya está en juego', async () => {
+    const { id } = await started(3);
+    for (const z of [0, 1, 2]) await playZone(id, z);
+    // Un cruce real de la 1ª ronda cuyo hermano es un libre: al jugarlo, el cruce siguiente queda con sus dos parejas.
+    const all = await llave(id);
+    const f = all.filter((m) => m.round === 1 && m.status !== 'bye').find((m) => all.some((o) => o.id !== m.id && o.nextMatchId === m.nextMatchId && o.status === 'bye'))!;
+    await A((tx) => recordResult(tx, ca, f.id, [[6, 1], [6, 1]])); // gana A
+    await A((tx) => setMatchLive(tx, ca, f.nextMatchId!, true));
+    const before = JSON.stringify((await llave(id)).find((m) => m.id === f.nextMatchId));
+    // Corregir a favor de B cambiaría una pareja del cruce que ya está en juego: se rechaza y no cambia nada.
+    await expect(A((tx) => recordResult(tx, ca, f.id, [[1, 6], [1, 6]]))).rejects.toMatchObject({ code: 'next_played' });
+    expect(JSON.stringify((await llave(id)).find((m) => m.id === f.nextMatchId))).toBe(before);
+    // Sacándolo de juego, la corrección vuelve a ser posible.
+    await A((tx) => setMatchLive(tx, ca, f.nextMatchId!, false));
+    await A((tx) => recordResult(tx, ca, f.id, [[1, 6], [1, 6]]));
+    expect((await llave(id)).find((m) => m.id === f.id)!.winnerEntryId).toBe(f.entryBId);
   });
 
   it('un empate sin sortear deja esos lugares sin definir y el torneo en zonas', async () => {
