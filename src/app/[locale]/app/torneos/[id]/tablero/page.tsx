@@ -15,6 +15,7 @@ import { getClubContext } from "@/server/club-context";
 import { withTenant } from "@/server/db/client";
 import { panelBoardMatches, tournamentView } from "@/server/services/tournament-view";
 import { MatchMenu } from "../../_components/match-menu";
+import { GroupCheck, MatchCheck, ScheduleSelection } from "../../_components/schedule-selection";
 import { ruleLabel } from "../../_components/shared";
 import { TvDialog } from "../../_components/tv-dialog";
 
@@ -45,6 +46,23 @@ async function Tablero({ params }: { params: PageProps<"/[locale]/app/torneos/[i
   const publicUrl = `${origin}/${locale}/c/${club.slug}/torneo/${id}`;
   const matches = panelBoardMatches(view);
 
+  // Los partidos a los que se les puede poner horario (los ya jugados no); en el modo "programar varios" se eligen con casillas.
+  const schedulable = matches.filter((m) => m.status !== "jugado");
+  const board = (
+    <TournamentBoard
+      matches={matches}
+      timezone={club.timezone}
+      select={editable ? (m) => (m.status === "jugado" ? null : <MatchCheck id={m.id} label={`${m.nameA ?? t("tournaments.zones.tbd")} vs ${m.nameB ?? t("tournaments.zones.tbd")}`} />) : undefined}
+      selectGroup={editable ? (rows, label) => <GroupCheck ids={rows.filter((m) => m.status !== "jugado").map((m) => m.id)} label={label} /> : undefined}
+      actions={editable ? (m) => (
+        <MatchMenu
+          matchId={m.id} nameA={m.nameA ?? t("tournaments.zones.tbd")} nameB={m.nameB ?? t("tournaments.zones.tbd")} sets={m.sets}
+          status={m.status} ready={m.ready} scheduled={m.scheduledAt ? utcToLocalInputs(m.scheduledAt, club.timezone) : null} compact
+        />
+      ) : undefined}
+    />
+  );
+
   return (
     <div className="space-y-6">
       <AutoRefresh seconds={30} />
@@ -60,16 +78,7 @@ async function Tablero({ params }: { params: PageProps<"/[locale]/app/torneos/[i
         }
       />
       {!editable && <p role="status" className={cx(ui.notice, ui.noticeInfo)}>{t("tournaments.board.readOnly")}</p>}
-      <TournamentBoard
-        matches={matches}
-        timezone={club.timezone}
-        actions={editable ? (m) => (
-          <MatchMenu
-            matchId={m.id} nameA={m.nameA ?? t("tournaments.zones.tbd")} nameB={m.nameB ?? t("tournaments.zones.tbd")} sets={m.sets}
-            status={m.status} ready={m.ready} scheduled={m.scheduledAt ? utcToLocalInputs(m.scheduledAt, club.timezone) : null} compact
-          />
-        ) : undefined}
-      />
+      {editable ? <ScheduleSelection all={schedulable.map((m) => m.id)} unscheduled={schedulable.filter((m) => !m.scheduledAt).map((m) => m.id)}>{board}</ScheduleSelection> : board}
     </div>
   );
 }

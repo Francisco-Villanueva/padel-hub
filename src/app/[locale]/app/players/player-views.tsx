@@ -31,7 +31,7 @@ function CategoryBadge({ p, t }: { p: PlayerRow; t: T }) {
   return p.category !== null ? <span className={ui.badgeAccent}>{categoryLabel(t, p.category)}</span> : null;
 }
 
-const WhatsAppLink = ({ p, t, className }: { p: PlayerRow; t: T; className?: string }) => (
+const WhatsAppLink = ({ p, t, className }: { p: PlayerRow; t: T; className?: string }) => !p.phoneE164 ? null : (
   <a
     href={whatsappLink(p.phoneE164)}
     target="_blank"
@@ -62,7 +62,7 @@ export function PlayerCards({ rows, t, locale }: { rows: PlayerRow[]; t: T; loca
             </div>
           </div>
           <div className="space-y-0.5 text-sm text-ink-muted">
-            <p>{formatPhone(p.phoneE164)}</p>
+            <p>{formatPhone(p.phoneE164) || t("players.noPhone")}</p>
             {slotsText(p, t) && <p>{slotsText(p, t)}</p>}
             <p><LastContact p={p} t={t} locale={locale} /></p>
           </div>
@@ -108,7 +108,7 @@ export function PlayerTable({ rows, t }: { rows: PlayerRow[]; t: T }) {
               <td className="px-4 py-3">{p.position ? t(`position.${p.position}`) : dash}</td>
               <td className="max-w-[16rem] px-4 py-3 text-ink-muted">{slotsText(p, t) ?? dash}</td>
               <td className="px-4 py-3 text-ink-muted">
-                <div className="whitespace-nowrap">{formatPhone(p.phoneE164)}</div>
+                <div className="whitespace-nowrap">{formatPhone(p.phoneE164) || t("players.noPhone")}</div>
                 {p.instagram && <div className="text-xs">@{p.instagram}</div>}
               </td>
               <td className="px-4 py-3">

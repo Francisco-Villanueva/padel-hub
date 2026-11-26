@@ -1,5 +1,5 @@
 // "Falta el cuarto": candidatos para completar un partido. La app solo ordena y filtra; quien decide es el club.
-import { and, asc, eq, isNull, sql, type SQL } from 'drizzle-orm';
+import { and, asc, eq, isNotNull, isNull, sql, type SQL } from 'drizzle-orm';
 import type { PlayerFilters } from '../../lib/player-schema';
 import { contactLog, playerConsents, players } from '../db/schema';
 import type { Tx } from '../db/tenant';
@@ -15,6 +15,7 @@ export type CandidateFilters = Pick<PlayerFilters, 'category' | 'gender' | 'posi
 export async function listCandidates(tx: Tx, f: Partial<CandidateFilters>) {
   const conds: SQL[] = [
     isNull(players.deletedAt),
+    isNotNull(players.phoneE164), // sin teléfono no hay a quién escribirle por WhatsApp
     sql`exists (select 1 from ${playerConsents} c where c.player_id = ${players.id})`,
   ];
   if (f.category) conds.push(eq(players.category, f.category));

@@ -35,7 +35,7 @@ async function Cuarto({ locale, searchParams }: { locale: string; searchParams: 
       r.position ? t(`position.${r.position}`) : null,
       ...r.slots.map((s) => t(`slot.${s}`)),
     ].filter((x): x is string => Boolean(x)),
-    wa: whatsappLink(r.phoneE164),
+    wa: whatsappLink(r.phoneE164 ?? ""), // la consulta excluye a quienes no tienen teléfono
     contactedText: r.lastContactAt ? relativeTime(r.lastContactAt, locale) : null,
     contactedRecently: r.lastContactAt ? isWithin(r.lastContactAt, WEEK) : false,
   }));

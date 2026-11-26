@@ -56,7 +56,7 @@ async function Ficha({ params }: { params: PageProps<"/[locale]/app/players/[id]
         })}
         actions={
           <>
-            <WhatsAppButton href={whatsappLink(player.phoneE164)} playerId={player.id} className="flex-1 sm:flex-none" />
+            {player.phoneE164 && <WhatsAppButton href={whatsappLink(player.phoneE164)} playerId={player.id} className="flex-1 sm:flex-none" />}
             {session.role === "owner" && <DeletePlayer playerId={player.id} name={name} />}
           </>
         }

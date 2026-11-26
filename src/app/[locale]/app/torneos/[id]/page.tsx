@@ -21,8 +21,9 @@ import type { Option } from "../_components/adjust-dialogs";
 import { BracketTree } from "../_components/bracket-tree";
 import { MatchCard } from "../_components/match-card";
 import { MatchMenu, type SlotEditor } from "../_components/match-menu";
-import { PairPicker } from "../_components/pair-picker";
-import { PairsSheet, type PairRow } from "../_components/pairs-sheet";
+import type { PairRow } from "../_components/pair-menu";
+import { PairsSheet } from "../_components/pairs-sheet";
+import { RegistrationTable } from "../_components/registration-table";
 import { playerLabel, pairName, ruleLabel, statusBadge } from "../_components/shared";
 import { TournamentMenu } from "../_components/tournament-menu";
 import { TvDialog } from "../_components/tv-dialog";
@@ -127,7 +128,7 @@ async function Detalle({ params, searchParams }: { params: PageProps<"/[locale]/
   );
 
   const pairRows: PairRow[] = entries.map((e) => ({
-    id: e.id, name: pairName(e, ""), p1: { id: e.player1Id, name: playerLabel(e.player1) }, p2: { id: e.player2Id, name: playerLabel(e.player2) },
+    id: e.id, name: pairName(e, ""), p1: { id: e.player1Id, name: playerLabel(e.player1), first: e.player1.firstName }, p2: { id: e.player2Id, name: playerLabel(e.player2), first: e.player2.firstName },
     categories: [e.player1.category, e.player2.category].map((c) => (c ? categoryLabel(t, c) : "—")).join(" + "), seed: e.seed,
   }));
   const free: Option[] = view.free.map((p) => ({ value: p.id, label: `${p.lastName}, ${p.firstName}${p.category ? ` · ${categoryLabel(t, p.category)}` : ""}` }));
@@ -181,14 +182,10 @@ async function Detalle({ params, searchParams }: { params: PageProps<"/[locale]/
       )}
 
       {status === "inscripcion" && (
-        <section className={cx(ui.card, "enter space-y-3")} style={stagger(1)}>
-          <h2 className="text-xl font-bold">{t("tournaments.entries.addTitle")}</h2>
-          <PairPicker
-            tournamentId={id}
-            categories={categoryOptions(t)}
-            players={view.eligible.map((p) => ({ id: p.id, name: `${p.lastName}, ${p.firstName}`, categoryLabel: p.category ? categoryLabel(t, p.category) : "—" }))}
-          />
-        </section>
+        <RegistrationTable
+          tournamentId={id} pairs={pairRows} free={free} modality={tr.modality} ruleKind={tr.categoryRuleKind as "single" | "sum"} categories={categoryOptions(t)}
+          categoryDefault={tr.categoryRuleKind === "single" ? String(tr.categoryRuleValue) : undefined} removable replaceable min={tr.minPairs}
+        />
       )}
       {status === "borrador" && <p className={cx(ui.card, "enter text-sm text-ink-muted")}>{t("tournaments.detail.draftHint")}</p>}
 

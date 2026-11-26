@@ -127,3 +127,21 @@ export async function getLatestConsent(tx: Tx, playerId: string) {
   const [c] = await tx.select().from(playerConsents).where(eq(playerConsents.playerId, playerId)).orderBy(sql`${playerConsents.acceptedAt} desc`).limit(1);
   return c ?? null;
 }
+
+/**
+ * Alta de un jugador sin teléfono (se anotó solo para un torneo y se completa después). Mismo alta manual que createPlayer,
+ * con su registro de consentimiento; el teléfono queda en null.
+ */
+export async function createPlayerWithoutPhone(
+  tx: Tx, ctx: { clubId: string },
+  input: { firstName: string; lastName: string; gender: 'male' | 'female'; category?: number; slots?: PlayerInput['slots'] },
+  consent: { textVersion: string; locale: 'es' | 'en' | 'pt'; source?: 'manual' | 'link' | 'tablet' },
+) {
+  const source = consent.source ?? 'manual';
+  const [p] = await tx.insert(players).values({
+    clubId: ctx.clubId, firstName: input.firstName, lastName: input.lastName, gender: input.gender, category: input.category ?? null,
+    phoneE164: null, slots: input.slots ?? [], source,
+  }).returning({ id: players.id });
+  await tx.insert(playerConsents).values({ clubId: ctx.clubId, playerId: p.id, textVersion: consent.textVersion, locale: consent.locale, source });
+  return p.id;
+}

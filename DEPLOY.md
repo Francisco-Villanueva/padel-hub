@@ -85,7 +85,8 @@ Bash: `ENV_FILE=.env.neon-production npx tsx ...`.
 
 Por qué migrar primero: en el instante entre migrar y desplegar, el código viejo corre contra el esquema nuevo. Los cambios que rompen el código anterior (borrar o renombrar columnas, como pasó con `categories`) se hacen en **dos releases**: primero se agrega lo nuevo y se despliega el código que lo usa; recién en el release siguiente se borra lo viejo.
 
-### Torneos y rankings (migraciones 0007–0014)
+### Torneos y rankings (migraciones 0007–0015)
+La 0015 hace opcional el teléfono de los jugadores (`DROP NOT NULL`): no borra ni renombra nada, así que se migra primero como las demás.
 Son **aditivas** (tablas y funciones nuevas), así que el código viejo no se rompe al migrar primero. Orden: respaldo → `ENV_FILE=.env.neon-production npm run db:migrate` (confirmar el host impreso) → merge a `main`. La función queda **apagada** para todos los clubes: se activa club por club desde `/admin/clubs/[id]` → tarjeta "Funciones". No correr `seed-demo` contra producción.
 
 ## 6. Después de cada deploy (2 minutos)

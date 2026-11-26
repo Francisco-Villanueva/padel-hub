@@ -20,6 +20,8 @@ export function whatsappLink(e164: string, text?: string): string {
   return text ? `${base}?text=${encodeURIComponent(text)}` : base;
 }
 
-export function formatPhone(e164: string): string {
+/** Teléfono para mostrar; vacío si el jugador todavía no tiene (se anotó solo para un torneo). */
+export function formatPhone(e164: string | null): string {
+  if (!e164) return '';
   return parsePhoneNumberFromString(e164)?.formatInternational() ?? e164;
 }

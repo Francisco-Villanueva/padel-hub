@@ -47,7 +47,7 @@ export async function exportPlayers(
     category: p.category !== null ? describe.category(p.category) : '',
     position: p.position ? describe.enums('position', p.position) : '',
     slots: p.slots.map((s) => describe.enums('slot', s)).join(' / '),
-    phone: p.phoneE164, instagram: p.instagram ?? '', locality: p.locality ?? '',
+    phone: p.phoneE164 ?? '', instagram: p.instagram ?? '', locality: p.locality ?? '',
     source: describe.enums('source', p.source), createdAt: p.createdAt.toISOString().slice(0, 10),
   }));
 }

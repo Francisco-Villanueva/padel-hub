@@ -49,3 +49,12 @@ export function winnerOfSets(sets: SetsInput): 'a' | 'b' | null {
   const b = sets.length - a;
   return a === b ? null : a > b ? 'a' : 'b';
 }
+
+const playerRefSchema = z.object({
+  firstName: z.string().trim().max(80).optional(),
+  lastName: z.string().trim().min(1).max(80),
+  gender: z.enum(['male', 'female']).optional(),
+  category: z.number().int().min(1).max(9).nullable().optional(),
+});
+/** Parejas anotadas escribiendo los nombres (alta rápida o lista pegada): hasta 200 por vez. */
+export const pairRowsSchema = z.array(z.object({ p1: playerRefSchema, p2: playerRefSchema })).min(1).max(200);
