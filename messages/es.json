@@ -868,7 +868,8 @@
       "drawButton": "Sortear desempate",
       "drawDone": "El desempate se resolvió por sorteo.",
       "progress": "{done} de {total} partidos",
-      "complete": "Completa"
+      "complete": "Completa",
+      "jump": "Ir a una zona"
     },
     "bracket": {
       "title": "Llave",
@@ -883,7 +884,8 @@
         "round_of_64": "32vos de final",
         "round_of_128": "64vos de final"
       },
-      "slot": "{position}º {zone}"
+      "slot": "{position}º {zone}",
+      "swipe": "Deslizá hacia los costados para ver las otras rondas."
     },
     "result": {
       "title": "Resultado",
@@ -1049,7 +1051,8 @@
     "views": {
       "label": "Vista del torneo",
       "zones": "Zonas",
-      "bracket": "Cruces"
+      "bracket": "Cruces",
+      "matches": "Partidos"
     },
     "menu": {
       "matchActions": "Acciones del partido",

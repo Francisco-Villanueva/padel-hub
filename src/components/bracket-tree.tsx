@@ -20,13 +20,13 @@ export function BracketTree<T extends TreeMatch>({
   const GAP = "2rem"; // hueco entre columnas; las líneas llegan a la mitad (1rem)
   const line = "bg-line-strong";
   return (
-    <div className="-mx-4 overflow-x-auto px-4 pb-3 sm:mx-0 sm:px-0" role="group" aria-label={label}>
+    <div className="-mx-4 snap-x snap-proximity scroll-px-4 overflow-x-auto px-4 pb-3 sm:mx-0 sm:scroll-px-0 sm:px-0" role="group" aria-label={label}>
       <div
         className="grid"
         style={{ gridTemplateColumns: `repeat(${rounds}, minmax(${minCol}, 1fr))`, gridTemplateRows: `auto repeat(${rows}, ${rowHeight})`, columnGap: GAP }}
       >
         {Array.from({ length: rounds }, (_, i) => i + 1).map((r) => (
-          <h2 key={r} className="px-1 pb-3 text-base font-bold" style={{ gridColumn: r, gridRow: 1 }}>{roundTitle(r)}</h2>
+          <h2 key={r} className="snap-start px-1 pb-3 text-base font-bold" style={{ gridColumn: r, gridRow: 1 }}>{roundTitle(r)}</h2>
         ))}
         {matches.map((m, i) => {
           const span = 2 ** (m.round - 1);
@@ -36,7 +36,7 @@ export function BracketTree<T extends TreeMatch>({
           return (
             <div
               key={m.id}
-              className="enter relative flex items-center"
+              className="enter relative flex snap-start items-center"
               style={{ gridColumn: m.round, gridRow: `${2 + m.position * span} / span ${span}`, ...stagger(i) }}
             >
               <div className="w-full">{render(m)}</div>

@@ -113,6 +113,13 @@
       "when": 1795546497003,
       "tag": "0015_player_phone_optional",
       "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1795735214899,
+      "tag": "0016_public_tournament_draw",
+      "breakpoints": true
     }
   ]
 }
