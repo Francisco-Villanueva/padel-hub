@@ -3,10 +3,15 @@ import { notFound } from "next/navigation";
 import { getFormatter, getTranslations, setRequestLocale } from "next-intl/server";
 import { Suspense } from "react";
 import { categoryLabel, categoryOptions } from "@/components/category-label";
+import { ByeSlot, ChampionBanner } from "@/components/bracket-parts";
+import { BracketTree } from "@/components/bracket-tree";
 import { Icon } from "@/components/icons";
+import { MatchCard } from "@/components/match-card";
 import { PageHead } from "@/components/page-head";
 import { ListSkeleton } from "@/components/skeleton";
-import { cx, stagger, ui } from "@/components/ui";
+import { cx, ui } from "@/components/ui";
+import { ViewTabs } from "@/components/view-tabs";
+import { ZoneCard } from "@/components/zone-card";
 import { Link } from "@/i18n/navigation";
 import { utcToLocalInputs } from "@/lib/tz";
 import { roundKeyForParticipants } from "@/lib/tournament/points";
@@ -18,8 +23,6 @@ import { tournamentPoints, tournamentView } from "@/server/services/tournament-v
 import { closeTournamentAction, openRegistrationAction, resolveTieAction, startTournamentAction } from "../actions";
 import { ActionButton } from "../_components/action-button";
 import type { Option } from "../_components/adjust-dialogs";
-import { BracketTree } from "../_components/bracket-tree";
-import { MatchCard } from "../_components/match-card";
 import { MatchMenu, type SlotEditor } from "../_components/match-menu";
 import type { PairRow } from "../_components/pair-menu";
 import { PairsSheet } from "../_components/pairs-sheet";
@@ -28,7 +31,6 @@ import { RegistrationTable } from "../_components/registration-table";
 import { playerLabel, pairName, ruleLabel, statusBadge } from "../_components/shared";
 import { TournamentMenu } from "../_components/tournament-menu";
 import { TvDialog } from "../_components/tv-dialog";
-import { ViewTabs } from "../_components/view-tabs";
 import { ZoneMoveButton } from "../_components/zone-move";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -177,15 +179,7 @@ async function Detalle({ params, searchParams }: { params: PageProps<"/[locale]/
       {status === "cancelado" && <p role="status" className={cx(ui.notice, ui.noticeError, "enter")}>{t("tournaments.detail.cancelledNotice")}</p>}
       {playing && pendingDraw && <p role="status" className={cx(ui.notice, ui.noticeWarning, "enter")}>{t("tournaments.zones.drawNeeded")}</p>}
 
-      {finalDone && finalMatch && (
-        <section className="enter flex items-center gap-4 rounded-lg bg-brand p-4 text-on-brand sm:p-5">
-          <span className="inline-flex size-12 shrink-0 items-center justify-center rounded-full bg-ball text-on-ball"><Icon name="crown" className="size-6" /></span>
-          <div className="min-w-0">
-            <p className="text-sm font-medium opacity-90">{t("tournaments.closed.champion")}</p>
-            <p className="truncate font-display text-3xl font-bold leading-tight sm:text-4xl">{name(finalMatch.winnerEntryId)}</p>
-          </div>
-        </section>
-      )}
+      {finalDone && finalMatch && <ChampionBanner label={t("tournaments.closed.champion")} name={name(finalMatch.winnerEntryId)} />}
 
       {status === "inscripcion" && (
         <RegistrationTable
@@ -207,52 +201,19 @@ async function Detalle({ params, searchParams }: { params: PageProps<"/[locale]/
       {hasZones && vista === "zonas" && (
         <section className="grid gap-4 xl:grid-cols-2" aria-label={t("tournaments.zones.title")}>
           {view.zones.map((z, zi) => {
-            const done = z.matches.filter((m) => m.status === "jugado").length;
             const untouched = !z.matches.some((m) => m.status === "jugado" || m.status === "en_juego");
             return (
-              <div key={z.zone.id} className={cx(ui.card, "enter space-y-3 !p-4")} style={stagger(zi)}>
-                <div className="flex items-center justify-between gap-2">
-                  <h2 className="text-lg font-bold">{z.zone.name}</h2>
-                  {z.standings.complete
-                    ? <span className={ui.badgeAccent}><Icon name="check" className="size-3" />{t("tournaments.zones.complete")}</span>
-                    : <span className="text-xs font-medium text-ink-muted">{t("tournaments.zones.progress", { done, total: z.matches.length })}</span>}
-                </div>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="text-left text-xs font-semibold text-ink-muted">
-                        <th scope="col" className="w-7 py-1.5">{t("tournaments.zones.pos")}</th>
-                        <th scope="col" className="py-1.5">{t("tournaments.zones.pair")}</th>
-                        <th scope="col" className="px-2 py-1.5 text-right">{t("tournaments.zones.played")}</th>
-                        <th scope="col" className="px-2 py-1.5 text-right">{t("tournaments.zones.wins")}</th>
-                        <th scope="col" className="px-2 py-1.5 text-right">{t("tournaments.zones.diff")}</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-line">
-                      {z.standings.rows.map((r, i) => (
-                        <tr key={r.entryId} className={r.qualified ? "font-semibold" : undefined}>
-                          <td className="py-1.5 text-ink-muted">{r.position ?? "·"}</td>
-                          <td className="py-1.5">
-                            <span className="inline-flex flex-wrap items-center gap-x-2">
-                              {name(r.entryId)}
-                              {r.qualified && <span className={ui.badgeAccent}>{t("tournaments.zones.qualified")}</span>}
-                              {z.standings.complete && i === z.standings.rows.length - 1 && !r.qualified && r.position && <span className={ui.badge}>{t("tournaments.zones.out")}</span>}
-                              {playing && untouched && (
-                                <ZoneMoveButton
-                                  entryId={r.entryId} name={name(r.entryId)}
-                                  options={view.zones.filter((o) => o.zone.id !== z.zone.id).flatMap((o) => o.entryIds.map((eid) => ({ value: eid, label: `${name(eid)} · ${o.zone.name}` })))}
-                                />
-                              )}
-                            </span>
-                          </td>
-                          <td className="px-2 py-1.5 text-right text-ink-muted">{r.played}</td>
-                          <td className="px-2 py-1.5 text-right">{r.wins}</td>
-                          <td className="px-2 py-1.5 text-right">{r.gameDiff > 0 ? `+${r.gameDiff}` : r.gameDiff}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+              <ZoneCard
+                key={z.zone.id} index={zi} title={z.zone.name} complete={z.standings.complete}
+                done={z.matches.filter((m) => m.status === "jugado").length} total={z.matches.length}
+                rows={z.standings.rows.map((r) => ({ ...r, name: name(r.entryId) }))}
+                rowAction={playing && untouched ? (r) => (
+                  <ZoneMoveButton
+                    entryId={r.entryId} name={r.name}
+                    options={view.zones.filter((o) => o.zone.id !== z.zone.id).flatMap((o) => o.entryIds.map((eid) => ({ value: eid, label: `${name(eid)} · ${o.zone.name}` })))}
+                  />
+                ) : undefined}
+              >
                 <div className="space-y-2">
                   {z.matches.map((m) => matchCard(m, { roundLabel: t("tournaments.zones.round", { n: m.round }), flat: true }))}
                 </div>
@@ -263,7 +224,7 @@ async function Detalle({ params, searchParams }: { params: PageProps<"/[locale]/
                   </div>
                 )}
                 {Boolean(z.zone.tieDraw) && <p className="text-xs text-ink-muted">{t("tournaments.zones.drawDone")}</p>}
-              </div>
+              </ZoneCard>
             );
           })}
         </section>
@@ -276,12 +237,9 @@ async function Detalle({ params, searchParams }: { params: PageProps<"/[locale]/
             matches={view.bracket}
             label={t("tournaments.bracket.title")}
             roundTitle={(r) => t(`tournaments.bracket.round.${roundKeyForParticipants(2 ** (lastRound - r + 1))}`)}
-            render={(m) => m.status === "bye" ? (
-              <div className="flex min-h-9 items-center justify-between gap-2 rounded-lg border border-dashed border-line-strong bg-surface-raised px-3 py-1.5">
-                <p className="min-w-0 truncate text-[13px] font-semibold" title={slotText(m, "a")}>{slotText(m, "a")}</p>
-                <span className={ui.badge}>{t("tournaments.bracket.bye")}</span>
-              </div>
-            ) : matchCard(m, { bracket: true, compact: true })}
+            render={(m) => m.status === "bye"
+              ? <ByeSlot name={slotText(m, "a")} label={t("tournaments.bracket.bye")} />
+              : matchCard(m, { bracket: true, compact: true })}
           />
         </section>
       )}

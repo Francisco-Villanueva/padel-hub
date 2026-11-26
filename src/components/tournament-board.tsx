@@ -44,7 +44,7 @@ export async function TournamentBoard<T extends BoardMatch>({
         return (
           <div key={side} className={cx("flex items-center gap-2 rounded-md px-2", tv ? "py-1 lg:py-1.5" : "py-1", won && "bg-brand-tint")}>
             <span className={cx("flex w-5 shrink-0 justify-center", tv && "lg:w-7")}>{won && <WinnerMark label={t("tournaments.winner")} className={tv ? "lg:size-7" : undefined} />}</span>
-            <p className={cx("min-w-0 flex-1 truncate", won ? "font-bold text-ink" : tbd ? "italic text-ink-muted" : m.winner ? "text-ink-muted" : "text-ink")} title={name}>{name}</p>
+            <p className={cx("min-w-0 flex-1 break-words sm:truncate", won ? "font-bold text-ink" : tbd ? "italic text-ink-muted" : m.winner ? "text-ink-muted" : "text-ink")} title={name}>{name}</p>
             {(m.sets ?? []).map(([x, y], k) => {
               const mine = side === "a" ? x : y, other = side === "a" ? y : x;
               return <span key={k} className={cx("w-6 shrink-0 text-center font-display text-xl tabular-nums leading-none", tv && "lg:w-9 lg:text-3xl", mine > other ? "font-bold text-ink" : "text-ink-muted")}>{mine}</span>;
@@ -123,11 +123,11 @@ export async function TournamentBoard<T extends BoardMatch>({
                       <span className={cx("flex items-center gap-2 font-display text-2xl font-bold", tv && "lg:text-4xl", m.status === "jugado" && "text-ink-muted")}>{select?.(m)}{m.scheduledAt ? hour(m) : "—"}</span>
                       <span className={cx("hidden text-ink-muted sm:block", tv && "lg:text-xl")}>{phase(m)}</span>
                       <div className="min-w-0">
-                        <p className="mb-0.5 px-2 text-xs font-medium text-ink-muted sm:hidden">{phase(m)}</p>
+                        <div className="mb-0.5 flex flex-wrap items-center gap-x-2 px-2 text-xs font-medium text-ink-muted sm:hidden">{phase(m)}{badges}</div>
                         {teams(m)}
                       </div>
                       <div className="flex items-center justify-end gap-2">
-                        {badges}
+                        <span className="hidden sm:contents">{badges}</span>
                         {actions?.(m)}
                       </div>
                     </li>
