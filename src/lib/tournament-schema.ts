@@ -16,6 +16,14 @@ export const templateInputSchema = z.object({
 });
 export type TemplateInput = z.infer<typeof templateInputSchema>;
 
+/** Puntos de un torneo ya creado: campeón, participación y ajustes absolutos por ronda. */
+export const pointsInputSchema = z.object({
+  championPoints: points.min(1),
+  participationPoints: points,
+  roundOverrides: z.partialRecord(roundKey, points).optional(),
+});
+export type PointsInput = z.infer<typeof pointsInputSchema>;
+
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 
 export const tournamentInputSchema = z.object({

@@ -2,7 +2,7 @@
 // Reciben el `tx` de withTenant() y no conocen HTTP. Cada función comprueba el flag `tournaments` (defensa en profundidad).
 import { randomInt } from 'node:crypto';
 import { and, asc, desc, eq, inArray } from 'drizzle-orm';
-import type { TournamentInput } from '../../lib/tournament-schema';
+import type { PointsInput, TournamentInput } from '../../lib/tournament-schema';
 import { MIN_PAIRS_FLOOR, type CategoryRuleKind, type Modality, type RoundKey, type TournamentStatus } from '../../lib/tournament/constants';
 import { drawZones, zoneMatchPlan } from '../../lib/tournament/draw';
 import { playerPoints, roundKeyForParticipants, roundPoints, type RoundPoints } from '../../lib/tournament/points';
@@ -93,6 +93,19 @@ export async function updateTournament(tx: Tx, ctx: Ctx, id: string, input: Tour
     minPairs: input.minPairs, championPoints: p.champion, participationPoints: p.participation, pointsTable: p.table, templateId: p.templateId,
     startsOn: input.startsOn, seedWindow: input.seedWindow,
   }).where(eq(tournaments.id, id));
+}
+
+/**
+ * Cambia cuánto reparte el torneo (campeón, participación y ajustes por ronda), también con el torneo en juego: los puntos se
+ * escriben recién al cerrarlo. Con el torneo cerrado hay que reabrirlo primero (al volver a cerrar se recalculan); cancelado no.
+ */
+export async function updateTournamentPoints(tx: Tx, ctx: Ctx, id: string, input: PointsInput) {
+  const t = await mustGet(tx, ctx, id);
+  if (t.status === 'cerrado' || t.status === 'cancelado') throw new TournamentError('invalid_state', { status: t.status });
+  const [template] = t.templateId ? await tx.select().from(tournamentTemplates).where(eq(tournamentTemplates.id, t.templateId)) : [];
+  const table = roundPoints(input.championPoints, { percents: template?.roundPercents ?? undefined, overrides: input.roundOverrides });
+  await tx.update(tournaments).set({ championPoints: input.championPoints, participationPoints: input.participationPoints, pointsTable: table })
+    .where(eq(tournaments.id, id));
 }
 
 export async function openRegistration(tx: Tx, ctx: Ctx, id: string) {

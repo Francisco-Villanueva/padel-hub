@@ -970,7 +970,8 @@
       "schedule_invalid": "The day or time is not valid.",
       "slot_taken": "That pair is already in another first-round spot: swap the spots instead.",
       "zone_started": "Not possible: that group already has matches in progress or played.",
-      "pair_missing_names": "A player is missing a last name."
+      "pair_missing_names": "A player is missing a last name.",
+      "bracket_invalid": "The bracket is not valid: each qualifier from the groups must appear exactly once."
     },
     "pairReasons": {
       "no_category": "Both players need a category.",
@@ -1119,6 +1120,12 @@
       "pickGroupShort": "Select all",
       "dialogTitle": "{count, plural, one {Day and time for # match} other {Day and time for # matches}}",
       "dialogBody": "The same day and time is applied to every selected match."
+    },
+    "points": {
+      "edit": "Edit points",
+      "title": "Tournament points",
+      "body": "They are written to the ranking when the tournament is closed, so you can change them while it is being played.",
+      "save": "Save points"
     }
   },
   "register": {

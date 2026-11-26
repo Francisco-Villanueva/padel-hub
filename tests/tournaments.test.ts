@@ -11,7 +11,7 @@ import { clearResult, recordResult, resolveTie, setMatchLive } from '../src/serv
 import { createTemplate, deleteTemplate, listTemplates, updateTemplate } from '../src/server/services/tournament-templates';
 import {
   cancelTournament, closeTournament, createTournament, getTournament, openRegistration, reopenTournament, startTournament,
-  updateTournament, zoneStates,
+  updateTournament, updateTournamentPoints, zoneStates,
 } from '../src/server/services/tournaments';
 import { seedTwoClubs, setupDb } from './helpers';
 
@@ -84,6 +84,32 @@ describe('feature flag en los servicios', () => {
 });
 
 describe('plantillas y puntos', () => {
+  it('se pueden cambiar los puntos también en juego; al cerrar se usan los nuevos; cerrado exige reabrir', async () => {
+    const { id } = await openTournament(6, { championPoints: 1000 });
+    await A((tx) => startTournament(tx, ca, id, { seed: 2 }));
+    await A((tx) => updateTournamentPoints(tx, ca, id, { championPoints: 100, participationPoints: 5 }));
+    expect(await A((tx) => getTournament(tx, ca, id))).toMatchObject({ championPoints: 100, participationPoints: 5, pointsTable: { champion: 100, final: 60, semifinal: 36, quarterfinal: 18, round_of_16: 9, round_of_32: 5 } });
+    await A((tx) => updateTournamentPoints(tx, ca, id, { championPoints: 100, participationPoints: 0, roundOverrides: { semifinal: 40 } }));
+    expect((await A((tx) => getTournament(tx, ca, id)))!.pointsTable).toMatchObject({ semifinal: 40, final: 60 });
+    await playAll('zona', id);
+    await playAll('llave', id);
+    await A((tx) => closeTournament(tx, ca, id));
+    const events = await A((tx) => tx.select().from(rankingEvents).where(eq(rankingEvents.tournamentId, id)));
+    expect(Math.max(...events.map((e) => e.points))).toBe(100);
+    await expect(A((tx) => updateTournamentPoints(tx, ca, id, { championPoints: 200, participationPoints: 5 }))).rejects.toMatchObject({ code: 'invalid_state' });
+    await A((tx) => reopenTournament(tx, ca, id));
+    await A((tx) => updateTournamentPoints(tx, ca, id, { championPoints: 200, participationPoints: 5 }));
+    await A((tx) => closeTournament(tx, ca, id));
+    expect(Math.max(...(await A((tx) => tx.select().from(rankingEvents).where(eq(rankingEvents.tournamentId, id)))).map((e) => e.points))).toBe(200);
+  });
+  it('no se cambian los puntos de un torneo cancelado ni de otro club', async () => {
+    const { id } = await openTournament(1);
+    await t.withPlatform((tx) => setClubFeature(tx, { userId: s.ownerB }, s.b.id, 'tournaments', true));
+    await expect(B((tx) => updateTournamentPoints(tx, cb, id, { championPoints: 1, participationPoints: 0 }))).rejects.toMatchObject({ code: 'not_found' });
+    await t.withPlatform((tx) => setClubFeature(tx, { userId: s.ownerB }, s.b.id, 'tournaments', false));
+    await A((tx) => cancelTournament(tx, ca, id));
+    await expect(A((tx) => updateTournamentPoints(tx, ca, id, { championPoints: 100, participationPoints: 5 }))).rejects.toMatchObject({ code: 'invalid_state' });
+  });
   it('el torneo guarda su propia tabla: editar o borrar la plantilla no la cambia', async () => {
     const tpl = await A((tx) => createTemplate(tx, ca, templateInputSchema.parse({ name: 'Torneo de 1000 ptos', championPoints: 1000, participationPoints: 5 })));
     const id = await A((tx) => createTournament(tx, ca, input({ templateId: tpl, championPoints: undefined, participationPoints: undefined })));

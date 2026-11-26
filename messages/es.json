@@ -970,7 +970,8 @@
       "schedule_invalid": "El día o la hora no son válidos.",
       "slot_taken": "Esa pareja ya está en otro lugar de la primera ronda: intercambiá los lugares.",
       "zone_started": "No se puede: en esa zona ya hay partidos empezados o jugados.",
-      "pair_missing_names": "Falta el apellido de un jugador."
+      "pair_missing_names": "Falta el apellido de un jugador.",
+      "bracket_invalid": "Los cruces no son válidos: cada clasificado de las zonas tiene que aparecer exactamente una vez."
     },
     "pairReasons": {
       "no_category": "Los dos jugadores necesitan categoría.",
@@ -1119,6 +1120,12 @@
       "pickGroupShort": "Elegir todos",
       "dialogTitle": "{count, plural, one {Día y hora para # partido} other {Día y hora para # partidos}}",
       "dialogBody": "Se aplica el mismo día y hora a todos los partidos elegidos."
+    },
+    "points": {
+      "edit": "Editar puntos",
+      "title": "Puntos del torneo",
+      "body": "Se escriben en el ranking al cerrar el torneo, así que podés cambiarlos mientras se juega.",
+      "save": "Guardar puntos"
     }
   },
   "register": {

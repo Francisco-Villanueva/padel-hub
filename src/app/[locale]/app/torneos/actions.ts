@@ -2,7 +2,7 @@
 
 import { refresh } from "next/cache";
 import { redirect } from "next/navigation";
-import { pairRowsSchema, templateInputSchema, tournamentInputSchema } from "@/lib/tournament-schema";
+import { pairRowsSchema, pointsInputSchema, templateInputSchema, tournamentInputSchema } from "@/lib/tournament-schema";
 import { ROUND_KEYS } from "@/lib/tournament/constants";
 import { requireFeature } from "@/server/auth/session";
 import { getClubContext } from "@/server/club-context";
@@ -18,7 +18,7 @@ import { TournamentError } from "@/server/services/tournament-errors";
 import { clearResult, recordResult, resolveTie, setMatchLive, setMatchSchedule, setMatchesSchedule } from "@/server/services/tournament-matches";
 import { createTemplate, deleteTemplate, updateTemplate } from "@/server/services/tournament-templates";
 import {
-  cancelTournament, closeTournament, createTournament, openRegistration, reopenTournament, startTournament, updateTournament,
+  cancelTournament, closeTournament, createTournament, openRegistration, reopenTournament, startTournament, updateTournament, updateTournamentPoints,
 } from "@/server/services/tournaments";
 
 export type TState = {
@@ -113,6 +113,23 @@ export async function updateTournamentAction(_prev: TState, fd: FormData): Promi
   const parsed = tournamentInputSchema.safeParse(readTournament(fd));
   if (!parsed.success) return fail("validation", undefined, parsed.error.issues.map((i) => String(i.path[0])));
   return mutate(fd, (tx, c) => updateTournament(tx, { clubId: c.clubId, userId: c.userId }, id, parsed.data));
+}
+
+/** Cuánto reparte un torneo ya creado (también en juego). Los ajustes por ronda vacíos se calculan solos. */
+export async function updatePointsAction(_prev: TState, fd: FormData): Promise<TState> {
+  const id = idOf(fd);
+  if (!id) return fail("not_found");
+  const overrides: Record<string, number> = {};
+  for (const k of ROUND_KEYS) {
+    const v = String(fd.get(`override_${k}`) ?? "").trim();
+    if (v !== "") overrides[k] = Number(v);
+  }
+  const parsed = pointsInputSchema.safeParse({
+    championPoints: fd.get("championPoints"), participationPoints: fd.get("participationPoints") || 0,
+    roundOverrides: Object.keys(overrides).length ? overrides : undefined,
+  });
+  if (!parsed.success) return fail("validation");
+  return mutate(fd, (tx, c) => updateTournamentPoints(tx, { clubId: c.clubId, userId: c.userId }, id, parsed.data));
 }
 
 const simple = (fn: (tx: Tx, ctx: { clubId: string; userId: string }, id: string) => Promise<unknown>) =>

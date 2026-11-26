@@ -23,6 +23,7 @@ import { MatchCard } from "../_components/match-card";
 import { MatchMenu, type SlotEditor } from "../_components/match-menu";
 import type { PairRow } from "../_components/pair-menu";
 import { PairsSheet } from "../_components/pairs-sheet";
+import { PointsEditor } from "../_components/points-dialog";
 import { RegistrationTable } from "../_components/registration-table";
 import { playerLabel, pairName, ruleLabel, statusBadge } from "../_components/shared";
 import { TournamentMenu } from "../_components/tournament-menu";
@@ -163,7 +164,12 @@ async function Detalle({ params, searchParams }: { params: PageProps<"/[locale]/
         <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-ink-muted">
           {meta("calendar", <span className="font-medium text-ink">{format.dateTime(new Date(`${tr.startsOn}T12:00:00`), { weekday: "short", day: "numeric", month: "long" })}</span>)}
           <PairsSheet pairs={pairRows} free={free} removable={status === "inscripcion" || status === "borrador"} replaceable={playing || status === "inscripcion"} missing={status === "inscripcion" ? missing : 0} min={tr.minPairs} />
-          {meta("trophy", <span>{t("tournaments.detail.pointsValue", { champion: tr.championPoints, participation: tr.participationPoints })}</span>)}
+          {meta("trophy", <span className="inline-flex items-center gap-1">
+            {t("tournaments.detail.pointsValue", { champion: tr.championPoints, participation: tr.participationPoints })}
+            {["borrador", "inscripcion", "zonas", "llave"].includes(status) && (
+              <PointsEditor id={id} champion={tr.championPoints} participation={tr.participationPoints} table={tr.pointsTable as Record<string, number>} />
+            )}
+          </span>)}
           {meta("ranking", <span>{tr.isRanked ? t("tournaments.ranked") : t("tournaments.notRanked")}</span>)}
         </div>
       </header>
