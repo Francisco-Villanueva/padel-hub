@@ -7,7 +7,7 @@ import type { CategoryRuleKind, Modality } from '../../lib/tournament/constants'
 import { players, tournamentEntries, tournamentEntryPlayers, tournaments } from '../db/schema';
 import type { Tx } from '../db/tenant';
 import { assertFeature } from './features';
-import { createPlayer, PlayerError } from './players';
+import { createPlayer, createPlayerWithoutPhone, PlayerError } from './players';
 import { isUniqueViolation, TournamentError } from './tournament-errors';
 
 type Ctx = { clubId: string };
@@ -99,4 +99,95 @@ export async function quickCreatePlayer(tx: Tx, ctx: { clubId: string; country: 
     if (e instanceof PlayerError && e.code === 'invalid_phone') throw new TournamentError('invalid_phone');
     throw e;
   }
+}
+
+
+// Inscripción rápida y masiva ------------------------------------------------------------------------------------------
+// Los jugadores que se anotan a un torneo suelen ser nuevos: en vez de dar de alta a cada uno aparte, se anota la pareja
+// escribiendo sus nombres. Si ya existe un jugador del club con ese nombre se usa; si no, se crea sin teléfono (se completa
+// después) con el alta manual de siempre y su consentimiento.
+
+/** Un lado de la pareja: un jugador ya existente o los datos para encontrarlo o crearlo. */
+export interface PlayerRef {
+  playerId?: string;
+  firstName?: string;
+  lastName?: string;
+  gender?: 'male' | 'female';
+  category?: number | null;
+}
+export interface PairRowInput { p1: PlayerRef; p2: PlayerRef }
+export type PairRowResult =
+  | { ok: true; entryId: string; created: number; reused: number }
+  | { ok: false; error: string; detail?: Record<string, unknown> };
+
+/** Sin tildes ni mayúsculas, para comparar nombres. */
+export const normalizeName = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/\s+/g, ' ').trim();
+
+/** Nombre de pila provisorio cuando solo se conoce el apellido (la lista de inscriptos suele traer solo apellidos). */
+export const PLACEHOLDER_FIRST_NAME = 'Nombre';
+
+type Catalogue = { id: string; first: string; last: string; category: number | null; gender: 'male' | 'female' }[];
+
+function defaultGender(modality: Modality, slot: 1 | 2): 'male' | 'female' {
+  if (modality === 'femenino') return 'female';
+  if (modality === 'mixto') return slot === 1 ? 'male' : 'female';
+  return 'male';
+}
+
+/** Busca un jugador del club que coincida con la referencia; null si no hay uno inequívoco. */
+function findExisting(cat: Catalogue, ref: PlayerRef): Catalogue[number] | null {
+  const last = normalizeName(ref.lastName ?? ''), first = normalizeName(ref.firstName ?? '');
+  if (!last) return null;
+  const placeholder = !first || first === normalizeName(PLACEHOLDER_FIRST_NAME);
+  const same = placeholder
+    ? cat.filter((p) => p.last === last)
+    : cat.filter((p) => (p.last === last && p.first === first) || (p.last === first && p.first === last)); // también "Nombre Apellido" al revés
+  return same.length === 1 ? same[0] : null;
+}
+
+/**
+ * Anota varias parejas de una vez. Cada fila se resuelve por separado (con un savepoint): si una falla, las demás siguen y
+ * esa no deja nada a medias. Devuelve un resultado por fila, en el mismo orden.
+ */
+export async function registerPairs(
+  tx: Tx, ctx: { clubId: string; country?: string; locale?: 'es' | 'en' | 'pt' }, tournamentId: string, rows: PairRowInput[],
+): Promise<PairRowResult[]> {
+  await assertFeature(tx, ctx.clubId, 'tournaments');
+  const t = await loadTournament(tx, tournamentId);
+  if (t.status !== 'inscripcion') throw new TournamentError('invalid_state', { status: t.status });
+
+  const all = await tx.select({ id: players.id, first: players.firstName, last: players.lastName, category: players.category, gender: players.gender })
+    .from(players).where(isNull(players.deletedAt));
+  const cat: Catalogue = all.map((p) => ({ id: p.id, first: normalizeName(p.first), last: normalizeName(p.last), category: p.category, gender: p.gender }));
+  const single = t.categoryRuleKind === 'single' ? t.categoryRuleValue : undefined;
+
+  const results: PairRowResult[] = [];
+  for (const row of rows) {
+    let created = 0, reused = 0;
+    try {
+      const entryId = await tx.transaction(async (sp) => {
+        const ids: string[] = [];
+        for (const [i, ref] of ([row.p1, row.p2] as const).entries()) {
+          if (ref.playerId) { ids.push(ref.playerId); continue; }
+          const lastName = (ref.lastName ?? '').trim();
+          if (!lastName || lastName.length > 80 || (ref.firstName ?? '').trim().length > 80) throw new TournamentError('pair_missing_names');
+          const hit = findExisting(cat, ref);
+          if (hit) { ids.push(hit.id); reused++; continue; }
+          const playerInput = {
+            firstName: (ref.firstName ?? '').trim() || PLACEHOLDER_FIRST_NAME, lastName, gender: ref.gender ?? defaultGender(t.modality as Modality, (i + 1) as 1 | 2),
+            category: ref.category === undefined ? single : ref.category ?? undefined, slots: [],
+          };
+          const id = await createPlayerWithoutPhone(sp as unknown as Tx, ctx, playerInput, { textVersion: 'club-attested-v1', locale: ctx.locale ?? 'es', source: 'manual' });
+          cat.push({ id, first: normalizeName(playerInput.firstName), last: normalizeName(lastName), category: playerInput.category ?? null, gender: playerInput.gender });
+          ids.push(id); created++;
+        }
+        return registerPair(sp as unknown as Tx, ctx, tournamentId, { player1Id: ids[0], player2Id: ids[1] });
+      });
+      results.push({ ok: true, entryId, created, reused });
+    } catch (e) {
+      if (e instanceof TournamentError) results.push({ ok: false, error: e.code, detail: e.detail });
+      else throw e;
+    }
+  }
+  return results;
 }

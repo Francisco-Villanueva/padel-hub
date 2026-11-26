@@ -1,6 +1,6 @@
 // Resultados de partidos (zonas y llave), avance de la llave y sorteo de desempates.
 import { randomInt } from 'node:crypto';
-import { and, asc, eq } from 'drizzle-orm';
+import { and, asc, eq, inArray } from 'drizzle-orm';
 import { setsSchema, winnerOfSets } from '../../lib/tournament-schema';
 import { resolveFourZoneRound2 } from '../../lib/tournament/draw';
 import { mulberry32 } from '../../lib/tournament/rng';
@@ -131,6 +131,26 @@ export async function setMatchSchedule(tx: Tx, ctx: Ctx, matchId: string, at: Da
   if (m.status === 'bye') throw new TournamentError('invalid_state', { status: m.status });
   if (at && Number.isNaN(at.getTime())) throw new TournamentError('schedule_invalid');
   await tx.update(tournamentMatches).set({ scheduledAt: at }).where(eq(tournamentMatches.id, matchId));
+}
+
+/**
+ * Programa (o quita, con null) el mismo día y hora para varios partidos a la vez: lo habitual cuando se juegan en simultáneo en
+ * distintas canchas. Todo o nada: si alguno no se puede (otro torneo cerrado, un libre, de otro club) no se cambia ninguno.
+ */
+export async function setMatchesSchedule(tx: Tx, ctx: Ctx, matchIds: string[], at: Date | null) {
+  await assertFeature(tx, ctx.clubId, 'tournaments');
+  const ids = [...new Set(matchIds)];
+  if (ids.length === 0 || ids.length > 100) throw new TournamentError('schedule_invalid');
+  if (at && Number.isNaN(at.getTime())) throw new TournamentError('schedule_invalid');
+  const found = await tx.select({ id: tournamentMatches.id, status: tournamentMatches.status, tournamentId: tournamentMatches.tournamentId }).from(tournamentMatches).where(inArray(tournamentMatches.id, ids));
+  if (found.length !== ids.length) throw new TournamentError('not_found'); // RLS: los de otro club no aparecen
+  if (found.some((m) => m.status === 'bye')) throw new TournamentError('invalid_state', { status: 'bye' });
+  const tids = [...new Set(found.map((m) => m.tournamentId))];
+  const ts = await tx.select({ id: tournaments.id, status: tournaments.status }).from(tournaments).where(inArray(tournaments.id, tids));
+  const bad = ts.find((x) => !isLive(x.status));
+  if (bad) throw new TournamentError('invalid_state', { status: bad.status });
+  await tx.update(tournamentMatches).set({ scheduledAt: at }).where(inArray(tournamentMatches.id, ids));
+  return ids.length;
 }
 
 /** El club marca qué partidos se están jugando ahora (o los saca). Solo con las dos parejas definidas y sin resultado. */

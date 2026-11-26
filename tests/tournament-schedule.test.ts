@@ -7,7 +7,7 @@ import type { Tx } from '../src/server/db/tenant';
 import { setClubFeature } from '../src/server/services/features';
 import { publicTournamentBoard, publicTournamentInfo } from '../src/server/services/public-board';
 import { registerPair } from '../src/server/services/tournament-entries';
-import { clearResult, recordResult, setMatchLive, setMatchSchedule } from '../src/server/services/tournament-matches';
+import { clearResult, recordResult, setMatchLive, setMatchSchedule, setMatchesSchedule } from '../src/server/services/tournament-matches';
 import { panelBoardMatches, tournamentView } from '../src/server/services/tournament-view';
 import { cancelTournament, createTournament, openRegistration, startTournamentWithZones, zoneStates } from '../src/server/services/tournaments';
 import { seedTwoClubs, setupDb } from './helpers';
@@ -202,5 +202,45 @@ describe('tablero del club', () => {
     expect(panel[0].id).toBe(zs[1].matches[0].id);
     // La 2ª ronda de una zona de 4 todavía no tiene rivales: no está lista.
     expect(panel.filter((m) => m.round === 2).every((m) => !m.ready && m.nameA === null)).toBe(true);
+  });
+});
+
+describe('horario de varios partidos a la vez', () => {
+  async function two() {
+    const { id, ids } = await entries(6);
+    await A((tx) => startTournamentWithZones(tx, ca, id, [[ids[0], ids[1], ids[2]], [ids[3], ids[4], ids[5]]]));
+    const zs = await A((tx) => zoneStates(tx, ca, id));
+    return { id, zs, all: zs.flatMap((z) => z.matches) };
+  }
+  const sched = (id: string) => A((tx) => tx.select({ id: tournamentMatches.id, at: tournamentMatches.scheduledAt }).from(tournamentMatches).where(eq(tournamentMatches.id, id))).then((r) => r[0].at?.toISOString() ?? null);
+
+  it('pone el mismo día y hora a todos los elegidos, y se puede quitar', async () => {
+    const { all } = await two();
+    const pick = [all[0].id, all[2].id, all[4].id];
+    const at = localToUtc('2026-11-21', '17:00', TZ)!;
+    expect(await A((tx) => setMatchesSchedule(tx, ca, pick, at))).toBe(3);
+    for (const id of pick) expect(await sched(id)).toBe(at.toISOString());
+    expect(await sched(all[1].id)).toBeNull(); // los no elegidos no se tocan
+    await A((tx) => setMatchesSchedule(tx, ca, pick, null));
+    for (const id of pick) expect(await sched(id)).toBeNull();
+  });
+
+  it('es todo o nada: un partido que no se puede programar frena todo', async () => {
+    const { id, all } = await two();
+    const at = localToUtc('2026-11-21', '18:00', TZ)!;
+    await expect(A((tx) => setMatchesSchedule(tx, ca, [all[0].id, '00000000-0000-4000-8000-000000000000'], at))).rejects.toMatchObject({ code: 'not_found' });
+    expect(await sched(all[0].id)).toBeNull();
+    await expect(A((tx) => setMatchesSchedule(tx, ca, [], at))).rejects.toMatchObject({ code: 'schedule_invalid' });
+    await expect(A((tx) => setMatchesSchedule(tx, ca, [all[0].id], new Date('x')))).rejects.toMatchObject({ code: 'schedule_invalid' });
+    await A((tx) => cancelTournament(tx, ca, id));
+    await expect(A((tx) => setMatchesSchedule(tx, ca, [all[0].id], at))).rejects.toMatchObject({ code: 'invalid_state' });
+  });
+
+  it('partidos de otro club no se programan', async () => {
+    const { all } = await two();
+    await t.withPlatform((tx) => setClubFeature(tx, { userId: s.ownerB }, s.b.id, 'tournaments', true));
+    await expect(t.withTenant(s.b.id, (tx) => setMatchesSchedule(tx, { clubId: s.b.id }, [all[0].id], new Date()))).rejects.toMatchObject({ code: 'not_found' });
+    await t.withPlatform((tx) => setClubFeature(tx, { userId: s.ownerB }, s.b.id, 'tournaments', false));
+    expect(await sched(all[0].id)).toBeNull();
   });
 });

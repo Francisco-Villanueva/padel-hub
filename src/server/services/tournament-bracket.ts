@@ -3,6 +3,7 @@
 import { randomUUID } from 'node:crypto';
 import { and, asc, eq } from 'drizzle-orm';
 import { buildTemplate, encodeSlot } from '../../lib/tournament/template';
+import { qualifiersPerZone } from '../../lib/tournament/zones';
 import { tournamentMatches, tournaments, tournamentZones } from '../db/schema';
 import type { Tx } from '../db/tenant';
 import { assertFeature } from './features';
@@ -81,6 +82,42 @@ export async function refreshBracket(tx: Tx, tournamentId: string) {
   const done = states.length > 0 && states.every((s) => s.standings.complete && s.standings.needsDraw.length === 0);
   if (t.status === 'zonas' && done) await tx.update(tournaments).set({ status: 'llave' }).where(eq(tournaments.id, tournamentId));
   if (t.status === 'llave' && !done) await tx.update(tournaments).set({ status: 'zonas' }).where(eq(tournaments.id, tournamentId));
+}
+
+/**
+ * Define a mano de dónde sale cada cruce de la primera ronda (por ejemplo los cruces que publicó la organización), en vez de la
+ * siembra automática. `firstRound` va en orden de arriba hacia abajo, un elemento por cruce, con "zona:puesto" (1 = Zona A):
+ * `{ a: '6:2', b: '7:2' }` es 2º F vs 2º G; un cruce con un solo lado es un libre. Cada clasificado tiene que aparecer
+ * exactamente una vez. Solo si ningún cruce de la llave empezó; conserva los horarios cargados y descarta lo puesto a mano.
+ */
+export async function setBracketSources(tx: Tx, ctx: Ctx, tournamentId: string, firstRound: readonly { a: string | null; b: string | null }[]) {
+  await assertFeature(tx, ctx.clubId, 'tournaments');
+  const [t] = await tx.select().from(tournaments).where(eq(tournaments.id, tournamentId));
+  if (!t) throw new TournamentError('not_found');
+  if (t.status !== 'zonas' && t.status !== 'llave') throw new TournamentError('invalid_state', { status: t.status });
+  const ms = await tx.select().from(tournamentMatches).where(and(eq(tournamentMatches.tournamentId, tournamentId), eq(tournamentMatches.stage, 'llave')))
+    .orderBy(asc(tournamentMatches.round), asc(tournamentMatches.position));
+  if (ms.some(isStarted)) throw new TournamentError('next_played');
+
+  const r1 = ms.filter((m) => m.round === 1);
+  const zones = await tx.select().from(tournamentZones).where(eq(tournamentZones.tournamentId, tournamentId));
+  const expected = new Set(zones.flatMap((z) => Array.from({ length: qualifiersPerZone(z.size as 3 | 4) }, (_, i) => encodeSlot({ zone: z.position - 1, position: i + 1 }))));
+  const given = firstRound.flatMap((m) => [m.a, m.b]).filter((x): x is string => x !== null);
+  const valid = firstRound.length === r1.length && firstRound.every((m) => m.a !== null || m.b !== null)
+    && given.length === expected.size && new Set(given).size === given.length && given.every((g) => expected.has(g));
+  if (!valid) throw new TournamentError('bracket_invalid');
+
+  // Se limpian los lugares de toda la llave antes de repartirlos de nuevo (nada empezó, así que no se pierde ningún resultado).
+  await tx.update(tournamentMatches).set({ entryAId: null, entryBId: null, winnerEntryId: null, lockA: false, lockB: false })
+    .where(and(eq(tournamentMatches.tournamentId, tournamentId), eq(tournamentMatches.stage, 'llave')));
+  for (const [i, m] of r1.entries()) {
+    const { a, b } = firstRound[i];
+    const bye = a === null || b === null;
+    // En un cruce libre el lugar real va siempre en el lado A.
+    await tx.update(tournamentMatches).set({ sourceA: bye ? a ?? b : a, sourceB: bye ? null : b, status: bye ? 'bye' : 'pendiente' })
+      .where(eq(tournamentMatches.id, m.id));
+  }
+  await refreshBracket(tx, tournamentId);
 }
 
 /**

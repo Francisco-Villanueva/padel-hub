@@ -244,7 +244,8 @@
         "createdAt": "Fecha de alta"
       }
     },
-    "emptyAction": "Agregar jugador"
+    "emptyAction": "Agregar jugador",
+    "noPhone": "Sin teléfono"
   },
   "signup": {
     "title": "Sumate a la comunidad",
@@ -968,7 +969,9 @@
       "zones_invalid": "Las zonas no son válidas: cada una debe tener 3 o 4 parejas y entre todas cubrir a las inscriptas, una sola vez.",
       "schedule_invalid": "El día o la hora no son válidos.",
       "slot_taken": "Esa pareja ya está en otro lugar de la primera ronda: intercambiá los lugares.",
-      "zone_started": "No se puede: en esa zona ya hay partidos empezados o jugados."
+      "zone_started": "No se puede: en esa zona ya hay partidos empezados o jugados.",
+      "pair_missing_names": "Falta el apellido de un jugador.",
+      "bracket_invalid": "Los cruces no son válidos: cada clasificado de las zonas tiene que aparecer exactamente una vez."
     },
     "pairReasons": {
       "no_category": "Los dos jugadores necesitan categoría.",
@@ -1038,7 +1041,7 @@
     },
     "winner": "Ganador",
     "header": {
-      "pairsCount": "{count} parejas",
+      "pairsCount": "{count, plural, one {# pareja} other {# parejas}}",
       "minPairs": "(mín. {min})",
       "missing": "faltan {count}",
       "viewPairs": "Ver parejas"
@@ -1061,6 +1064,68 @@
       "hint": "Cualquiera con el link puede verlo, sin iniciar sesión.",
       "open": "Abrir tablero",
       "manage": "Gestionar partidos"
+    },
+    "registration": {
+      "title": "Inscripciones",
+      "missing": "Faltan {count} parejas para llegar al mínimo de {min}.",
+      "ready": "Ya llegaron al mínimo. Cuando cierre la inscripción, iniciá el torneo para armar las zonas.",
+      "paste": "Pegar lista",
+      "lastName": "Apellido",
+      "firstName": "Nombre (opcional)",
+      "gender": "Género de",
+      "category": "Categoría",
+      "add": "Anotar pareja",
+      "adding": "Anotando…",
+      "hint": "Alcanza con el apellido. El nombre y el teléfono se completan después en la ficha del jugador.",
+      "added": "Anotada: {pair}",
+      "addedNew": "Anotada: {pair} ({n} jugadores nuevos).",
+      "empty": "Todavía no hay parejas. Anotá la primera arriba o pegá una lista.",
+      "num": "#",
+      "pair": "Pareja",
+      "categories": "Categoría",
+      "actions": "Acciones",
+      "pasteTitle": "Pegar lista de parejas",
+      "pasteBody": "Una pareja por línea, con los dos jugadores separados por / (también sirve -, y, & o +). Podés pegar solo apellidos.",
+      "pastePlaceholder": "Cardoso / Weber\nLopez / De Dios\nCharbonier / Sosa",
+      "order": "Cómo vienen escritos",
+      "orderSurname": "Solo apellidos",
+      "orderFirstLast": "Nombre Apellido",
+      "orderLastFirst": "Apellido Nombre",
+      "categoryAll": "Categoría de todos",
+      "preview": "{count, plural, one {# pareja para anotar} other {# parejas para anotar}}",
+      "problems": "{count, plural, one {# línea sin entender} other {# líneas sin entender}}",
+      "line": "Línea {n}",
+      "confirm": "{count, plural, one {Anotar # pareja} other {Anotar # parejas}}",
+      "summary": "{ok} de {total} anotadas. Las que fallaron quedaron en el cuadro para corregirlas.",
+      "reason": {
+        "one_player": "falta un jugador",
+        "too_many": "hay más de dos jugadores",
+        "empty_name": "falta un nombre"
+      },
+      "saving": "Guardando {count}…",
+      "dismiss": "Cerrar aviso",
+      "progress": "Anotando… {done} de {total} listas"
+    },
+    "bulk": {
+      "start": "Programar varios",
+      "barLabel": "Programar varios partidos",
+      "none": "Elegí los partidos que comparten día y hora",
+      "selected": "{count, plural, one {# partido elegido} other {# partidos elegidos}}",
+      "pickUnscheduled": "Los sin horario ({count})",
+      "pickAll": "Todos",
+      "exit": "Salir",
+      "setTime": "Poner día y hora",
+      "pick": "Elegir {label}",
+      "pickGroup": "Elegir todos los partidos de {label}",
+      "pickGroupShort": "Elegir todos",
+      "dialogTitle": "{count, plural, one {Día y hora para # partido} other {Día y hora para # partidos}}",
+      "dialogBody": "Se aplica el mismo día y hora a todos los partidos elegidos."
+    },
+    "points": {
+      "edit": "Editar puntos",
+      "title": "Puntos del torneo",
+      "body": "Se escriben en el ranking al cerrar el torneo, así que podés cambiarlos mientras se juega.",
+      "save": "Guardar puntos"
     }
   },
   "register": {
