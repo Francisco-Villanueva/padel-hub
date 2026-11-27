@@ -112,20 +112,21 @@ export async function TournamentBoard<T extends BoardMatch>({
                     </span>
                   );
                   return (
+                    // Celular: arriba hora, fase y acciones; abajo el marcador a todo el ancho. Desde sm, todo en una fila.
                     <li
                       key={i}
                       className={cx(
-                        "grid items-center gap-x-3 px-4 py-3",
-                        tv ? "grid-cols-[4.5rem_minmax(0,1fr)_auto] sm:grid-cols-[5.5rem_8rem_minmax(0,1fr)_auto] lg:grid-cols-[8rem_14rem_minmax(0,1fr)_auto]" : "grid-cols-[6.25rem_minmax(0,1fr)_auto] sm:grid-cols-[7rem_8rem_minmax(0,1fr)_auto]",
+                        "grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1 px-2 py-3 sm:px-4",
+                        tv ? "sm:grid-cols-[5.5rem_8rem_minmax(0,1fr)_auto] lg:grid-cols-[8rem_14rem_minmax(0,1fr)_auto]" : "sm:grid-cols-[7rem_8rem_minmax(0,1fr)_auto]",
                         isLive && "bg-brand-tint",
                       )}
                     >
-                      <span className={cx("flex items-center gap-2 font-display text-2xl font-bold", tv && "lg:text-4xl", m.status === "jugado" && "text-ink-muted")}>{select?.(m)}{m.scheduledAt ? hour(m) : "—"}</span>
-                      <span className={cx("hidden text-ink-muted sm:block", tv && "lg:text-xl")}>{phase(m)}</span>
-                      <div className="min-w-0">
-                        <div className="mb-0.5 flex flex-wrap items-center gap-x-2 px-2 text-xs font-medium text-ink-muted sm:hidden">{phase(m)}{badges}</div>
-                        {teams(m)}
+                      <span className={cx("flex items-center gap-2 pl-2 font-display text-2xl font-bold sm:pl-0", tv && "lg:text-4xl", m.status === "jugado" && "text-ink-muted")}>{select?.(m)}{m.scheduledAt ? hour(m) : "—"}</span>
+                      <div className={cx("flex min-w-0 flex-wrap items-center gap-x-2 text-sm text-ink-muted sm:text-base", tv && "lg:text-xl")}>
+                        {phase(m)}
+                        <span className="contents sm:hidden">{badges}</span>
                       </div>
+                      <div className="order-last col-span-3 min-w-0 sm:order-none sm:col-span-1">{teams(m)}</div>
                       <div className="flex items-center justify-end gap-2">
                         <span className="hidden sm:contents">{badges}</span>
                         {actions?.(m)}
