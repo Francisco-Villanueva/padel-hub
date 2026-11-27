@@ -6,7 +6,7 @@ import type { Tx } from '../src/server/db/tenant';
 import { setClubFeature } from '../src/server/services/features';
 import { replacePlayer, restoreSlot, setSlotEntry, swapSlots, swapZoneEntries } from '../src/server/services/tournament-adjust';
 import { publicTournamentBoard } from '../src/server/services/public-board';
-import { rebuildBracket } from '../src/server/services/tournament-bracket';
+import { rebuildBracket, setBracketSources } from '../src/server/services/tournament-bracket';
 import { registerPair } from '../src/server/services/tournament-entries';
 import { clearResult, recordResult, setMatchLive } from '../src/server/services/tournament-matches';
 import { closeTournament, createTournament, getTournament, openRegistration, startTournamentWithZones, zoneStates } from '../src/server/services/tournaments';
@@ -297,5 +297,51 @@ describe('ajustes a mano', () => {
     await expect(B((tx) => rebuildBracket(tx, { clubId: s.b.id }, id))).rejects.toMatchObject({ code: 'not_found' });
     await t.withPlatform((tx) => setClubFeature(tx, { userId: s.ownerB }, s.b.id, 'tournaments', false));
     await expect(A((tx) => tx.select().from(tournaments).where(eq(tournaments.id, id)))).resolves.toHaveLength(1);
+  });
+});
+
+describe('cruces definidos por la organización', () => {
+  // 11 zonas (A = 1 … K = 11); 22 clasificados en una llave de 32, como un torneo real.
+  const z = (letter: string, pos: number) => `${letter.charCodeAt(0) - 64}:${pos}`;
+  const one = (a: string) => ({ a, b: null }), vs = (a: string, b: string) => ({ a, b });
+  const layout = [
+    one(z('A', 1)), vs(z('F', 2), z('G', 2)), one(z('I', 1)), one(z('H', 1)),
+    one(z('E', 1)), vs(z('B', 2), z('K', 2)), vs(z('J', 2), z('C', 2)), one(z('D', 1)),
+    one(z('C', 1)), vs(z('D', 2), z('I', 2)), vs(z('K', 1), z('A', 2)), one(z('F', 1)),
+    one(z('G', 1)), one(z('J', 1)), vs(z('H', 2), z('E', 2)), one(z('B', 1)),
+  ];
+
+  it('reemplaza la siembra automática y, al terminar las zonas, ubica a las parejas en esos cruces', async () => {
+    const { id, z: zonePairs } = await started(11);
+    await A((tx) => setBracketSources(tx, ca, id, layout));
+    let first = await r1(id);
+    expect(first).toHaveLength(16);
+    expect(first.filter((m) => m.status === 'bye')).toHaveLength(10);
+    expect(first[1]).toMatchObject({ status: 'pendiente', sourceA: '6:2', sourceB: '7:2' });
+    expect(first[2]).toMatchObject({ status: 'bye', sourceA: '9:1', sourceB: null });
+
+    for (let i = 0; i < 11; i++) await playZone(id, i);
+    first = await r1(id);
+    // playZone deja a las parejas en el orden de la zona: 1º = primera, 2º = segunda.
+    expect([first[1].entryAId, first[1].entryBId]).toEqual([zonePairs[5][1], zonePairs[6][1]]); // 2F vs 2G
+    expect([first[10].entryAId, first[10].entryBId]).toEqual([zonePairs[10][0], zonePairs[0][1]]); // 1K vs 2A
+    const r2 = (await llave(id)).filter((m) => m.round === 2);
+    expect(r2[0].entryAId).toBe(zonePairs[0][0]); // 1A espera en octavos (pasó libre)
+    expect([r2[1].entryAId, r2[1].entryBId]).toEqual([zonePairs[8][0], zonePairs[7][0]]); // 1I vs 1H
+    expect(r2[3].entryBId).toBe(zonePairs[3][0]); // … vs 1D
+    expect(await status(id)).toBe('llave');
+  });
+
+  it('rechaza cruces incompletos, repetidos, de otro tamaño o con un cruce vacío; y con la llave empezada', async () => {
+    const { id } = await started(11);
+    const bad = (l: { a: string | null; b: string | null }[]) => expect(A((tx) => setBracketSources(tx, ca, id, l))).rejects.toMatchObject({ code: 'bracket_invalid' });
+    await bad(layout.slice(0, 15));
+    await bad(layout.map((m, i) => (i === 0 ? one(z('B', 1)) : m)));      // 1B repetido y falta 1A
+    await bad(layout.map((m, i) => (i === 0 ? { a: null, b: null } : m)));
+    await bad(layout.map((m, i) => (i === 1 ? vs(z('F', 3), z('G', 2)) : m))); // no existe 3º en zona de 3
+    for (let i = 0; i < 11; i++) await playZone(id, i);
+    const real = (await r1(id)).find((m) => m.status === 'pendiente')!;
+    await A((tx) => recordResult(tx, ca, real.id, [[6, 1], [6, 1]]));
+    await expect(A((tx) => setBracketSources(tx, ca, id, layout))).rejects.toMatchObject({ code: 'next_played' });
   });
 });

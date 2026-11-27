@@ -16,6 +16,14 @@ export const templateInputSchema = z.object({
 });
 export type TemplateInput = z.infer<typeof templateInputSchema>;
 
+/** Puntos de un torneo ya creado: campeón, participación y ajustes absolutos por ronda. */
+export const pointsInputSchema = z.object({
+  championPoints: points.min(1),
+  participationPoints: points,
+  roundOverrides: z.partialRecord(roundKey, points).optional(),
+});
+export type PointsInput = z.infer<typeof pointsInputSchema>;
+
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 
 export const tournamentInputSchema = z.object({
@@ -49,3 +57,12 @@ export function winnerOfSets(sets: SetsInput): 'a' | 'b' | null {
   const b = sets.length - a;
   return a === b ? null : a > b ? 'a' : 'b';
 }
+
+const playerRefSchema = z.object({
+  firstName: z.string().trim().max(80).optional(),
+  lastName: z.string().trim().min(1).max(80),
+  gender: z.enum(['male', 'female']).optional(),
+  category: z.number().int().min(1).max(9).nullable().optional(),
+});
+/** Parejas anotadas escribiendo los nombres (alta rápida o lista pegada): hasta 200 por vez. */
+export const pairRowsSchema = z.array(z.object({ p1: playerRefSchema, p2: playerRefSchema })).min(1).max(200);

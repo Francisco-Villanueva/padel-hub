@@ -12,8 +12,14 @@ import { utcToLocalInputs } from "@/lib/tz";
  * Cada partido es un marcador: una fila por pareja con los games de cada set pegados al nombre, la ganadora con corona.
  */
 export async function TournamentBoard<T extends BoardMatch>({
-  matches, timezone, actions,
-}: { matches: T[]; timezone: string; actions?: (m: T) => React.ReactNode }) {
+  matches, timezone, actions, select, selectGroup,
+}: {
+  matches: T[]; timezone: string; actions?: (m: T) => React.ReactNode;
+  /** Casilla para elegir un partido (modo "programar varios" del club). */
+  select?: (m: T) => React.ReactNode;
+  /** Casilla para elegir todos los partidos de un día. */
+  selectGroup?: (rows: T[], label: string) => React.ReactNode;
+}) {
   const t = await getTranslations();
   const format = await getFormatter();
   const tv = !actions;
@@ -38,7 +44,7 @@ export async function TournamentBoard<T extends BoardMatch>({
         return (
           <div key={side} className={cx("flex items-center gap-2 rounded-md px-2", tv ? "py-1 lg:py-1.5" : "py-1", won && "bg-brand-tint")}>
             <span className={cx("flex w-5 shrink-0 justify-center", tv && "lg:w-7")}>{won && <WinnerMark label={t("tournaments.winner")} className={tv ? "lg:size-7" : undefined} />}</span>
-            <p className={cx("min-w-0 flex-1 truncate", won ? "font-bold text-ink" : tbd ? "italic text-ink-muted" : m.winner ? "text-ink-muted" : "text-ink")} title={name}>{name}</p>
+            <p className={cx("min-w-0 flex-1 break-words sm:truncate", won ? "font-bold text-ink" : tbd ? "italic text-ink-muted" : m.winner ? "text-ink-muted" : "text-ink")} title={name}>{name}</p>
             {(m.sets ?? []).map(([x, y], k) => {
               const mine = side === "a" ? x : y, other = side === "a" ? y : x;
               return <span key={k} className={cx("w-6 shrink-0 text-center font-display text-xl tabular-nums leading-none", tv && "lg:w-9 lg:text-3xl", mine > other ? "font-bold text-ink" : "text-ink-muted")}>{mine}</span>;
@@ -92,7 +98,10 @@ export async function TournamentBoard<T extends BoardMatch>({
         ) : (
           days.map((d) => (
             <div key={d.key || "none"} className={cx(ui.card, "overflow-hidden !p-0")}>
-              <h3 className={cx("bg-surface-sunken px-4 py-2.5 text-base font-bold first-letter:uppercase", tv && "lg:text-xl")}>{d.label}</h3>
+              <div className="flex items-center justify-between gap-3 bg-surface-sunken px-4 py-2.5">
+                <h3 className={cx("text-base font-bold first-letter:uppercase", tv && "lg:text-xl")}>{d.label}</h3>
+                {selectGroup?.(d.rows, d.label)}
+              </div>
               <ul className={cx("divide-y divide-line text-base", tv && "lg:text-xl")}>
                 {d.rows.map((m, i) => {
                   const isLive = m.status === "en_juego";
@@ -103,22 +112,23 @@ export async function TournamentBoard<T extends BoardMatch>({
                     </span>
                   );
                   return (
+                    // Celular: arriba hora, fase y acciones; abajo el marcador a todo el ancho. Desde sm, todo en una fila.
                     <li
                       key={i}
                       className={cx(
-                        "grid items-center gap-x-3 px-4 py-3",
-                        tv ? "grid-cols-[4.5rem_minmax(0,1fr)_auto] sm:grid-cols-[5.5rem_8rem_minmax(0,1fr)_auto] lg:grid-cols-[8rem_14rem_minmax(0,1fr)_auto]" : "grid-cols-[4.5rem_minmax(0,1fr)_auto] sm:grid-cols-[5.5rem_8rem_minmax(0,1fr)_auto]",
+                        "grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1 px-2 py-3 sm:px-4",
+                        tv ? "sm:grid-cols-[5.5rem_8rem_minmax(0,1fr)_auto] lg:grid-cols-[8rem_14rem_minmax(0,1fr)_auto]" : "sm:grid-cols-[7rem_8rem_minmax(0,1fr)_auto]",
                         isLive && "bg-brand-tint",
                       )}
                     >
-                      <span className={cx("font-display text-2xl font-bold", tv && "lg:text-4xl", m.status === "jugado" && "text-ink-muted")}>{m.scheduledAt ? hour(m) : "—"}</span>
-                      <span className={cx("hidden text-ink-muted sm:block", tv && "lg:text-xl")}>{phase(m)}</span>
-                      <div className="min-w-0">
-                        <p className="mb-0.5 px-2 text-xs font-medium text-ink-muted sm:hidden">{phase(m)}</p>
-                        {teams(m)}
+                      <span className={cx("flex items-center gap-2 pl-2 font-display text-2xl font-bold sm:pl-0", tv && "lg:text-4xl", m.status === "jugado" && "text-ink-muted")}>{select?.(m)}{m.scheduledAt ? hour(m) : "—"}</span>
+                      <div className={cx("flex min-w-0 flex-wrap items-center gap-x-2 text-sm text-ink-muted sm:text-base", tv && "lg:text-xl")}>
+                        {phase(m)}
+                        <span className="contents sm:hidden">{badges}</span>
                       </div>
+                      <div className="order-last col-span-3 min-w-0 sm:order-none sm:col-span-1">{teams(m)}</div>
                       <div className="flex items-center justify-end gap-2">
-                        {badges}
+                        <span className="hidden sm:contents">{badges}</span>
                         {actions?.(m)}
                       </div>
                     </li>

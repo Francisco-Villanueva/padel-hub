@@ -1,0 +1,1 @@
+ALTER TABLE "players" ALTER COLUMN "phone_e164" DROP NOT NULL;

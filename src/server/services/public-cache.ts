@@ -4,7 +4,7 @@ import { CATEGORY_RULE_KINDS, MODALITIES } from '../../lib/tournament/constants'
 import { DEFAULT_RANKING_WINDOW, RANKING_WINDOWS, type RankingWindow } from '../../lib/tournament/ranking-window';
 import { withPlatform } from '../db/client';
 import { publicRanking, publicRankingBuckets, publicRankingClub, type PublicBucket } from './public-ranking';
-import { publicTournamentBoard, publicTournamentInfo } from './public-board';
+import { publicTournamentBoard, publicTournamentDraw, publicTournamentInfo } from './public-board';
 
 // Datos de las páginas públicas (ranking y tablero del televisor). Son iguales para todos los visitantes y se piden mucho
 // (cada televisor se actualiza solo), así que se cachean unos segundos en el servidor en vez de ir a la base en cada request.
@@ -46,6 +46,9 @@ export async function loadPublicBoard(slug: string, id: string) {
     withPlatform((tx) => publicTournamentInfo(tx, slug, id)),
   ]);
   if (!club || !info) return null;
-  const matches = await withPlatform((tx) => publicTournamentBoard(tx, slug, id));
-  return { club, info, matches };
+  const [matches, draw] = await Promise.all([
+    withPlatform((tx) => publicTournamentBoard(tx, slug, id)),
+    withPlatform((tx) => publicTournamentDraw(tx, slug, id)),
+  ]);
+  return { club, info, matches, draw };
 }

@@ -244,7 +244,8 @@
         "createdAt": "Data de cadastro"
       }
     },
-    "emptyAction": "Adicionar jogador"
+    "emptyAction": "Adicionar jogador",
+    "noPhone": "Sem telefone"
   },
   "signup": {
     "title": "Entre para a comunidade",
@@ -867,7 +868,8 @@
       "drawButton": "Sortear desempate",
       "drawDone": "O desempate foi resolvido por sorteio.",
       "progress": "{done} de {total} partidas",
-      "complete": "Completo"
+      "complete": "Completo",
+      "jump": "Ir para um grupo"
     },
     "bracket": {
       "title": "Chave",
@@ -882,7 +884,8 @@
         "round_of_64": "32 avos de final",
         "round_of_128": "64 avos de final"
       },
-      "slot": "{position}º {zone}"
+      "slot": "{position}º {zone}",
+      "swipe": "Deslize para os lados para ver as outras fases."
     },
     "result": {
       "title": "Resultado",
@@ -968,7 +971,9 @@
       "zones_invalid": "Os grupos não são válidos: cada um precisa de 3 ou 4 duplas e juntos devem cobrir as duplas inscritas uma única vez.",
       "schedule_invalid": "O dia ou a hora não são válidos.",
       "slot_taken": "Essa dupla já está em outro lugar da primeira rodada: troque os lugares.",
-      "zone_started": "Não é possível: esse grupo já tem partidas em andamento ou jogadas."
+      "zone_started": "Não é possível: esse grupo já tem partidas em andamento ou jogadas.",
+      "pair_missing_names": "Falta o sobrenome de um jogador.",
+      "bracket_invalid": "Os confrontos não são válidos: cada classificado dos grupos deve aparecer exatamente uma vez."
     },
     "pairReasons": {
       "no_category": "Os dois jogadores precisam ter categoria.",
@@ -1038,7 +1043,7 @@
     },
     "winner": "Vencedor",
     "header": {
-      "pairsCount": "{count} duplas",
+      "pairsCount": "{count, plural, one {# dupla} other {# duplas}}",
       "minPairs": "(mín. {min})",
       "missing": "faltam {count}",
       "viewPairs": "Ver duplas"
@@ -1046,7 +1051,8 @@
     "views": {
       "label": "Visão do torneio",
       "zones": "Grupos",
-      "bracket": "Chaves"
+      "bracket": "Chaves",
+      "matches": "Jogos"
     },
     "menu": {
       "matchActions": "Ações da partida",
@@ -1061,6 +1067,68 @@
       "hint": "Qualquer pessoa com o link pode ver, sem entrar na conta.",
       "open": "Abrir painel",
       "manage": "Gerenciar partidas"
+    },
+    "registration": {
+      "title": "Inscrições",
+      "missing": "Faltam {count} duplas para chegar ao mínimo de {min}.",
+      "ready": "O mínimo foi atingido. Quando as inscrições fecharem, inicie o torneio para montar os grupos.",
+      "paste": "Colar lista",
+      "lastName": "Sobrenome",
+      "firstName": "Nome (opcional)",
+      "gender": "Gênero de",
+      "category": "Categoria",
+      "add": "Inscrever dupla",
+      "adding": "Inscrevendo…",
+      "hint": "O sobrenome basta. O nome e o telefone se completam depois na ficha do jogador.",
+      "added": "Inscrita: {pair}",
+      "addedNew": "Inscrita: {pair} ({n} jogadores novos).",
+      "empty": "Ainda não há duplas. Inscreva a primeira acima ou cole uma lista.",
+      "num": "#",
+      "pair": "Dupla",
+      "categories": "Categoria",
+      "actions": "Ações",
+      "pasteTitle": "Colar lista de duplas",
+      "pasteBody": "Uma dupla por linha, com os dois jogadores separados por / (também vale -, y, & ou +). Pode colar só sobrenomes.",
+      "pastePlaceholder": "Cardoso / Weber\nLopez / De Dios\nCharbonier / Sosa",
+      "order": "Como estão escritos",
+      "orderSurname": "Só sobrenomes",
+      "orderFirstLast": "Nome Sobrenome",
+      "orderLastFirst": "Sobrenome Nome",
+      "categoryAll": "Categoria de todos",
+      "preview": "{count, plural, one {# dupla para inscrever} other {# duplas para inscrever}}",
+      "problems": "{count, plural, one {# linha não entendida} other {# linhas não entendidas}}",
+      "line": "Linha {n}",
+      "confirm": "{count, plural, one {Inscrever # dupla} other {Inscrever # duplas}}",
+      "summary": "{ok} de {total} inscritas. As que falharam ficaram na caixa para corrigir.",
+      "reason": {
+        "one_player": "falta um jogador",
+        "too_many": "mais de dois jogadores",
+        "empty_name": "falta um nome"
+      },
+      "saving": "Salvando {count}…",
+      "dismiss": "Fechar aviso",
+      "progress": "Inscrevendo… {done} de {total} prontas"
+    },
+    "bulk": {
+      "start": "Programar vários",
+      "barLabel": "Programar várias partidas",
+      "none": "Escolha as partidas que compartilham dia e hora",
+      "selected": "{count, plural, one {# partida escolhida} other {# partidas escolhidas}}",
+      "pickUnscheduled": "Sem horário ({count})",
+      "pickAll": "Todas",
+      "exit": "Sair",
+      "setTime": "Definir dia e hora",
+      "pick": "Escolher {label}",
+      "pickGroup": "Escolher todas as partidas de {label}",
+      "pickGroupShort": "Escolher todas",
+      "dialogTitle": "{count, plural, one {Dia e hora para # partida} other {Dia e hora para # partidas}}",
+      "dialogBody": "O mesmo dia e hora vale para todas as partidas escolhidas."
+    },
+    "points": {
+      "edit": "Editar pontos",
+      "title": "Pontos do torneio",
+      "body": "São gravados no ranking ao encerrar o torneio, então dá para mudar durante o jogo.",
+      "save": "Salvar pontos"
     }
   },
   "register": {

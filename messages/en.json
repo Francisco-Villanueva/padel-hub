@@ -244,7 +244,8 @@
         "createdAt": "Sign-up date"
       }
     },
-    "emptyAction": "Add player"
+    "emptyAction": "Add player",
+    "noPhone": "No phone"
   },
   "signup": {
     "title": "Join the community",
@@ -867,7 +868,8 @@
       "drawButton": "Draw the tiebreak",
       "drawDone": "The tie was resolved by a draw.",
       "progress": "{done} of {total} matches",
-      "complete": "Complete"
+      "complete": "Complete",
+      "jump": "Go to a group"
     },
     "bracket": {
       "title": "Bracket",
@@ -882,7 +884,8 @@
         "round_of_64": "Round of 64",
         "round_of_128": "Round of 128"
       },
-      "slot": "{position} {zone}"
+      "slot": "{position} {zone}",
+      "swipe": "Swipe sideways to see the other rounds."
     },
     "result": {
       "title": "Result",
@@ -968,7 +971,9 @@
       "zones_invalid": "The groups are not valid: each needs 3 or 4 pairs and together they must cover the registered pairs exactly once.",
       "schedule_invalid": "The day or time is not valid.",
       "slot_taken": "That pair is already in another first-round spot: swap the spots instead.",
-      "zone_started": "Not possible: that group already has matches in progress or played."
+      "zone_started": "Not possible: that group already has matches in progress or played.",
+      "pair_missing_names": "A player is missing a last name.",
+      "bracket_invalid": "The bracket is not valid: each qualifier from the groups must appear exactly once."
     },
     "pairReasons": {
       "no_category": "Both players need a category.",
@@ -1038,7 +1043,7 @@
     },
     "winner": "Winner",
     "header": {
-      "pairsCount": "{count} pairs",
+      "pairsCount": "{count, plural, one {# pair} other {# pairs}}",
       "minPairs": "(min. {min})",
       "missing": "{count} missing",
       "viewPairs": "View pairs"
@@ -1046,7 +1051,8 @@
     "views": {
       "label": "Tournament view",
       "zones": "Groups",
-      "bracket": "Bracket"
+      "bracket": "Bracket",
+      "matches": "Matches"
     },
     "menu": {
       "matchActions": "Match actions",
@@ -1061,6 +1067,68 @@
       "hint": "Anyone with the link can see it, no sign-in needed.",
       "open": "Open board",
       "manage": "Manage matches"
+    },
+    "registration": {
+      "title": "Registrations",
+      "missing": "{count} more pairs needed to reach the minimum of {min}.",
+      "ready": "The minimum is reached. When registration closes, start the tournament to build the groups.",
+      "paste": "Paste list",
+      "lastName": "Last name",
+      "firstName": "First name (optional)",
+      "gender": "Gender of",
+      "category": "Category",
+      "add": "Register pair",
+      "adding": "Registering…",
+      "hint": "A last name is enough. First name and phone can be filled in later on the player page.",
+      "added": "Registered: {pair}",
+      "addedNew": "Registered: {pair} ({n} new players).",
+      "empty": "No pairs yet. Register the first one above or paste a list.",
+      "num": "#",
+      "pair": "Pair",
+      "categories": "Category",
+      "actions": "Actions",
+      "pasteTitle": "Paste a list of pairs",
+      "pasteBody": "One pair per line, with the two players separated by / (- , and, & or + also work). You can paste last names only.",
+      "pastePlaceholder": "Cardoso / Weber\nLopez / De Dios\nCharbonier / Sosa",
+      "order": "How names are written",
+      "orderSurname": "Last names only",
+      "orderFirstLast": "First Last",
+      "orderLastFirst": "Last First",
+      "categoryAll": "Category for everyone",
+      "preview": "{count, plural, one {# pair to register} other {# pairs to register}}",
+      "problems": "{count, plural, one {# line not understood} other {# lines not understood}}",
+      "line": "Line {n}",
+      "confirm": "{count, plural, one {Register # pair} other {Register # pairs}}",
+      "summary": "{ok} of {total} registered. The ones that failed stay in the box so you can fix them.",
+      "reason": {
+        "one_player": "a player is missing",
+        "too_many": "more than two players",
+        "empty_name": "a name is missing"
+      },
+      "saving": "Saving {count}…",
+      "dismiss": "Dismiss",
+      "progress": "Registering… {done} of {total} done"
+    },
+    "bulk": {
+      "start": "Schedule several",
+      "barLabel": "Schedule several matches",
+      "none": "Pick the matches that share a day and time",
+      "selected": "{count, plural, one {# match selected} other {# matches selected}}",
+      "pickUnscheduled": "Without a time ({count})",
+      "pickAll": "All",
+      "exit": "Exit",
+      "setTime": "Set day and time",
+      "pick": "Select {label}",
+      "pickGroup": "Select every match of {label}",
+      "pickGroupShort": "Select all",
+      "dialogTitle": "{count, plural, one {Day and time for # match} other {Day and time for # matches}}",
+      "dialogBody": "The same day and time is applied to every selected match."
+    },
+    "points": {
+      "edit": "Edit points",
+      "title": "Tournament points",
+      "body": "They are written to the ranking when the tournament is closed, so you can change them while it is being played.",
+      "save": "Save points"
     }
   },
   "register": {

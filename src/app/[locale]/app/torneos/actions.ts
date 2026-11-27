@@ -2,7 +2,7 @@
 
 import { refresh } from "next/cache";
 import { redirect } from "next/navigation";
-import { templateInputSchema, tournamentInputSchema } from "@/lib/tournament-schema";
+import { pairRowsSchema, pointsInputSchema, templateInputSchema, tournamentInputSchema } from "@/lib/tournament-schema";
 import { ROUND_KEYS } from "@/lib/tournament/constants";
 import { requireFeature } from "@/server/auth/session";
 import { getClubContext } from "@/server/club-context";
@@ -13,12 +13,12 @@ import type { Tx } from "@/server/db/tenant";
 import { FeatureDisabledError } from "@/server/services/features";
 import { replacePlayer, restoreSlot, setSlotEntry, swapSlots, swapZoneEntries, type Side } from "@/server/services/tournament-adjust";
 import { rebuildBracket } from "@/server/services/tournament-bracket";
-import { quickCreatePlayer, registerPair, removePair } from "@/server/services/tournament-entries";
+import { registerPairs, removePair } from "@/server/services/tournament-entries";
 import { TournamentError } from "@/server/services/tournament-errors";
-import { clearResult, recordResult, resolveTie, setMatchLive, setMatchSchedule } from "@/server/services/tournament-matches";
+import { clearResult, recordResult, resolveTie, setMatchLive, setMatchSchedule, setMatchesSchedule } from "@/server/services/tournament-matches";
 import { createTemplate, deleteTemplate, updateTemplate } from "@/server/services/tournament-templates";
 import {
-  cancelTournament, closeTournament, createTournament, openRegistration, reopenTournament, startTournament, updateTournament,
+  cancelTournament, closeTournament, createTournament, openRegistration, reopenTournament, startTournament, updateTournament, updateTournamentPoints,
 } from "@/server/services/tournaments";
 
 export type TState = {
@@ -115,6 +115,23 @@ export async function updateTournamentAction(_prev: TState, fd: FormData): Promi
   return mutate(fd, (tx, c) => updateTournament(tx, { clubId: c.clubId, userId: c.userId }, id, parsed.data));
 }
 
+/** Cuánto reparte un torneo ya creado (también en juego). Los ajustes por ronda vacíos se calculan solos. */
+export async function updatePointsAction(_prev: TState, fd: FormData): Promise<TState> {
+  const id = idOf(fd);
+  if (!id) return fail("not_found");
+  const overrides: Record<string, number> = {};
+  for (const k of ROUND_KEYS) {
+    const v = String(fd.get(`override_${k}`) ?? "").trim();
+    if (v !== "") overrides[k] = Number(v);
+  }
+  const parsed = pointsInputSchema.safeParse({
+    championPoints: fd.get("championPoints"), participationPoints: fd.get("participationPoints") || 0,
+    roundOverrides: Object.keys(overrides).length ? overrides : undefined,
+  });
+  if (!parsed.success) return fail("validation");
+  return mutate(fd, (tx, c) => updateTournamentPoints(tx, { clubId: c.clubId, userId: c.userId }, id, parsed.data));
+}
+
 const simple = (fn: (tx: Tx, ctx: { clubId: string; userId: string }, id: string) => Promise<unknown>) =>
   async (_prev: TState, fd: FormData): Promise<TState> => {
     const id = idOf(fd);
@@ -132,28 +149,24 @@ export const resolveTieAction = simple((tx, c, id) => resolveTie(tx, c, id));
 export const clearResultAction = simple(clearResult);
 
 // Parejas ----------------------------------------------------------------------------------------
-export async function registerPairAction(_prev: TState, fd: FormData): Promise<TState> {
-  const tournamentId = idOf(fd), p1 = idOf(fd, "player1Id"), p2 = idOf(fd, "player2Id");
-  if (!tournamentId || !p1 || !p2) return fail("pair_missing");
-  return mutate(fd, async (tx, c) => { await registerPair(tx, { clubId: c.clubId }, tournamentId, { player1Id: p1, player2Id: p2 }); });
+/**
+ * Anota una o varias parejas escribiendo los nombres: la fila de alta rápida manda una, "pegar lista" manda muchas.
+ * Cada fila se resuelve por separado; el resultado por fila vuelve en `data.results` (JSON, en el mismo orden).
+ */
+export async function registerPairsAction(_prev: TState, fd: FormData): Promise<TState> {
+  const tournamentId = idOf(fd);
+  if (!tournamentId) return fail("not_found");
+  let raw: unknown;
+  try { raw = JSON.parse(String(fd.get("rows") ?? "[]")); } catch { return fail("validation"); }
+  const parsed = pairRowsSchema.safeParse(raw);
+  if (!parsed.success) return fail("validation");
+  return mutate(fd, async (tx, c): Promise<Record<string, string>> => {
+    const results = await registerPairs(tx, { clubId: c.clubId, country: c.country, locale: c.clubLocale }, tournamentId, parsed.data);
+    return { results: JSON.stringify(results) };
+  });
 }
 
 export const removePairAction = simple((tx, c, id) => removePair(tx, c, id));
-
-export async function quickCreatePlayerAction(_prev: TState, fd: FormData): Promise<TState> {
-  const firstName = String(fd.get("firstName") ?? "").trim(), lastName = String(fd.get("lastName") ?? "").trim();
-  const gender = fd.get("gender"), phone = String(fd.get("phone") ?? "").trim();
-  const catRaw = String(fd.get("category") ?? "");
-  const category = catRaw === "" ? undefined : Number(catRaw);
-  if (!firstName || !lastName || (gender !== "male" && gender !== "female") || !phone || firstName.length > 80 || lastName.length > 80
-    || (category !== undefined && !(Number.isInteger(category) && category >= 1 && category <= 9))) return fail("validation");
-  return mutate(fd, async (tx, c): Promise<Record<string, string>> => {
-    const res = await quickCreatePlayer(tx, { clubId: c.clubId, country: c.country }, { firstName, lastName, gender, category, phone }, c.clubLocale);
-    return "existing" in res && res.existing
-      ? { playerId: res.existing.id, existing: "1", name: `${res.existing.firstName} ${res.existing.lastName}`, category: String(res.existing.category ?? "") }
-      : { playerId: res.created!.id, existing: "", name: `${firstName} ${lastName}`, category: String(category ?? "") };
-  });
-}
 
 // Resultados -------------------------------------------------------------------------------------
 export async function recordResultAction(_prev: TState, fd: FormData): Promise<TState> {
@@ -204,6 +217,18 @@ export async function setScheduleAction(_prev: TState, fd: FormData): Promise<TS
     const at = localToUtc(date, time, c.timezone);
     if (!at) throw new TournamentError("schedule_invalid");
     await setMatchSchedule(tx, { clubId: c.clubId }, id, at);
+  });
+}
+
+/** El mismo día y hora para varios partidos (los que se juegan en simultáneo). `ids` viene repetido en el formulario; vacío quita el horario. */
+export async function setScheduleBulkAction(_prev: TState, fd: FormData): Promise<TState> {
+  const ids = fd.getAll("ids").map(String);
+  if (ids.length === 0 || ids.length > 100 || ids.some((i) => !UUID.test(i))) return fail("not_found");
+  const date = String(fd.get("date") ?? "").trim(), time = String(fd.get("time") ?? "").trim();
+  return mutate(fd, async (tx, c) => {
+    const at = date || time ? localToUtc(date, time, c.timezone) : null;
+    if ((date || time) && !at) throw new TournamentError("schedule_invalid");
+    await setMatchesSchedule(tx, { clubId: c.clubId }, ids, at);
   });
 }
 

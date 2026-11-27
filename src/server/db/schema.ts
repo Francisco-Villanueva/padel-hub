@@ -136,7 +136,7 @@ export const players = pgTable('players', {
   lastName: text('last_name').notNull(),
   gender: playerGender('gender').notNull(),
   category: smallint('category'), // nivel 1 a 8, 9 = Principiantes (nulo = sin categoría). El género va aparte, en `gender`.
-  phoneE164: text('phone_e164').notNull(),
+  phoneE164: text('phone_e164'), // opcional: un jugador anotado solo para un torneo puede no tener teléfono todavía (único por club cuando existe)
   position: playerPosition('position'),
   slots: timeSlot('slots').array().notNull().default(sql`'{}'`),
   photoUrl: text('photo_url'),
